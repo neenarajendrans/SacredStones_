@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>OTP Validation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .otp-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="otp-container">
+        <% if(message) {%>
+            <p class="text-danger errorMsg">
+                <%=message %>
+            </p>
+            <% } %>
+        <h2>Enter OTP</h2>
+        <p>Check your email or phone for the OTP code.</p>
+        <form method="post" action="/otp">
+            <input type="text" placeholder="Enter OTP"  name="otp" id="otpInput" maxlength="4" required>
+            <button type="submit">Validate OTP</button>
+
+        </form>
+
+        <div class="container mt-2 fw-bold" id="timer">
+          30
+        </div>
+    </div>
+
+    
+</body>
+<script>
+    const error = document.getElementsByClassName('errorMsg');
+    // Check if there are any elements with the class 'errorMsg'
+    if (error.length) {
+        setTimeout(() => {
+            for (let i = 0; i < error.length; i++) {
+                error[i].innerHTML = ' ';
+            }
+        }, 3000);
+    }
+</script>
+<script>
+    let i = 30
+    const timerContainer = document.querySelector("#timer")
+
+    console.log(timerContainer)
+
+    const intervelId = setInterval(() => {
+        if(i<=0){
+            clearInterval(intervelId)
+            const resendButton = document.createElement("a");
+            resendButton.href = "/resend";
+            resendButton.textContent = "Resend OTP";
+            timerContainer.innerHTML = '';
+            timerContainer.appendChild(resendButton);
+        }else{
+            i--;
+            timerContainer.innerHTML = i;
+        }
+    },1000);
+
+</script>
+</html>

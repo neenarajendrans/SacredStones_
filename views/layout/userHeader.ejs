@@ -1,0 +1,62 @@
+<header class="header_section" style="color: grey;">
+ 
+    <div class="container-fluid">
+      <nav class="navbar navbar-expand-lg custom_nav-container " >
+        <a class="navbar-brand" href="index.html">
+          <img src="images/logo.png" style="width: 350px;" alt="">
+          <span>
+           
+          </span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
+            <ul class="navbar-nav  ">
+              <li class="nav-item active">
+                <a class="nav-link" href="/home" style="color: black;font-size: medium;">Home <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/about"style="color: black;font-size: medium;"> About</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/jewellery"style="color: black;font-size: medium;">Jewellery </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/contact"style="color: black;font-size: medium;">Contact us</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/useraccount" style="color: black;font-size: medium;">My Account</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout" style="color: black;font-size: medium;">Logout</a>
+              </li>
+            </ul>
+
+          </div>
+          <div class="quote_btn-container " >
+            <a href="/cart" >
+              <i class="fa fa-shopping-bag" style="color: black; padding: 20px;"></i>
+              <div class="cart_number" style="color: black; background-color: aliceblue;">
+                <%=cart?.products.length%>
+              </div>
+            </a>
+            <form class="form-inline">
+              <i class="fa fa-search"></i>
+            </form> 
+            
+          </div>
+        </div>
+      </nav>
+      <!-- <nav aria-label="breadcrumb" >
+        <ol class="breadcrumb" style="background-color:white;">
+          <li class="breadcrumb-item"><a href="/jewellery">Jewellery</a></li>
+          <li class="breadcrumb-item"><a href="/about">About Us</a></li>
+          <li class="breadcrumb-item"><a href="/contact">Contact Us</a></li>
+          
+        </ol>
+      </nav> -->
+    </div>
+  </header>

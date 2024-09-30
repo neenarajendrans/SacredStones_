@@ -1,0 +1,280 @@
+<%- include ("../layout/admintemHeader")%>
+    <%- include ("../layout/sideBar")%>
+
+
+        <main class="main-wrap">
+
+            <section class="content-main">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="content-header">
+                            <h2 class="content-title">Edit Product</h2>
+                            <div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+
+                            <div class="card-body">
+                                <form action="/admin/editproduct/<%= product._id %>" method="post"
+                                    enctype="multipart/form-data">
+                                    <div class="mb-4">
+                                        <label for="product_name" class="form-label">Product Name</label>
+                                        <input type="text" name="name" value="<%= product.name %>"
+                                            placeholder="Type here" class="form-control" id="product_name">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Full Description</label>
+                                        <textarea name="description" placeholder="Type here" class="form-control"
+                                            rows="4"><%= product.description %></textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="mb-4">
+                                                <label class="form-label">Total Price</label>
+                                                <div class="row gx-2">
+                                                    <input name="total_price" value="<%= product.total_price %>"
+                                                        placeholder="" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="mb-4">
+                                                <label class="form-label">Discount price</label>
+                                                <input name="discount_price" value="<%= product.discount_price %>"
+                                                    placeholder="" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <!-- <div class="mb-4">
+                                        <label class="form-label">Category</label>
+                                        <input name="Category" placeholder="" type="text" class="form-control">
+                                        </div> -->
+
+                                            <div class="text-bookso-product">Category</div>
+                                            <select name="category" class="form-select"
+                                                aria-label="Default select example" required>
+                                                <option selected>Category</option>
+                                                <% category.forEach(element=> { %>
+                                                    <option value=<%=element._id %>><%= element.name %>
+                                                    </option>
+
+                                                    <% }) %>
+
+                                            </select>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="mb-4">
+                                                <label class="form-label">Gold Purity</label>
+                                                <div class="row gx-2">
+                                                    <input name="gold_purity" value="<%= product.gold_purity %>"
+                                                        placeholder="" type="text" class="form-control">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="mb-4">
+                                                <label class="form-label">Gross Weight</label>
+                                                <input name="gross_weight" value="<%= product.gross_weight %>"
+                                                    placeholder="" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="mb-4">
+                                                <label class="form-label">Making Charges</label>
+                                                <input name="making_charge" value="<%= product.making_charge%>"
+                                                    placeholder="" type="text" class="form-control">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="form-label">Stock</label>
+                                        <input type="text" name="stock" value="<%= product.stock %>" placeholder=""
+                                            class="form-control" id="product_name">
+                                    </div>
+                                    <!-- <label class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" value="">
+                                <span class="form-check-label"> Make a template </span>
+                               </label> -->
+                                    
+                                        <div>
+                                            <div class="card-header">
+                                                <h4>Media</h4>
+                                            </div>
+
+                                            <div class="card-body">
+                                                <div class="input-upload">
+                                                    <img src="/assets/imgs/theme/upload.svg" alt="Upload Icon">
+                                                    <input class="form-control" name="images" type="file" multiple>
+
+
+                                                </div>
+
+
+                                            </div> <!-- card end// -->
+
+                                        </div>
+                                        <div>
+
+                                            <button class="btn btn-md rounded font-sm hover-up"
+                                                type="submit">Publish</button>
+                                        </div>
+
+                                </form>
+                                <!-- </form> -->
+                            </div>
+                        </div> <!-- card end// -->
+                        <!-- <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Shipping</h4>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-4">
+                                        <label for="product_name" class="form-label">Width</label>
+                                        <input type="text" placeholder="inch" class="form-control" id="product_name">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-4">
+                                        <label for="product_name" class="form-label">Height</label>
+                                        <input type="text" placeholder="inch" class="form-control" id="product_name">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Weight</label>
+                                <input type="text" placeholder="gam" class="form-control" id="product_name">
+                            </div>
+                            <div class="mb-4">
+                                <label for="product_name" class="form-label">Shipping fees</label>
+                                <input type="text" placeholder="$" class="form-control" id="product_name">
+                            </div>
+                        </form>
+                    </div>
+                </div> card end// -->
+                    </div>
+
+                </div>
+            </section> <!-- content-main end// --> <!-- content-main end// -->
+            <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear())
+                        </script> ©, Evara - HTML Ecommerce Template .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">
+                            All rights reserved
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+        <!-- <script>
+        document.getElementById('productForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+        
+            let isValid = true;
+        
+            // Clear previous error messages
+            document.querySelectorAll('.error-message').forEach(function(el) {
+                el.textContent = '';
+            });
+        
+            // Validation rules
+            const name = event.target.name.value.trim();
+            const description = event.target.description.value.trim();
+            const totalPrice = event.target.total_price.value.trim();
+            const discountPrice = event.target.discount_price.value.trim();
+            const category = event.target.category.value.trim();
+            const goldPurity = event.target.gold_purity.value.trim();
+            const grossWeight = event.target.gross_weight.value.trim();
+            const makingCharge = event.target.making_charge.value.trim();
+            const stock = event.target.stock.value.trim();
+        
+            const lettersOnly = /^[a-zA-Z\s]+$/;
+            const numbersOnly = /^[0-9]+(\.[0-9]+)?$/;
+        
+            if (!name.match(lettersOnly)) {
+                isValid = false;
+                document.getElementById('error_name').textContent = 'Product Name must contain only letters.';
+            }
+        
+            if (!description.match(lettersOnly)) {
+                isValid = false;
+                document.getElementById('error_description').textContent = 'Description must contain only letters.';
+            }
+        
+            if (!totalPrice.match(numbersOnly)) {
+                isValid = false;
+                document.getElementById('error_total_price').textContent = 'Total Price must contain only numbers.';
+            }
+        
+            if (!discountPrice.match(numbersOnly)) {
+                isValid = false;
+                document.getElementById('error_discount_price').textContent = 'Discount Price must contain only numbers.';
+            }
+        
+            if (!category) {
+                isValid = false;
+                document.getElementById('error_category').textContent = 'Please select a category.';
+            }
+        
+            if (!goldPurity.match(numbersOnly)) {
+                isValid = false;
+                document.getElementById('error_gold_purity').textContent = 'Gold Purity must contain only numbers.';
+            }
+        
+            if (!grossWeight.match(numbersOnly)) {
+                isValid = false;
+                document.getElementById('error_gross_weight').textContent = 'Gross Weight must contain only numbers.';
+            }
+        
+            if (!makingCharge.match(numbersOnly)) {
+                isValid = false;
+                document.getElementById('error_making_charge').textContent = 'Making Charges must contain only numbers.';
+            }
+        
+            if (!stock.match(numbersOnly)) {
+                isValid = false;
+                document.getElementById('error_stock').textContent = 'Stock must contain only numbers.';
+            }
+        
+            if (isValid) {
+                event.target.submit(); // Submit the form if all validations pass
+            }
+        });
+        </script> -->
+
+        <style>
+            .error-message {
+                color: red;
+                font-size: 0.9em;
+                margin-top: 0.2em;
+            }
+        </style>
+        <script src="/assets/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="/assets/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="/assets/js/vendors/select2.min.js"></script>
+        <script src="/assets/js/vendors/perfect-scrollbar.js"></script>
+        <script src="/assets/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="/assets/js/main.js" type="text/javascript"></script>
+        </body>
+
+
+        <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-form-product-1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:32 GMT -->
+
+        </html>

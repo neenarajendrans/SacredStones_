@@ -1,0 +1,53 @@
+
+
+<%- include ("../layout/admintemHeader")%>
+
+<body>
+    <main>
+     
+        <section  style="padding-top: 200px;" class="content-main ">
+            <div class="card mx-auto card-login">
+                <div class="card-body">
+                    <% if(message) {%>
+                        <p class="text-danger errorMsg">
+                            <%=message %>
+                        </p>
+                        <% } %>
+                    <h4 class="card-title mb-4">Admin Login</h4>
+                   
+                    <form method="post" action="/admin/login">
+                       
+                        <div class="mb-3">
+                            <input class="form-control" placeholder="email" name="email" type="text">
+                        </div> <!-- form-group// -->
+                        <div class="mb-3">
+                            <input class="form-control" placeholder="Password" name="password" type="password">
+                        </div> <!-- form-group// -->
+                        <!-- form-group form-check .// -->
+                        <div class="mb-4">
+                            <button type="submit" class="btn btn-primary w-100"> Login </button>
+                        </div> <!-- form-group// -->
+                    </form>
+                    
+                </div>
+            </div>
+        </section>
+       
+    </main>
+   
+</body>
+<script>
+    const error = document.getElementsByClassName('errorMsg');
+    // Check if there are any elements with the class 'errorMsg'
+    if (error.length) {
+        setTimeout(() => {
+            for (let i = 0; i < error.length; i++) {
+                error[i].innerHTML = ' ';
+            }
+        }, 3000);
+    }
+</script>
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-account-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:33 GMT -->
+</html>

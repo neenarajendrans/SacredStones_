@@ -1,0 +1,23 @@
+body {
+    font-family: 'poppin', sans-serif;;
+    background-image: url('/img/login_background.jpg'); /* Replace with your background image */
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-form {
+    background: rgba(244, 244, 244, 0.2); /* Adjust the transparency and color as needed */
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px; /* Adjust the width as needed */
+    color: #080808; /* Golden brown text color */
+}
+
+.new-account-link {
+    display: block;
+}

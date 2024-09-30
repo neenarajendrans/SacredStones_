@@ -1,0 +1,188 @@
+<%- include ("../layout/usertem")%>
+
+<body>
+  <main>
+    <section class="content-main ">
+      <div class="card mx-auto card-login">
+        <div class="card-body">
+          <% if(message) {%>
+            <p class="text-danger errorMsg">
+                <%=message %>
+            </p>
+            <% } %>
+          <h4 class="card-title mb-4">Create an Account</h4>
+         
+            <form  id="myForm" method="post" action="/signup"  onsubmit="return validation(event)" >
+              <div class="mb-3">
+                  <label class="form-label" >Full Name</label>
+                  <input class="form-control"  id="name" placeholder="Full Name" type="text" name="fullName" onkeyup="nameChecking()" required />
+              </div>
+              <div id="errorname" class="ms-2 text-danger"></div>
+              <div class="mb-3">
+                  <label class="form-label">Email</label>
+                  <input class="form-control" id="email" placeholder="Your email" type="text"  name="email" onkeyup="emailChecking()" required/>
+              </div>
+              <div id="erroremail" class="ms-2 text-danger"></div>
+          
+              <div class="mb-3">
+                  <label class="form-label">Phone</label>
+                  <div class="row gx-2">
+                  
+                      <div class="col-8"> <input class="form-control" id="phoneNumber" name="phoneNumber"  placeholder="Phone"  minlength="10" maxlength="10" type="text" onkeyup="phoneNumberChecking()" name="phoneNumber" required/> </div>
+                  </div>
+              </div>
+              <div id="errorphone" class="ms-2 text-danger"></div>
+           
+              <div class="mb-3">
+                  <label class="form-label">password</label>
+                  <input class="form-control" id="password" name="password" placeholder="Password" type="password"  onkeyup="passwordChecking()" required>
+              </div>
+              <div id="errorpassword" class="ms-2 text-danger"></div>
+              <div class="mb-3">
+                  <label class="form-label"> Confirm Password</label>
+                  <input class="form-control" name="confirmPassword" id="cpassword" placeholder="Password" type="password" onkeyup="cpasswordChecking()" required>
+              </div>
+              <div id="errorcpassword" class="ms-2 text-danger"></div> 
+              
+        
+            <div class="mb-4">
+              <button type="submit" name="signup" class="btn btn-primary w-100"> SignUp </button>
+            </div>
+          </form>
+          <p class="text-center mb-2">Already have an account? <a href="/login">Sign in now</a></p>
+          
+           <a href="/auth/google"> <button id="google-signin-button" class="btn btn-secondary w-100">Sign in with Google</button></a>
+          
+          
+        </div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const error = document.getElementsByClassName('errorMsg');
+    // Check if there are any elements with the class 'errorMsg'
+    if (error.length) {
+        setTimeout(() => {
+            for (let i = 0; i < error.length; i++) {
+                error[i].innerHTML = ' ';
+            }
+        }, 3000);
+    }
+</script>
+  
+  <!-- Other scripts -->
+  <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
+  <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+  <script src="assets/js/main.js" type="text/javascript"></script>
+
+  <script >
+
+      
+
+    //REGISTER SIDE VALIDATION
+    function validation(event) {
+     
+     if(nameChecking() && emailChecking() && phoneNumberChecking() && passwordChecking() ){
+             document.getElementById("myForm").submit();                
+         }
+         else{
+           nameChecking();
+    
+    emailChecking();
+    
+    numberChecking();
+    
+    passwordChecking();
+             return false;
+         }
+    
+    
+    
+    
+     // Show all errors
+    }
+    
+    function nameChecking() {
+     let name = document.getElementById("name").value;
+     let errorName = document.getElementById("errorname");
+    
+     if (name.trim() === "") {
+       errorName.innerHTML = "Please enter your name";
+       return false;
+     } else {
+       errorName.innerHTML = "";
+       return true;
+     }
+    }
+    
+    function emailChecking() {
+     let emailId = document.getElementById("email").value;
+     let errorEmail = document.getElementById("erroremail");
+    
+     if (!/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(emailId)) {
+       errorEmail.innerHTML = "Please enter valid email";
+       return false;
+     } else {
+       errorEmail.innerHTML = "";
+       return true;
+     }
+    }
+    
+    function phoneNumberChecking() {
+     let number = document.getElementById("phoneNumber").value;
+     let errorNumber = document.getElementById("errorphone");
+    
+     if (!/^[1-9]\d{9}$/.test(number)) {
+       errorNumber.innerHTML = "Please enter a valid  phone number";
+       return false;
+     } else if (number.length !== 10) {
+       errorNumber.innerHTML = "Please enter 10 digits";
+       return false;
+     } else {
+       errorNumber.innerHTML = "";
+       return true;
+     }
+    }
+    function passwordChecking() {
+      password = document.getElementById("password").value;
+     let errorPassword = document.getElementById("errorpassword");
+    
+     if (password.trim() === "") {
+       errorPassword.innerHTML = "Please enter your password";
+       return false;
+     } else if (password.length < 8) {
+       errorPassword.innerHTML = "Please enter a minimum of 8 characters";
+       return false;
+    } if(!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/.test(password)){
+        errorPassword.innerHTML = "Please include atleast one symbol, number, capital letter ";
+       return false;
+    } else {
+       errorPassword.innerHTML = "";
+       return true;
+     }
+    }
+    function cpasswordChecking() {
+     let cpassword = document.getElementById("cpassword").value;
+     if (cpassword == "") {
+       document.getElementById("errorcpassword").innerHTML =
+         "please enter your password";
+       return false;
+     } else if (cpassword != password) {
+       document.getElementById("errorcpassword").innerHTML =
+         "Password not match";
+       return false;
+     } else {
+       document.getElementById("errorcpassword").innerHTML = "";
+       return true;
+     }
+    }
+    window.onload = function() {
+        document.getElementById("password").value = ""; // Clear password field
+        document.getElementById("cpassword").value = ""; // Clear confirm password field
+        document.getElementById("errorpassword").innerHTML = ""; // Clear error message for password
+        document.getElementById("errorcpassword").innerHTML = ""; // Clear error message for confirm password
+    };
+        </script>
+</body>
+</html>

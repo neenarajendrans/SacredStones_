@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css" />
+
+
+    <%- include ("../layout/cdn")%>
+</head>
+<body>
+    <%- include ("../layout/userHeader")%>
+     <!-- Jewellery section -->
+
+    
+    <label for="sort">
+        Sort by
+        <select name="sort" id="sort">
+                <option value="name">Name</option>
+                <option value="price">Price</option>
+                <option value="date">New</option>
+        </select>
+</label>
+<section class="price_section layout_padding">
+    <div class="container">
+        <div class="heading_container">
+            <h2>
+               All Products
+            </h2>
+        </div>
+        <div class="price_container">
+           
+            <% product.forEach ((ele)=>{%>
+                <% if(ele.is_listed ) { %>
+            <div class="box">
+                <div class="name">
+                    <h6>
+                      <%= ele.name %>
+                    </h6>
+                </div>
+                <div class="img-box">
+                    
+                    <img src="/assets/imgs/productIMG/<%= ele.images[0] %>" style="width: 300px;" alt="">
+                     
+                </div>
+                <div class="detail-box">
+                    <h5>
+                        jadsfjhj
+                    </h5>
+                    <a href="/productdetail?id=<%=ele.id%>">
+                        View Details
+                    </a>
+                </div>
+            </div>
+            <%} })%>
+           
+           
+            
+       
+    </div>
+</section>
+     <!-- <section class="price_section layout_padding">
+        <div class="container">
+            <div class="heading_container">
+                <h2>
+                    Jewelry that inspires.
+                </h2>
+            </div>
+            <div class="price_container">
+                <div class="price_container">
+                    <% //category.forEach ((ele)=>{%>
+                    <div class="box">
+                        <div class="name">
+                            <h6>
+                              <%= //ele.name %>
+                            </h6>
+                        </div>
+                        <div class="img-box">
+                            
+                            <img src="/assets/imgs/categoryIMG/<%= //ele.image %>" style="width: 300px;" alt="">
+                             
+                        </div>
+                        <div class="detail-box">
+                            <h5>
+                                <span></span>
+                            </h5>
+                            <a href="">
+                                Show More
+                            </a>
+                        </div>
+                    </div>
+                    <% //})%>
+                <!-- <div class="box">
+                    <div class="name">
+                        <h6>
+                            Earrings
+                        </h6>
+                    </div>
+                    <div class="img-box">
+                        <img src="images/img_3.jpg" style="width: 300px;" alt="">
+                    </div>
+                    <div class="detail-box">
+                        <h5>
+                            <span></span>
+                        </h5>
+                        <a href="">
+                            Show More
+                        </a>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="name">
+                        <h6>
+                            Hand Chains
+                        </h6>
+                    </div>
+                    <div class="img-box">
+                        <img src="images/img_4.jpg" style="width: 300px;" alt="">
+                    </div>
+                    <div class="detail-box">
+                        <h5>
+                            <span></span>
+                        </h5>
+                        <a href="">
+                            Show More
+                        </a>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="name">
+                        <h6>
+                            Bangles
+                        </h6>
+                    </div>
+                    <div class="img-box">
+                        <img src="images/img_1.jpg" style="width: 300px;" alt="">
+                    </div>
+                    <div class="detail-box">
+                        <h5>
+                            <span></span>
+                        </h5>
+                        <a href="">
+                            Show More
+                        </a>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="name">
+                        <h6>
+                            Necklaces
+                        </h6>
+                    </div>
+                    <div class="img-box">
+                        <img src="images/img_5.jpg" style="width: 300px;" alt="">
+                    </div>
+                    <div class="detail-box">
+                        <h5>
+                            <span></span>
+                        </h5>
+                        <a href="">
+                            Show More
+                        </a>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="name">
+                        <h6>
+                            Rings
+                        </h6>
+                    </div>
+                    <div class="img-box">
+                        <img src="images/img_6.jpg" style="width: 300px;" alt="">
+                    </div>
+                    <div class="detail-box">
+                        <h5>
+                            <span></span>
+                        </h5>
+                        <a href="">
+                            Show More
+                        </a>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="name">
+                        <h6>
+                            Pendent Necklaces
+                        </h6>
+                    </div>
+                    <div class="img-box">
+                        <img src="images/img_2.jpg" style="width: 300px;" alt="">
+                    </div>
+                    <div class="detail-box">
+                        <h5>
+                            <span></span>
+                        </h5>
+                        <a href="">
+                            Show More
+                        </a>
+                    </div>
+                  </div> -->
+                </div>
+            </div>  
+                
+           
+        </div>
+    </section> -->
+
+    <!-- end Jewellery section -->
+      <!-- info section -->
+      <section class="info_section ">
+        <div class="container">
+            <div class="info_container">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="info_logo">
+                            <a href="">
+                                <img src="images/logo.png" style="width: 200px;" alt="">
+                                <span>
+                                    
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="info_contact">
+                            <a href="">
+                                <img src="images/location.png" alt="">
+                                <span>
+                                    Address
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="info_contact">
+                            <a href="">
+                                <img src="images/phone.png" alt="">
+                                <span>
+                                    +01 1234567890
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="info_contact">
+                            <a href="">
+                                <img src="images/mail.png" alt="">
+                                <span>
+                                    demo@gmail.com
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="info_form">
+                    <div class="d-flex justify-content-center">
+                        <h5 class="info_heading">
+                            Newsletter
+                        </h5>
+                    </div>
+                    <form action="">
+                        <div class="email_box">
+                            <label for="email2">Enter Your Email</label>
+                            <input type="text" id="email2">
+                        </div>
+                        <div>
+                            <button>
+                                subscribe
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="info_social">
+                    <div class="d-flex justify-content-center">
+                        <h5 class="info_heading">
+                            Follow Us
+                        </h5>
+                    </div>
+                    <div class="social_box">
+                        <a href="">
+                            <img src="images/fb.png" alt="">
+                        </a>
+                        <a href="">
+                            <img src="images/twitter.png" alt="">
+                        </a>
+                        <a href="">
+                            <img src="images/linkedin.png" alt="">
+                        </a>
+                        <a href="">
+                            <img src="images/insta.png" alt="">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- end info_section -->
+
+    <!-- footer section -->
+    <section class="container-fluid footer_section">
+        <p>
+            &copy; <span id="displayYear"></span> All Rights Reserved By
+            <a href="https://html.design/">Free Html Templates</a>
+        </p>
+    </section>
+    <!-- footer section -->
+
+    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript" src="js/custom.js"></script>
+</body>
+</html>

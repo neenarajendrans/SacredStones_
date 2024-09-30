@@ -1,0 +1,126 @@
+
+    <%- include ("../layout/admintemHeader")%>
+    <%- include ("../layout/sideBar")%>
+    <main class="main-wrap">
+ 
+
+        <form action="/admin/addCategory" method="post" id="category-form" enctype="multipart/form-data">
+            <section class="content-main">
+                <div class="row">
+                    <div class="col-9">
+                        <div class="content-header">
+                            <h2 class="content-title">Create Category</h2>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4>Basic</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <label for="category_name" class="form-label">Category name</label>
+                                    <input type="text" name="name"  placeholder="Type here" class="form-control" id="category_name">
+                                    <div class="error-message" style="color: red;" id="category_name-error"></div>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Full description</label>
+                                    <textarea name="description" id="description" placeholder="Type here" class="form-control" rows="4"></textarea>
+                                    <div class="error-message" style="color: red;" id="description-error"></div>
+                                </div>
+                                <div class="card-header">
+                                    <h4>Media</h4>
+                                </div>
+                               
+                                    <div class="card-body">
+                                        <div class="input-upload">
+                                            <img src="/assets/imgs/theme/upload.svg" alt="Upload Icon">
+                                            <input class="form-control" name="image" type="file" required >
+                                          
+    
+                                    </div>
+                                    <br>
+                                    <br>
+                                <div>
+
+                                        <button class="btn btn-md rounded font-sm hover-up"
+                                            type="submit">Publish</button>
+                                </div>
+                            </div>
+                           
+                        </div> <!-- card end// -->
+                        
+                    </div>
+                    
+                
+                        <!-- <div id="invalid">
+                            <%// if (typeof error !=='undefined' && error) { %>
+                                <p class="text-danger" id="message">
+                                    <%= //error %>
+                                </p>
+                                <%// } %>
+                                
+                        </div>
+                    </div>
+                    <div id="invalid">
+                        <% //if (typeof message !=='undefined' && message) { %>
+                            <p style="color: rgb(8, 96, 0);" id="message">
+                                <%= //message %>
+                            </p>
+                            <%// } %>
+                             -->
+                    </div>
+                    </div>
+                </div>
+            </section>
+             <!-- content-main end// -->
+        </form>
+        <style>
+            .error-message {
+                color: red;
+            }
+        </style>
+        <!-- <script>
+            function validateForm(event) {
+                // Regular expression for letters only
+                const lettersOnly = /^[A-Za-z\s]+$/;
+    
+                // Get form elements
+                const categoryName = document.getElementById('category_name');
+                const description = document.getElementById('description');
+                const categoryNameError = document.getElementById('category_name-error');
+                const descriptionError = document.getElementById('description-error');
+    
+                // Clear previous error messages
+                categoryNameError.textContent = '';
+                descriptionError.textContent = '';
+    
+                let isValid = true;
+    
+                // Validate category name
+                if (!lettersOnly.test(categoryName.value.trim())) {
+                    categoryNameError.textContent = 'Category name must contain only letters.';
+                    isValid = false;
+                }
+    
+                // Validate description
+                if (!lettersOnly.test(description.value.trim())) {
+                    descriptionError.textContent = 'Description must contain only letters.';
+                    isValid = false;
+                }
+    
+                // If the form is not valid, prevent form submission
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            }
+    
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('category-form').addEventListener('submit', validateForm);
+            });
+        </script> -->
+        
+        
+        
+        
+        

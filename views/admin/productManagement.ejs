@@ -1,0 +1,123 @@
+<%- include ("../layout/admintemHeader")%>
+    <%- include ("../layout/sideBar")%>
+
+        <main class="main-wrap">
+            
+            <section class="content-main">
+                <div class="content-header">
+                   
+                        <h1 >Products List</h1>
+                        
+                    
+                    
+                    
+                    <div>
+
+                        <a href="/admin/addproduct" class="btn btn-primary btn-sm rounded">Create Product</a>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                 <!-- card-header end// -->
+                    <div class="card-body">
+                        <form action="" method="get">
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="searchInput" class="form-control" placeholder="Search User...">
+                                <input type="submit" class="btn btn-md font-sm rounded btn-brand" style="margin-left: 10px;" value="Filter">
+                            </div>
+                        </form>
+                       <br>
+                       
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Number</th>
+                                    <th scope="col">Images</th>
+                                    <th scope="col">Product Name</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Gross Weight</th>
+                                    <th scope="col">Gold Purity</th>
+                                    <th scope="col">Making Charges</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">stock</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <% if (product && product.length > 0) { %>
+                                <% product.forEach((ele,i) => { %>
+                                <tr>
+                                    <td>
+                                        <%= i+1 %>
+                                    </td>
+                                   
+                                    
+                                    <td><img   width="60"
+                                        height="60" src="/assets/imgs/productIMG/<%= ele.images[0] %>"></td>
+                                    
+                                    <td><%= ele.name %></td>
+                                    <td><%= ele.total_price %></td>
+                                    <td><%= ele.gross_weight %></td>
+                                    <td><%= ele.gold_purity %></td>
+                                    <td><%= ele.making_charge %></td>
+                                    <td><%= ele.category.name %></td>
+                                    <td><%= ele.stock %></td>
+                                    <td><span class="badge rounded-pill alert-success">Active</span></td>
+                                    <td></td>
+                                    <td>
+                                        
+                                        <a class="btn btn-sm font-sm btn-light rounded" href="/admin/editproduct/<%=ele._id %>">Edit</a>
+                                        <% if (ele.is_listed) { %>
+                                            <a class="btn btn-sm font-sm btn-light rounded " href="/admin/unlistproduct/<%= ele._id %>">
+                                                  Unlist</a>
+                                              <% }else{ %> 
+                                                <a class="btn btn-sm font-sm btn-light rounded " href="/admin/listproduct/<%= ele._id %>">
+                                                  List
+                                              <% } %> 
+                                            </a>
+                                      
+                                    </td>
+                                    
+                                </tr>
+                                <% }) %>
+                            <% } else { %>
+                                    <tr>
+                                        <td colspan="4">
+                                            <p>No products found</p>
+                                        </td>
+                                    </tr>
+                             <% } %>    
+                            </tbody>
+                        </table>
+                    </div> <!-- card-body end// -->
+                    
+                </div> <!-- card end// -->
+                
+            </section> <!-- content-main end// -->
+            <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear())
+                        </script> ©, Evara - HTML Ecommerce Template .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">
+                            All rights reserved
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+        <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="assets/js/vendors/select2.min.js"></script>
+        <script src="assets/js/vendors/perfect-scrollbar.js"></script>
+        <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="assets/js/main.js" type="text/javascript"></script>
+        </body>
+
+
+        <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-products-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:12 GMT -->
+
+        </html>

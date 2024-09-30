@@ -1,0 +1,108 @@
+<%- include ("../layout/admintemHeader") %>
+
+<form id="edit-category-form" action="/admin/editcategory" method="POST" >
+    <input type="hidden" name="id" value="<%= category.id %>">
+    <section class="content-main">
+        <div class="row">
+            <div class="col-9">
+                <div class="content-header">
+                    <h2 class="content-title">Edit Category</h2>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Basic</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label for="category_name" class="form-label">Category name</label>
+                            <input type="text" name="name" placeholder="Type here" value="<%= category.name %>" class="form-control" id="category_name">
+                            <div class="error-message" style="color: red;" id="category_name-error"></div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Full description</label>
+                            <textarea name="description" placeholder="Type here" class="form-control" rows="4" id="description"><%= category.description %></textarea>
+                            <div class="error-message" style="color: red;" id="description-error"></div>
+                        </div>
+                        <div class="card-header">
+                            <h4>Media</h4>
+                        </div>
+                        
+                            <div class="card-body">
+                                <div class="input-upload">
+                                    <img  id="category-image" width="500"
+                                    height="100"src="/assets/imgs/categoryIMG/<%= category.image %>" alt="Upload Icon" >
+                                    <br>
+                                    <button id="delete-button" class="btn btn-danger" onclick="deleteImage()">Delete</button>
+                                    <button id="update-button" class="btn btn-success" onclick="updateImage()" style="display: none;">Update</button>
+                                    <br>
+                                    <br>
+                                    <br>
+                                    <input id="image-input" class="form-control" name="image" type="file" required style="display: none;" >
+                                </div>     
+                                  
+
+                            </div>
+                            <br>
+                            <br>
+                        
+                    </div>
+                </div>
+                <div>
+                    <input type="submit" value="Submit" class="btn btn-md rounded font-sm hover-up editbtn">
+                </div>
+            
+            </div>
+            
+              
+        </div>
+    </section>
+</form>
+
+<script>
+    async function deleteImage() {
+      const categoryId = '<%= category._id %>'; // Assuming you have the category ID available
+      try {
+        const response = await fetch(`/admin/category/delete-image?id=${categoryId}`, {
+          method: 'DELETE'
+        });
+        if (response.ok) {
+          document.getElementById('category-image').src = ''; // Remove the image
+          document.getElementById('category-image').alt = 'Upload Icon'; // Show alt text
+          document.getElementById('image-input').style.display = 'block'; // Show the file input
+          document.getElementById('delete-button').style.display = 'none'; // Hide the delete button
+          document.getElementById('update-button').style.display = 'block'; // Show the update button
+        } else {
+          alert('Failed to delete the image');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  
+    async function updateImage() {
+      const categoryId = '<%= category._id %>';
+      const fileInput = document.getElementById('image-input');
+      const formData = new FormData();
+      formData.append('image', fileInput.files[0]);
+  
+      try {
+        const response = await fetch(`/admin/category/update-image?id=${categoryId}`, {
+          method: 'POST',
+          body: formData
+        });
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('category-image').src = `/assets/imgs/categoryIMG/${data.image}`; // Update the image source
+          document.getElementById('image-input').style.display = 'none'; // Hide the file input
+          document.getElementById('delete-button').style.display = 'block'; // Show the delete button
+          document.getElementById('update-button').style.display = 'none'; // Hide the update button
+        } else {
+          alert('Failed to update the image');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+  </script>

@@ -1,0 +1,114 @@
+<%- include('../Layout/indexHeader.ejs') %>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="#">
+            <img src="/img/logo_main.png" class="d-inline-block align-top" alt="Your Logo">
+        </a>
+       
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">LOGIN</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/signup">SIGNUP</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    
+
+    <!-- Moving Banner -->
+    <div class="jumbotron">
+        <h1 class="display-4">Welcome to SacredStones</h1>
+        <p class="lead">Explore Our Exquisite Collection of Gold and Diamond Jewellery.</p>
+        <!-- Add any other content or components for the banner here -->
+    </div>
+
+    <!-- Swiper Banner Section -->
+    <section>
+        <div class="swiper main-swiper" style="height: 100vh;">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" style="background-image: url('images/indeximg1.jpg');">
+                    <div class="banner-content">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h2 class="banner-title">Classic Collection</h2>
+                                    <p style="color: black;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu feugiat amet,
+                                        libero ipsum enim pharetra hac.</p>
+                                    <div class="btn-wrap">
+                                        <a href="/jewellery"
+                                            class="btn btn-light btn-medium d-flex align-items-center"
+                                            tabindex="0">Shop it now <i class="icon icon-arrow-io"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide" style="background-image: url('images/indeximg2.jpg');">
+                    <div class="banner-content">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h2 class="banner-title">Bridal Collection </h2>
+                                    <p style="color: black;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu feugiat amet,
+                                        libero ipsum enim pharetra hac.</p>
+                                    <div class="btn-wrap">
+                                        <a href="/jewellery"
+                                            class="btn btn-light btn-light-arrow btn-medium d-flex align-items-center"
+                                            tabindex="0">Shop it now <i class="icon icon-arrow-io"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide" style="background-image: url('images/indeximg3.jpg');">
+                    <div class="banner-content">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h2 class="banner-title">Casual Collection</h2>
+                                    <p style="color: black;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu feugiat amet,
+                                        libero ipsum enim pharetra hac.</p>
+                                    <div class="btn-wrap">
+                                        <a href="/jewellery"
+                                            class="btn btn-light btn-light-arrow btn-medium d-flex align-items-center"
+                                            tabindex="0">Shop it now <i class="icon icon-arrow-io"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-slide" style="background-image: url('images/indeximg4.jpg');">
+                    <div class="banner-content">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h2 class="banner-title">Luxury Collection</h2>
+                                    <p style="color: black;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu feugiat amet,
+                                        libero ipsum enim pharetra hac.</p>
+                                    <div class="btn-wrap">
+                                        <a href="/jewellery"
+                                            class="btn btn-light btn-light-arrow btn-medium d-flex align-items-center"
+                                            tabindex="0">Shop it now <i class="icon icon-arrow-io"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <!-- Add Swiper Navigation -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+    </section>
+
+    <%- include('../Layout/indexFooter.ejs') %>

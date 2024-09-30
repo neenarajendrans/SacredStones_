@@ -1,0 +1,65 @@
+<%- include ("../layout/usertem")%>
+
+    <body>
+        <main>
+            <section style="padding-top: 200px;"  class="content-main ">
+                <div class="card mx-auto card-login">
+                    <div   class="card-body ">
+                        <h4 class="card-title mb-4">Sign in</h4>
+                        <% if(message) {%>
+                            <p class="text-danger errorMsg">
+                                <%=message %>
+                            </p>
+                            <% } %>
+                                <form method="post" action="/login">
+                                    <div class="mb-3">
+                                        <input class="form-control" placeholder="email" name="email" type="text">
+                                    </div> <!-- form-group// -->
+                                    <div class="mb-3">
+                                        <input class="form-control" placeholder="Password" name="password"
+                                            type="password">
+                                    </div> <!-- form-group// -->
+                                    <div class="mb-3">
+                                        <a href="/forgotPasswordEmail" class="float-end font-sm text-muted">Forgot password?</a>
+                                        <label class="form-check">
+                                            <input type="checkbox" class="form-check-input" checked="">
+                                            <span class="form-check-label">Remember</span>
+                                        </label>
+                                    </div> <!-- form-group form-check .// -->
+                                    <div class="mb-4">
+                                        <button type="submit" class="btn btn-primary w-100"> Login </button>
+                                    </div> <!-- form-group// -->
+                                </form>
+                                <p class="text-center mb-4">Don't have account? <a href="/signup">Sign up</a></p>
+                    </div>
+                </div>
+            </section>
+            <footer class="main-footer text-center">
+                <p class="font-xs">
+                    <!-- <script>
+                document.write(new Date().getFullYear())
+                </script>  -->
+                </p>
+                <p class="font-xs mb-30">All rights reserved</p>
+            </footer>
+        </main>
+        <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="assets/js/main.js" type="text/javascript"></script>
+        <script>
+            const error = document.getElementsByClassName('errorMsg');
+            // Check if there are any elements with the class 'errorMsg'
+            if (error.length) {
+                setTimeout(() => {
+                    for (let i = 0; i < error.length; i++) {
+                        error[i].innerHTML = ' ';
+                    }
+                }, 3000);
+            }
+        </script>
+    </body>
+    <!-- Mirrored from wp.alithemes.com/html/evara/evara-backend/page-account-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:33 GMT -->
+
+    </html>

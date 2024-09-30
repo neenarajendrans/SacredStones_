@@ -1,0 +1,96 @@
+<%- include('../Layout/admintemHeader.ejs') %>
+<%- include ("../layout/sideBar")%>
+
+<main class="main-wrap">
+    <section class="content-main">
+        <div class="content-header">
+            <h1>User List</h1>
+        </div>
+        <div class="card mb-4">
+            <header class="card-header">
+                <form action="" method="get">
+                    <div style="display: flex; align-items: center;">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search User...">
+                        <input type="submit" class="btn btn-md font-sm rounded btn-brand" style="margin-left: 10px;" value="Filter">
+                    </div>
+                </form>
+            </header>
+            <div class="card-body">
+                <table id="users" class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone Number</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableData"> <!-- Use id="tableData" to populate user data -->
+                        <% if (users && users.length > 0) { %>
+                            <% users.forEach(user => { %>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="ms-3">
+                                                <p class="fw-bold mb-1"><%= user.fullName %></p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span><%= user.email %></span>
+                                    </td>
+                                    <td>
+                                        <span><%= user.phoneNumber %></span>
+                                    </td>
+                                    <td>
+                                        <% if (user.is_blocked) { %>
+                                            <button class="btn btn-danger blockBtn" onclick="unblock(event, '<%= user._id %>')">UNBLOCK</button>
+                                        <% } else { %>
+                                            <button class="btn btn-success blockBtn" onclick="block(event,'<%= user._id %>')">BLOCK</button>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="4">
+                                    <p>No users found</p>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+       
+    </section>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const unblock = async (event, userId) => {
+        event.preventDefault();
+        const response = await fetch(`/admin/unblock/${userId}`, { method: 'PUT' });
+        const data = await response.json();
+        if (data.success) {
+            // Update the button and status without reloading the page
+            const button = event.target;
+            button.innerText = 'BLOCK';
+            button.className = 'btn btn-success';
+            button.setAttribute('onclick', `block(event,'${userId}')`);
+        }
+    };
+
+    const block = async (event, userId) => {
+        event.preventDefault();
+        const response = await fetch(`/admin/block/${userId}`, { method: 'PUT' });
+        const data = await response.json();
+        if (data.success) {
+            // Update the button and status without reloading the page
+            const button = event.target;
+            button.innerText = 'UNBLOCK';
+            button.className = 'btn btn-danger';
+            button.setAttribute('onclick', `unblock(event,'${userId}')`);
+        }
+    };
+</script>

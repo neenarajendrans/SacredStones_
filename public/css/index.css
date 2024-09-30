@@ -1,0 +1,116 @@
+
+body {
+    font-family: 'Lato', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: #ebeeeb; /* Navbar background color */
+}
+
+.navbar-brand img {
+    width: 300px; /* Make the logo fill the navbar */
+    height: auto;
+}
+
+.nav-link {
+    color: #800000 !important; /* Navbar link color */
+    margin-right: 15px;
+}
+
+.navbar-light .navbar-toggler-icon {
+    background-color: #800000; /* Navbar toggle icon color */
+}
+
+/* Banner Section Styles */
+.jumbotron {
+    width: 100%;
+    height: 90vh;
+    background-color: #cec3c3; /* Jumbotron background color */
+    text-align: center;
+    padding: 100px 0;
+    background-image: url(/img/index_img5.jpg);
+    background-size: cover;
+   
+}
+
+.jumbotron h1,
+.jumbotron p {
+    color: #0b0b0b; /* Text color */
+}
+
+/* Swiper Styles */
+.main-swiper {
+    width: 100%;
+    height: 50vh; /* Adjusted height */
+}
+
+.swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.banner-content {
+    color: #943636; /* Text color */
+    text-align: left;
+    max-width: 80%; /* Adjusted max-width */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.banner-title {
+    font-size: 2em; /* Adjusted font size */
+    margin-bottom: 20px;
+}
+
+.banner-content p {
+    font-size: 1em; /* Adjusted font size */
+    margin-bottom: 30px;
+}
+
+.btn-wrap {
+    display: flex;
+}
+
+.btn {
+    background-color: #ffffff; /* Button background color */
+    color: #000000; /* Button text color */
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #944b4b; /* Hover background color */
+}
+
+.icon {
+    margin-left: 10px;
+}
+
+/* Product Item Styles */
+.product-item {
+    border: 1px solid #800000; /* Maroon */
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.show-more-link {
+    color: #800000; /* Maroon */
+}
+
+.show-more-link:hover {
+    text-decoration: underline;
+}
