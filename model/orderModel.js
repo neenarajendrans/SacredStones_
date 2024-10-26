@@ -1,21 +1,22 @@
+// const { type } = require("express/lib/response");
 const mongoose = require("mongoose")
-const {v4:uuidv4} = require('uuid'); // for creating a random number as orderID
-const ordersSchema = new mongoose.Schema({
+// const {v4:uuidv4} = require('uuid'); // for creating a random number as orderID
+const OrdersSchema = new mongoose.Schema({
 
 
-    orderId:{
-        type:String,
-        default:()=>uuidv4(),
-        unique:true
+    // orderId:{
+    //     type:String,
+    //     default:()=>uuidv4(),
+    //     unique:true
 
-    },
-    userId:{
+    // },
+    user_id:{
         type:mongoose.mongo.ObjectId,
         required:true,
         ref:"User"
     },
     items:[{
-        productId:{
+        product:{
             type:mongoose.mongo.ObjectId,
             required:true,
             ref:"Product"
@@ -37,64 +38,74 @@ const ordersSchema = new mongoose.Schema({
     },
     paymentMethod:{
         type:String,
-        enum:["COD","Card","Wallet"],
         required:true,
     },
-    deliveryCharge:{
-        type:Number,
-        required:true,
+    shipping:{
+        type:String,
+        default:"Free Shipping"
     },
-    finalAmount:{ // after discound
-        type:Number,
-        required:true,
-    },
-    discount:{
-        type:Number,
-        default:0,
-    },
+    // finalAmount:{ // after discound
+    //     type:Number,
+    //     required:true,
+    // },
+    // discount:{
+    //     type:Number,
+    //     default:0,
+    // },
     totalAmount:{
         type:Number,
         required:true,
     },
-    status:{
+    paymentStatus:{
         type:String,
-        enum: ["Pending","Processing","Placed","Shipped","Delivered","Cancelled","Return Request", "Returned"],
+        default:'pending',
+    },
+    orderStatus:{
+        type:String,
         default: "Placed",
         required:true
     },
-    invoiceDate:{
-        type:Date,
+    reason:{
+        type:String,
+    },
+    // invoiceDate:{
+    //     type:Date,
 
-    },
-    productCancellation:{
-        cancelStatus:{
-            type:Boolean,
-            default:false
-        },
-        description:{
-            type:String,
-        }
-    },
-    productReturned:{
-        returnStatus:{
-            type:Boolean,
-            default:false,
-        },
-        description:{
-            type:String,
-        }
-    },
-    createdOn:{
+    // },
+    // productCancellation:{
+    //     cancelStatus:{
+    //         type:Boolean,
+    //         default:false
+    //     },
+    //     description:{
+    //         type:String,
+    //     }
+    // },
+    // productReturned:{
+    //     returnStatus:{
+    //         type:Boolean,
+    //         default:false,
+    //     },
+    //     description:{
+    //         type:String,
+    //     }
+    // },
+    orderDate:{
         type:Date,
         default:Date.now
 
     },
-    couponApplied:{
-        type:Boolean,
-        default:false
-    }
+    deliveryDate:{
+        type:Date,
+        
+
+    },
+    // couponApplied:{
+    //     type:Boolean,
+    //     default:false
+    // }
     
 },{timestamps:true})
 
-const ordersModel = mongoose.model('Orders',ordersSchema)
+const ordersModel = mongoose.model('Order',OrdersSchema)
 module.exports = ordersModel;

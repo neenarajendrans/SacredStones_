@@ -1,12 +1,11 @@
 const express = require('express');
 const orderRoute = express.Router();
-const adminController = require('../controller/admin/adminController');
-const orderController = require('../controller/admin/orderController');
-const categoryController = require('../controller/admin/categoryController');
-const productController = require('../controller/admin/productController');
-const userController = require('../controller/user/userController')
-const asyncHandler = require('express-async-handler')
+const orderController = require('../controller/user/orderController');
 
-orderRoute.get('/', orderController.getOrderPage); 
+orderRoute.get('/checkout', orderController.getCheckOutPage); 
+orderRoute.post('/checkout', orderController.checkOutPost);
+orderRoute.get('/ordersuccess',orderController.loadOrderDetails); 
+orderRoute.get('/orderdetails/:id',orderController.singleOrderDetails); 
+
 
 module.exports= orderRoute;

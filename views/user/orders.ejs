@@ -3,7 +3,13 @@
 <%- include ("../layout/cdn")%>
 
 <main class="main">
-    <%- include ("../layout/userHeader")%>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">
+            <img src="/img/logo_main.png" width="400" height="70" class="d-inline-block align-top" alt="Your Logo">
+            
+        </a>
+      
+    </nav>
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
@@ -22,76 +28,53 @@
           <div class="row">
               <div class="col-lg-10 m-auto">
                   <div class="row">
-                      <div class="col-md-4">
-                          <div class="dashboard-menu">
-                            <ul class="nav flex-column" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" href="/useraccount" role="tab" aria-controls="dashboard" aria-selected="false"><i class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="/orders" role="tab" aria-controls="orders" aria-selected="false"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="/wishlist" role="tab" aria-controls="track-orders" aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>wishlist</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="/useraddress" role="tab" aria-controls="address" aria-selected="true"><i class="fi-rs-marker mr-10"></i>My Address</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab" href="/userprofile" role="tab" aria-controls="account-detail" aria-selected="true"><i class="fi-rs-user mr-10"></i>Account details</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="/logout"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
-                                </li>
-                            </ul>
-                          </div>
-                      </div>
+                    <%- include ("../layout/accountSideBar")%>
                       <div class="col-md-8">
                       
-                             
+                        <% if(order.length>0){ %>
                         <div class="card">
+                            
                             <div class="card-header">
-                                <h5 class="mb-0">Your Orders</h5>
+                                <h5>Your Orders</h5>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead>
                                             <tr>
-                                                <th>Order</th>
-                                                <th>Date</th>
+                                                <th>Order Id</th>
+                                                <th>Date of Order</th>
+                                                <th>Delivery date</th>
                                                 <th>Status</th>
                                                 <th>Total</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            <% order.forEach(function(order_data) { 
+                                              %>
+                                                                
                                             <tr>
-                                                <td>#1357</td>
-                                                <td>March 45, 2020</td>
-                                                <td>Processing</td>
-                                                <td>$125.00 for 2 item</td>
-                                                <td><a href="#" class="btn-small d-block">View</a></td>
+                                                <td><%= order_data?._id %></td>
+                                                <td>     <%= new Date(order_data.orderDate).toLocaleDateString() %></td>
+                                                <td>     <%= new Date(order_data.deliveryDate).toLocaleDateString() %></td>
+                                               
+                                                <td><%= order_data.status %></td>
+                                                <td><%= order_data.totalAmount %></td>
+                                                <td><a href="/order/orderdetails/<%= order_data?._id%>" class="btn-small d-block">View</a></td>
                                             </tr>
-                                            <tr>
-                                                <td>#2468</td>
-                                                <td>June 29, 2020</td>
-                                                <td>Completed</td>
-                                                <td>$364.00 for 5 item</td>
-                                                <td><a href="#" class="btn-small d-block">View</a></td>
-                                            </tr>
-                                            <tr>
-                                                <td>#2366</td>
-                                                <td>August 02, 2020</td>
-                                                <td>Completed</td>
-                                                <td>$280.00 for 3 item</td>
-                                                <td><a href="#" class="btn-small d-block">View</a></td>
-                                            </tr>
+                                                     <% 
+                                                         }) %>
+                                           
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
+                           
                         </div>
+                        <%}else{%>
+                                <P>oops.. Haven't Ordered anything Yet?</P>
+                                <%}%>
                        
                            
                          

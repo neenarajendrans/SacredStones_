@@ -13,7 +13,7 @@
       </div>
     </div>
 
-    <section class="pt-150 pb-150">
+    <section class="pt-20 pb-20">
 
       <div class="container">
 
@@ -21,63 +21,50 @@
           <div class="col-lg-10 m-auto">
 
             <div class="row">
-              <div class="col-md-4">
-                <div class="dashboard-menu">
-                  <ul class="nav flex-column" role="tablist">
-                    <!-- <li class="nav-item">
-                                      <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="false"><i class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
-                                  </li> -->
-                    <li class="nav-item">
-                      <a class="nav-link" href="/userprofile"><i class="fi-rs-user mr-10"></i>Account details</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="/userAddress"><i class="fi-rs-marker mr-10"></i>My Address</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab"
-                        aria-controls="orders" aria-selected="false"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab"
-                        aria-controls="track-orders" aria-selected="false"><i
-                          class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
-                    </li>
-
-
-                    <li class="nav-item">
-                      <a class="nav-link" href="page-login-register.html"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
+              <%- include ("../layout/accountSideBar")%>
               <div class="col-md-8">
 
 
                 <section class="content-body p-xl-4">
-                  <form action="/editAddress" method="post"   onsubmit="return validationChecking()">
+                  <form action="/editaddress" method="post" onsubmit="return validationChecking()">
                     <div class="row">
 
-                      <input type="hidden" name="address_id" value="<%=//Address._id %>">
+
+
                       <div class="form-group">
-                        <input type="text" id="houseName" name="houseName"  value="<%=//Address.houseName %>" placeholder="Enter Name" />
-                        <div id="errorhouseName" class="ms-2 text-danger"></div>
+                        <input type="hidden" name="id" value="<%=address._id %>">
+                        <input type="text" id="fullName" name="fullName" placeholder="Enter your Full name" value="<%=address?.fullName %>" />
+                        <div id="errorfullName" class="ms-2 text-danger"></div>
+                      </div>
+                      <div class="form-group">
+                        <input type="text" id="address" name="address" placeholder="Enter Address"  value="<%=address?.address %>" />
+                        <div id="erroraddresss" class="ms-2 text-danger"></div>
                       </div>
                       <div class="form-group ">
-                        <input type="text" id="street" name="street"  value="<%=//Address.street %>" placeholder="Enter street" />
-                        <div id="errorstreet" class="ms-2 text-danger"></div>
+                        <input type="text" id="landmark" name="landmark" placeholder="Enter landmark" value="<%=address?.landmark %>" />
+                        <div id="errorlandmark" class="ms-2 text-danger"></div>
+                      </div>
+                      
+                      <div class="form-group ">
+                        <input type="text" id="locality" name="locality" placeholder="Enter your locality" value="<%=address?.locality %>" />
+                        <div id="errorlocatity" class="ms-2 text-danger"></div>
                       </div>
                       <div class="form-group ">
-                        <input type="text" id="city" name="city" value="<%=//Address.city %>" placeholder="Enter city" />
+                        <input type="text" id="city" name="city" placeholder="Enter city" value="<%=address?.city%>" />
                         <div id="errorcity" class="ms-2 text-danger"></div>
+                      </div>
+                      <div class="form-group ">
+                        <input type="text" id="phoneNumber" name="phoneNumber" placeholder="Enter your phone number" value="<%=address?.phoneNumber %>" />
+                        <div id="errorphoneNumber" class="ms-2 text-danger"></div>
                       </div>
 
                       <div class="row">
                         <div class="form-group col-md-6">
-                          <input type="text" id="state" name="state"  value="<%=//Address.state %>" placeholder="Enter state" />
+                          <input type="text" id="state" name="state" placeholder="Enter state" value="<%=address?.state %>" />
                           <div id="errorstate" class="ms-2 text-danger"></div>
                         </div>
                         <div class="form-group col-md-6">
-                          <input type="text" id="pincode" name="pincode" value="<%=//Address.pincode %>" placeholder="Enter pincode" />
+                          <input type="text" id="pincode" name="pincode" placeholder="Enter pincode" value="<%=address?.pincode %>" />
                           <div id="errorpincode" class="ms-2 text-danger"></div>
                         </div>
                       </div>
@@ -88,25 +75,9 @@
                       <button class="btn btn-primary " type="submit">Save changes</button>
                     </div>
 
-
-
-                    
                   </form>
-
-
-
-
                 </section>
-
-
-
-
               </div>
-
-
-
-
-
             </div>
           </div>
         </div>
@@ -114,29 +85,41 @@
     </section>
   </main>
 
-<script>
+  <script>
 
-  
+
 document.addEventListener('DOMContentLoaded', function () {
-  const houseName = document.getElementById("houseName");
-  const errorhouseName = document.getElementById("errorhouseName");
-  const street = document.getElementById("street");
-  const errorstreet = document.getElementById("errorstreet");
+  const fullName = document.getElementById("fullName");
+  const errorfullName = document.getElementById("errorfullName");
+  const address = document.getElementById("address");
+  const errorsaddress = document.getElementById("erroraddress");
+  const landmark = document.getElementById("landmark");
+  const errorlandmark = document.getElementById("errorlandmark");
+  const locality = document.getElementById("locality");
+  const errorlocality = document.getElementById("errorlocality");
   const city = document.getElementById("city");
   const errorcity = document.getElementById("errorcity");
   const state = document.getElementById("state");
   const errorstate = document.getElementById("errorstate");
   const pincode = document.getElementById("pincode");
   const errorpincode = document.getElementById("errorpincode");
+  const phoneNumber= document.getElementById("phoneNumber");
+  const errorphoneNumber = document.getElementById("errorphoneNumber");
 
-  houseName.addEventListener('input', function () {
-    errorhouseName.innerHTML = houseName.value.trim() === "" ? "Please enter home name" : /^[a-zA-Z ]+$/.test(houseName.value) == false ? "Please enter alphabets only" : "";
+  fullName.addEventListener('input', function () {
+    errorfullName.innerHTML = fullName.value.trim() === "" ? "Please enter full name" : /^[a-zA-Z ]+$/.test(fullName.value) == false ? "Please enter alphabets only" : "";
   });
-  street.addEventListener('input', function () {
-    errorstreet.innerHTML = street.value.trim() === "" ? "Please enter street name" : /^[a-zA-Z ]+$/.test(street.value) == false ? "Please enter alphabets only" : "";
+  address.addEventListener('input', function () {
+    erroraddress.innerHTML = address.value.trim() === "" ? "Please enter street name" : /^[a-zA-Z ]+$/.test(address.value) == false ? "Please enter alphabets only" : "";
+  });
+  landmark.addEventListener('input', function () {
+    errorlandmark.innerHTML = landmark.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(landmark.value) == false ? "Please enter alphabets only" : "";
+  });
+  locality.addEventListener('input', function () {
+    errorlocality.innerHTML =locality.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(locality.value) == false ? "Please enter alphabets only" : "";
   });
   city.addEventListener('input', function () {
-    errorcity.innerHTML = city.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(city.value) == false ? "Please enter alphabets only" : "";
+    errorcity.innerHTML = city.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(city.value) == false ? "Please enter alphabets only" : "";
   });
   state.addEventListener('input', function () {
     errorstate.innerHTML = state.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(state.value) == false ? "Please enter alphabets only" : "";
@@ -145,34 +128,49 @@ document.addEventListener('DOMContentLoaded', function () {
   pincode.addEventListener('input', function () {
     errorpincode.innerHTML = pincode.value.trim() === "" ? "Please enter  number" : /^\d{6}$/.test(pincode.value) == false ? "Please enter valid  number" : "";
   });
+  phoneNumber.addEventListener('input', function () {
+    errorphoneNumber.innerHTML = phoneNumber.value.trim() === "" ? "Please enter  number" : /^\d{10}$/.test(phoneNumber.value) == false ? "Please enter valid  number" : "";
+  });
 
 
 });
 function validationChecking() {
-  const houseName = document.getElementById("houseName");
-  const errorhouseName = document.getElementById("errorhouseName");
-  const street = document.getElementById("street");
-  const errorstreet = document.getElementById("errorstreet");
+  const fullName = document.getElementById("fullName");
+  const errorfullName = document.getElementById("errorfullName");
+  const address = document.getElementById("address");
+  const errorsaddress = document.getElementById("erroraddress");
+  const landmark = document.getElementById("landmark");
+  const errorlandmark = document.getElementById("errorlandmark");
+  const locality = document.getElementById("locality");
+  const errorlocality = document.getElementById("errorlocality");
   const city = document.getElementById("city");
   const errorcity = document.getElementById("errorcity");
   const state = document.getElementById("state");
   const errorstate = document.getElementById("errorstate");
   const pincode = document.getElementById("pincode");
   const errorpincode = document.getElementById("errorpincode");
+  const phoneNumber= document.getElementById("phoneNumber");
+  const errorphoneNumber = document.getElementById("errorphoneNumber");
 
   let isValid = true;
 
-  errorhouseName.innerHTML = houseName.value.trim() === "" ? "Please enter home name" : /^[a-zA-Z ]+$/.test(houseName.value) == false ? "Please enter alphabets only" : "";
-  errorstreet.innerHTML = street.value.trim() === "" ? "Please enter street name" : /^[a-zA-Z ]+$/.test(street.value) == false ? "Please enter alphabets only" : "";
+  errorfullName.innerHTML = fullName.value.trim() === "" ? "Please enter home name" : /^[a-zA-Z ]+$/.test(fullName.value) == false ? "Please enter alphabets only" : "";
+  erroraddress.innerHTML = address.value.trim() === "" ? "Please enter street name" : /^[a-zA-Z ]+$/.test(address.value) == false ? "Please enter alphabets only" : "";
+  errorlandmark.innerHTML = landmark.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(landmark.value) == false ? "Please enter alphabets only" : "";
+  errorlocality.innerHTML =locality.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(locality.value) == false ? "Please enter alphabets only" : "";
   errorcity.innerHTML = city.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(city.value) == false ? "Please enter alphabets only" : "";
   errorstate.innerHTML = state.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(state.value) == false ? "Please enter alphabets only" : "";
   errorpincode.innerHTML = pincode.value.trim() === "" ? "Please enter pincode" : /^\d{6}$/.test(pincode.value) == false ? "Please enter valid pincode" : "";
+  errorphoneNumber.innerHTML = phoneNumber.value.trim() === "" ? "Please enter  number" : /^\d{10}$/.test(phoneNumber.value) == false ? "Please enter valid  phone number" : "";
 
   if (
-    errorhouseName.innerHTML ||
-    errorstreet.innerHTML ||
+    errorfullName.innerHTML ||
+    erroraddress.innerHTML ||
+    errorlandmark.innerHTML ||
+    errorlocality.innerHTML ||
     errorcity.innerHTML ||
     errorstate.innerHTML ||
+    errorphoneNumber.innerHTML ||
     errorpincode.innerHTML
   ) {
     isValid = false;
@@ -180,6 +178,9 @@ function validationChecking() {
 
   return isValid;
 }
-
 </script>
-  
+
+
+
+
+

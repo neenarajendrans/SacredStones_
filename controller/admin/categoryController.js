@@ -1,4 +1,5 @@
 const Product = require("../../model/productModel");
+const sharp = require('sharp');
 const path=require('path');
 const fs = require('fs'); 
 const Category = require("../../model/categoryModel");
@@ -6,43 +7,115 @@ const User=require("../../model/userModel")
 const asyncHandler = require('express-async-handler')
 // GET CATEGORY
 const getCategoryManagement = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = 4;
+  const skip = (page-1)*limit;
    const category = await Category.find({})
-    res.render("admin/categoryManagement",{category:category,message:''});
+   .sort({createdAt:-1})
+   .skip(skip)
+   .limit(limit);
+
+   const totalCategories =await Category.countDocuments();
+   const totalPages = Math.ceil(totalCategories/limit);
+
+    res.render("admin/categoryManagement",{
+      category:category,
+      message:'',
+      currentPage:page,
+      totalPages:totalPages,
+      totalCategories:totalCategories});
   });
 
 // ADD CATEGORY // not working validation prob + condition foe checking if the category already exits
-
 const addCategory = asyncHandler(async (req, res) => {
-    const { name, description } = req.body;
-    const image = req.file.filename; // Assuming you are uploading an image
-
-    // Check if name and description are provided
-    if (!name || !description ) {
-        return res.status(400).json({ error: 'Name and description are required' });
-    }
-
-    try {
-        // Create a new category instance
-        const category = new Category({
-            name,
-            description,
-            image
-        });
-        const existCategory = await Category.findOne({ name: name});
-        if (existCategory) {
-          return res.render("admin/addcategory", {
-            message: "This category already exists",
+  try {
+      // Validate required fields
+      if (!req.body.name || !req.body.description) {
+          return res.status(400).json({
+              success: false,
+              message: 'Missing required fields'
           });
-          } else { // Save the new category to the database
-            await category.save();
-            res.redirect('/admin/category')
-          }
+      }
 
-       
-    } catch (err) {
-        console.error('Error adding category:', err);
-        res.status(500).json({ error: 'Failed to add category' });
-    }
+      // Check for category existence
+      const categoryExists = await Category.findOne({ name: req.body.name });
+      if (categoryExists) {
+          return res.status(400).json({
+              success: false,
+              message: 'Category already exists with this name'
+          });
+      }
+
+      // Process image
+      let processedImage = null;
+      if (req.file) {
+          const processedFileName = `processed-${req.file.filename}`;
+          const outputPath = path.join(
+              'public',
+              'assets',
+              'imgs',
+              'categoryIMG',
+              processedFileName
+          ).replace(/\\/g, '/');
+
+          try {
+              // Process image with sharp
+              await sharp(req.file.path)
+                  .resize(440, 440, {
+                      fit: 'contain',
+                      background: { r: 255, g: 255, b: 255, alpha: 1 }
+                  })
+                  .jpeg({ quality: 80 })
+                  .toFile(outputPath);
+
+              processedImage = processedFileName;
+          } catch (err) {
+              console.error(`Error processing image ${req.file.filename}:`, err);
+              return res.status(400).json({
+                  success: false,
+                  message: 'Failed to process image'
+              });
+          }
+      }
+
+      // If no image was processed successfully
+      if (!processedImage) {
+          return res.status(400).json({
+              success: false,
+              message: 'Category image is required'
+          });
+      }
+
+      // Create category object
+      const categoryData = {
+          name: req.body.name,
+          description: req.body.description,
+          image: processedImage,
+          status: req.body.status || 'Active' // Default status
+      };
+
+      // Save category
+      const newCategory = new Category(categoryData);
+      const savedCategory = await newCategory.save();
+
+      if (!savedCategory) {
+          return res.status(400).json({
+              success: false,
+              message: 'Failed to save category'
+          });
+      }
+
+      // Success response - redirect to categories page
+      return res.status(201).redirect('/admin/category');
+
+  } catch (error) {
+      console.error('Error in addCategory:', error);
+      return res.status(500).json({
+          success: false,
+          message: 'Internal server error',
+          error: error.message
+      });
+  }
 });
 
 
@@ -58,74 +131,104 @@ const getEditCategory = asyncHandler(async (req, res) => {
 
   });
 
-  const editCategory = asyncHandler( async (req, res) => {
-    const { name, description,id } = req.body;
-    // const image = req.file.filename; 
-    // const {id }= req.params;
-    console.log('inside edit cat')
-    console.log(req.body)
-    const catname = req.body.name.trim().toLowerCase()
-    const existingCategory = await Category.findOne({name:catname});
-    if(existingCategory){
-        req.session.message = "Category exists"
-        res.redirect('/admin/categoryManagement')
-        return;
-    }
-    const category = await Category.updateOne({ _id: id }, { $set: { name, description } })
-    res.redirect("/admin/category")
-})
+  // Update category
+const editCategory = asyncHandler(async (req, res) => {
+  try {
+      const categoryId = req.params.id;
 
+      // Find the category
+      let category = await Category.findById(categoryId);
+      if (!category) {
+          req.session.message = "Category not found";
+          return res.redirect('/admin/category');
+      }
+
+      // Check for duplicate category name (excluding current category)
+      const existingCategory = await Category.findOne({
+          name: req.body.name.trim().toLowerCase(),
+          _id: { $ne: categoryId }
+      });
+
+      if (existingCategory) {
+          req.session.message = "Category name already exists";
+          return res.redirect(`/admin/editcategory/${categoryId}`);
+      }
+
+      // Update basic category information
+      category.name = req.body.name.trim().toLowerCase();
+      category.description = req.body.description;
+
+      // Handle image deletion
+      if (req.body.deleteCurrentImage === 'true' && category.image) {
+          // Delete the actual file
+          const imagePath = path.join(__dirname, '../public/assets/imgs/categoryIMG', category.image);
+          if (fs.existsSync(imagePath)) {
+              fs.unlinkSync(imagePath);
+              category.image = ''; // Clear the image field
+          }
+      }
+
+      // Handle new image upload
+      if (req.files && req.files.newImage) {
+          // If there's an existing image, delete it first
+          if (category.image) {
+              const oldImagePath = path.join(__dirname, '../public/assets/imgs/categoryIMG', category.image);
+              if (fs.existsSync(oldImagePath)) {
+                  fs.unlinkSync(oldImagePath);
+              }
+          }
+          
+          // Update with new image
+          category.image = req.files.newImage[0].filename;
+      }
+
+      // Validate required fields
+      if (!category.name || (!category.image && req.body.deleteCurrentImage === 'true')) {
+          req.session.message = "Category name and image are required";
+          return res.redirect(`/admin/editcategory/${categoryId}`);
+      }
+
+      // Save the updated category
+      await category.save();
+
+      req.session.message = "Category updated successfully";
+      res.redirect('/admin/category');
+
+  } catch (error) {
+      console.error('Error updating category:', error);
+      req.session.message = "Error updating category";
+      res.redirect(`/admin/editcategory/${req.params.id}`);
+  }
+});
 
   const getDeleteCategory = asyncHandler(async (req, res) => {
     res.redirect("admin/category");
   });
-
-  const listCategory = asyncHandler (async (req, res) => {
-    const categoryId = req.params.id
-    const categoryData = await Category.updateOne({ _id: categoryId }, { $set: { is_listed: true } })
-    res.redirect("/admin/category")
-})
+  const listCategory = asyncHandler(async (req, res) => {
+    const categoryId = req.params.id;
+    
+    // Update the category to listed
+    await Category.updateOne({ _id: categoryId }, { $set: { is_listed: true } });
+    
+    // Update all products in the category to listed
+    await Product.updateMany({ category: categoryId }, { $set: { is_listed: true } });
+    
+    res.redirect("/admin/category");
+});
 
 const unlistCategory = asyncHandler(async (req, res) => {
-    const categoryId = req.params.id
-    const categoryData = await Category.updateOne({ _id: categoryId }, { $set: { is_listed: false } })
-    res.redirect("/admin/category")
-})
-
-// Function to delete the image
-const deleteImage = asyncHandler(async (req, res) => {
-  const categoryId = req.query.id;
-  const category = await Category.findById(categoryId);
-  if (!category) {
-    return res.status(404).json({ message: 'Category not found' });
-  }
-
-  const imagePath = path.join(__dirname, '..', 'public', 'assets', 'imgs', 'categoryIMG', category.image);
-  fs.unlink(imagePath, (err) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ message: 'Failed to delete image' });
-    }
-  });
-
-  category.image = '';
-  await category.save();
-  res.status(200).json({ message: 'Image deleted successfully' });
+    const categoryId = req.params.id;
+    
+    // Update the category to unlisted
+    await Category.updateOne({ _id: categoryId }, { $set: { is_listed: false } });
+    
+    // Update all products in the category to unlisted
+    await Product.updateMany({ category: categoryId }, { $set: { is_listed: false } });
+    
+    res.redirect("/admin/category");
 });
 
-// Function to update the image
-const updateImage = asyncHandler(async (req, res) => {
-  const categoryId = req.query.id;
-  const category = await Category.findById(categoryId);
-  if (!category) {
-    return res.status(404).json({ message: 'Category not found' });
-  }
 
-  const image = req.file.filename; 
-  category.image = image;
-  await category.save();
-  res.status(200).json({ image });
-});
 
 
 module.exports = {
@@ -137,6 +240,5 @@ module.exports = {
      editCategory,
      listCategory,
      unlistCategory,
-     deleteImage, 
-     updateImage
+     
 }

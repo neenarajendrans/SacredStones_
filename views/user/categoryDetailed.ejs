@@ -9,6 +9,114 @@
 
 
     <%- include ("../layout/cdn")%>
+    <style>
+        .price_container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 20px;
+        }
+        
+        .product-box {
+            width: calc(33.333% - 20px);
+            max-width: 300px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .product-box:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .product-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .wishlist-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.7);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .product-info {
+            padding: 15px;
+        }
+        
+        .product-name {
+            margin: 0 0 10px;
+            font-size: 1rem;
+        }
+        
+        .price-box {
+            margin-bottom: 10px;
+        }
+        
+        
+        
+        .discount-price {
+            font-weight: bold;
+            color: #080808;
+        }
+        
+        .action-box {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .add-to-cart-btn, .view-details-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .add-to-cart-btn {
+            background-color: #e4a333;
+            color: white;
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .view-details-btn {
+            background-color: #e4a333;
+            color: white;
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .product-box {
+                width: calc(50% - 20px);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .product-box {
+                width: 100%;
+            }
+        }
+        </style>
 </head>
 <body>
     <%- include ("../layout/userHeader")%>
@@ -26,39 +134,36 @@
 <section class="price_section layout_padding">
     <div class="container">
         <div class="heading_container">
-            <h2>
-               All Products
-            </h2>
+            <h2><%= category.name %></h2>
         </div>
         <div class="price_container">
-           
-            <% product.forEach ((ele)=>{%>
-                <% if(ele.is_listed ) { %>
-            <div class="box">
-                <div class="name">
-                    <h6>
-                      <%= ele.name %>
-                    </h6>
-                </div>
-                <div class="img-box">
-                    
-                    <img src="/assets/imgs/productIMG/<%= ele.images[0] %>" style="width: 300px;" alt="">
-                     
-                </div>
-                <div class="detail-box">
-                    <h5>
-                        jadsfjhj
-                    </h5>
-                    <a href="/productdetail?id=<%=ele.id%>">
-                        View Details
-                    </a>
-                </div>
-            </div>
-            <%} })%>
-           
-           
-            
-       
+            <% product.forEach((ele) => { %>
+                <% if(ele.is_listed) { %>
+                    <div class="product-box">
+                        <div class="product-image">
+                            <img src="/assets/imgs/productIMG/<%= ele.images[0] %>" alt="<%= ele.name %>">
+                            <button class="wishlist-btn" data-product-id="<%= ele._id %>">
+                                <i class="fa fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="product-info">
+                            <h6 class="product-name"><%= ele.name %></h6>
+                            <div class="price-box">
+                                
+                                    <span class="discount-price">₹<%= ele.discount_price %></span>
+                                
+                            </div>
+                            <div class="action-box">
+                                <button class="add-to-cart-btn" data-product-id="<%= ele._id %>">
+                                    Add to Cart
+                                </button>
+                                <a href="/productdetail?id=<%= ele._id %>" class="view-details-btn">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            <% }) %>
+        </div>
     </div>
 </section>
      <!-- <section class="price_section layout_padding">

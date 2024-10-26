@@ -5,6 +5,8 @@ const message = require("../../config/mailer");
 const Product = require("../../model/productModel");
 const Category = require("../../model/categoryModel");
 const Cart = require("../../model/cartModel");
+const { v4: uuidv4 } = require('uuid');
+
 
 
 
@@ -89,7 +91,7 @@ const getProfile = asyncHandler(async (req, res) => {
     console.error('User not found in the database');
     return res.status(404).send('User not found');
   }
-
+ console.log(user)
   // Render the profile page with the user object
   res.render("user/userProfile", { message: '', user });
 });
@@ -127,7 +129,7 @@ const getResetPassword = asyncHandler(async (req, res) => {
 //@access User
 const verifyOtp = asyncHandler(async (req, res) => {
   const userData = req.session.userData;
-
+  let googleId = req.body.googleId || uuidv4();
   if (req.body.otp == req.session.otp) {
     console.log(req.body.otp)
     if (userData.is_blocked) {
@@ -139,6 +141,7 @@ const verifyOtp = asyncHandler(async (req, res) => {
       req.session.isForgotPassword = false; // Reset the flag
       return res.redirect("/resetpassword"); // Assuming you have a reset password route
     } else {
+
       // For signup scenario
       const secure_password = await securePassword(userData.password);
       const user = new User({
@@ -146,6 +149,9 @@ const verifyOtp = asyncHandler(async (req, res) => {
         email: userData.email,
         phoneNumber: userData.phoneNumber,
         password: secure_password,
+        googleId: googleId,
+        
+        
       });
 
       const userDataSave = await user.save();
@@ -232,7 +238,6 @@ const logout = asyncHandler((req, res) => {
   console.log(req.session) 
   req.session.userId = null
   req.session.isAdmin = null
-  res.locals.isLoggedin = null;
   req.session.destroy();
   res.redirect("/")
 })
@@ -248,12 +253,14 @@ const getHomePage = asyncHandler(async (req, res) => {
     const user_id = req?.session?.user_id;
 
     // Use Promise.all to run all queries concurrently
+    const cartQuery = user_id ? Cart.findOne({ user_id }).populate('products.productData_id') : null;
+
     const [category, products, cart] = await Promise.all([
       Category.find({}),
       Product.find({}),
-      Cart.findOne({ user_id }).populate('products.productData_id'),
+      cartQuery,
     ]);
-
+    console.log(category,products)
     // Render the home page with the fetched data, including the cart
     res.render("user/home", { category, products, cart, message });
   } catch (error) {
@@ -377,24 +384,8 @@ const renderUserOrders = asyncHandler((req, res) => {
 const renderUserTrackOrder = asyncHandler((req, res) => {
   res.render("user/orderPlaced")
 })
-//@des Get user delivery address page
-//@route Get /useraddress
-//@access public
-const renderUserAddress = asyncHandler((req, res) => {
-  res.render("user/manageAddress")
-})
-//@des Update address page
-//@route put /editaddress
-//@access public
-const renderEditUserAddress = asyncHandler((req, res) => {
-  res.render("user/editAdress")
-})
-//@des Add address page
-//@route Post /addaddress
-//@access public
-const renderAddUserAddress = asyncHandler((req, res) => {
-  res.render("user/addAddress")
-})
+
+
 module.exports = {
   renderForgotPasswordEmail,
   getIndexPage,
@@ -417,9 +408,7 @@ module.exports = {
   getProfile,
   getUserAccount,
   getCategoryFilteredPage,
-  renderAddUserAddress,
-  renderEditUserAddress,
-  renderUserAddress,
+  
   renderUserOrders,
   renderUserTrackOrder,
   getErrorPage,

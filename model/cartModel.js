@@ -15,26 +15,30 @@ const cartSchema = new mongoose.Schema({
         qty: {
             type: Number,
             required: true,
-            default:1
+            min: 1,
 
         },
-        price:{
-            type:Number,
-            required:true
-        },
-        totalPrice:{
-            type:Number,
-            required:true
-        },
-        status:{
-            type:String,
-            default:'Placed'
-        },
-        cancellationReason:{
-            type:String,
-            default:'none'
-        }
+        // price:{
+        //     type:Number,
+        //     required:true
+        // },
+        // status:{
+        //     type:String,
+        //     default:'Placed'
+        // },
+        // cancellationReason:{
+        //     type:String,
+        //     default:'none'
+        // }
     }],
+    total:{
+        type:Number,
+        default:0,
+    },
+     date : {
+        type : Date,
+        default : Date.now
+    }
 }, { timestamps: true });
 
 const Cart = mongoose.model('Cart', cartSchema);

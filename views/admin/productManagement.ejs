@@ -1,6 +1,7 @@
 <%- include ("../layout/admintemHeader")%>
     <%- include ("../layout/sideBar")%>
-
+<% // want to do message setup for existing product =======same product is adding do similar to the video
+ %>
         <main class="main-wrap">
             
             <section class="content-main">
@@ -66,7 +67,7 @@
                                     <td>
                                         
                                         <a class="btn btn-sm font-sm btn-light rounded" href="/admin/editproduct/<%=ele._id %>">Edit</a>
-                                        <% if (ele.is_listed) { %>
+                                        <% if (ele.is_listed) { // what about the product in the unlisted category%>
                                             <a class="btn btn-sm font-sm btn-light rounded " href="/admin/unlistproduct/<%= ele._id %>">
                                                   Unlist</a>
                                               <% }else{ %> 
@@ -91,6 +92,18 @@
                     </div> <!-- card-body end// -->
                     
                 </div> <!-- card end// -->
+                <div class="pagination-area mt-30 mb-50">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-start">
+                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                            <li class="page-item"><a class="page-link" href="#">02</a></li>
+                            <li class="page-item"><a class="page-link" href="#">03</a></li>
+                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">16</a></li>
+                            <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                        </ul>
+                    </nav>
+                </div>
                 
             </section> <!-- content-main end// -->
             <footer class="main-footer font-xs">

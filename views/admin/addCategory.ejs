@@ -1,126 +1,251 @@
-
-    <%- include ("../layout/admintemHeader")%>
-    <%- include ("../layout/sideBar")%>
-    <main class="main-wrap">
- 
-
-        <form action="/admin/addCategory" method="post" id="category-form" enctype="multipart/form-data">
-            <section class="content-main">
-                <div class="row">
-                    <div class="col-9">
-                        <div class="content-header">
-                            <h2 class="content-title">Create Category</h2>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="card mb-4">
-                            <div class="card-header">
-                                <h4>Basic</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="mb-4">
-                                    <label for="category_name" class="form-label">Category name</label>
-                                    <input type="text" name="name"  placeholder="Type here" class="form-control" id="category_name">
-                                    <div class="error-message" style="color: red;" id="category_name-error"></div>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Full description</label>
-                                    <textarea name="description" id="description" placeholder="Type here" class="form-control" rows="4"></textarea>
-                                    <div class="error-message" style="color: red;" id="description-error"></div>
-                                </div>
-                                <div class="card-header">
-                                    <h4>Media</h4>
-                                </div>
-                               
-                                    <div class="card-body">
-                                        <div class="input-upload">
-                                            <img src="/assets/imgs/theme/upload.svg" alt="Upload Icon">
-                                            <input class="form-control" name="image" type="file" required >
-                                          
-    
-                                    </div>
-                                    <br>
-                                    <br>
-                                <div>
-
-                                        <button class="btn btn-md rounded font-sm hover-up"
-                                            type="submit">Publish</button>
-                                </div>
-                            </div>
-                           
-                        </div> <!-- card end// -->
-                        
-                    </div>
-                    
-                
-                        <!-- <div id="invalid">
-                            <%// if (typeof error !=='undefined' && error) { %>
-                                <p class="text-danger" id="message">
-                                    <%= //error %>
-                                </p>
-                                <%// } %>
-                                
-                        </div>
-                    </div>
-                    <div id="invalid">
-                        <% //if (typeof message !=='undefined' && message) { %>
-                            <p style="color: rgb(8, 96, 0);" id="message">
-                                <%= //message %>
-                            </p>
-                            <%// } %>
-                             -->
-                    </div>
+<%- include ("../layout/admintemHeader")%>
+<%- include ("../layout/sideBar")%>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
+</head>
+<main class="main-wrap">
+    <form action="/admin/addCategory" method="post" id="category-form" enctype="multipart/form-data">
+        <section class="content-main">
+            <div class="row">
+                <div class="col-9">
+                    <div class="content-header">
+                        <h2 class="content-title">Create Category</h2>
                     </div>
                 </div>
-            </section>
-             <!-- content-main end// -->
-        </form>
-        <style>
-            .error-message {
-                color: red;
-            }
-        </style>
-        <!-- <script>
-            function validateForm(event) {
-                // Regular expression for letters only
-                const lettersOnly = /^[A-Za-z\s]+$/;
-    
-                // Get form elements
-                const categoryName = document.getElementById('category_name');
-                const description = document.getElementById('description');
-                const categoryNameError = document.getElementById('category_name-error');
-                const descriptionError = document.getElementById('description-error');
-    
-                // Clear previous error messages
-                categoryNameError.textContent = '';
-                descriptionError.textContent = '';
-    
-                let isValid = true;
-    
-                // Validate category name
-                if (!lettersOnly.test(categoryName.value.trim())) {
-                    categoryNameError.textContent = 'Category name must contain only letters.';
-                    isValid = false;
-                }
-    
-                // Validate description
-                if (!lettersOnly.test(description.value.trim())) {
-                    descriptionError.textContent = 'Description must contain only letters.';
-                    isValid = false;
-                }
-    
-                // If the form is not valid, prevent form submission
-                if (!isValid) {
-                    event.preventDefault();
-                }
-            }
-    
-            document.addEventListener('DOMContentLoaded', () => {
-                document.getElementById('category-form').addEventListener('submit', validateForm);
-            });
-        </script> -->
-        
-        
-        
-        
-        
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h4>Basic</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label for="category_name" class="form-label">Category name</label>
+                                <input type="text" name="name" placeholder="Type here" class="form-control" id="category_name">
+                                <div class="error-message" style="color: red;" id="category_name-error"></div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Full description</label>
+                                <textarea name="description" id="description" placeholder="Type here" class="form-control" rows="4"></textarea>
+                                <div class="error-message" style="color: red;" id="description-error"></div>
+                            </div>
+                            <!-- Image upload with preview and crop -->
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h4>Choose Image</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-4">
+                                        <div style="position: relative;">
+                                            <input type="file" id="input" name="image" class="form-control"
+                                                accept="image/png,image/jpg,image/jpeg"
+                                                onchange="handleImageSelect(event)">
+                                            <div class="mt-2">
+                                                <!-- Cropper container -->
+                                                <div class="image-cropper" id="cropperContainer" style="display: none; margin-top: 10px;">
+                                                    <img src="" id="imgView" alt="Preview" style="max-width: 100%;">
+                                                    <button type="button" id="cropButton" class="btn btn-primary mt-2">
+                                                        Crop Image
+                                                    </button>
+                                                </div>
+                                                <!-- Preview container -->
+                                                <div class="preview-container" style="position: relative; display: inline-block;">
+                                                    <img id="finalPreview" alt="Final Preview" class="img-fluid rounded"
+                                                        style="max-width: 200px; display: none; border: 1px solid #dee2e6; padding: 0.25rem;">
+                                                    <button type="button" id="deleteIcon"
+                                                        class="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                                        style="display: none;" onclick="removeImage()">
+                                                        X
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <small id="image-error" style="color: #dc3545; display: none;"></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                            <div>
+                                <button class="btn btn-md rounded font-sm hover-up" type="submit">Publish</button>
+                            </div>
+                        </div>
+                    </div> <!-- card end// -->
+                </div>
+                <div id="invalid">
+                    <% if (typeof error !=='undefined' && error) { %>
+                        <p class="text-danger" id="message">
+                            <%= error %>
+                        </p>
+                    <% } %>
+                </div>
+            </div>
+            <div id="invalid">
+                <% if (typeof message !=='undefined' && message) { %>
+                    <p style="color: rgb(8, 96, 0);" id="message">
+                        <%= message %>
+                    </p>
+                <% } %>
+            </div>
+        </section> <!-- content-main end// -->
+    </form>
+</main>
+
+<style>
+    .error-message {
+        color: red;
+        font-size: 0.9em;
+        margin-top: 0.2em;
+    }
+</style>
+
+<script>
+let cropper;
+
+function handleImageSelect(event) {
+    const input = event.target;
+    const reader = new FileReader();
+
+    reader.onload = function () {
+        const dataURL = reader.result;
+        const image = document.getElementById('imgView');
+        const cropperContainer = document.getElementById('cropperContainer');
+        const finalPreview = document.getElementById('finalPreview');
+        const deleteIcon = document.getElementById('deleteIcon');
+
+        image.src = dataURL;
+        cropperContainer.style.display = 'block';
+        finalPreview.style.display = 'none';
+        deleteIcon.style.display = 'none';
+
+        if (cropper) {
+            cropper.destroy();
+        }
+
+        cropper = new Cropper(image, {
+            aspectRatio: 1,
+            viewMode: 1,
+            guides: true,
+            background: false,
+            autoCropArea: 1,
+            zoomable: true,
+            minCropBoxWidth: 100,
+            minCropBoxHeight: 100,
+        });
+
+        document.getElementById('cropButton').onclick = function () {
+            const canvas = cropper.getCroppedCanvas();
+            finalPreview.src = canvas.toDataURL('image/jpeg', 1.0);
+            finalPreview.style.display = 'block';
+            deleteIcon.style.display = 'block';
+            cropperContainer.style.display = 'none';
+
+            canvas.toBlob(function (blob) {
+                const fileName = `cropped-img-${new Date().getTime()}.jpg`;
+                const newFile = new File([blob], fileName, { type: 'image/jpeg' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(newFile);
+                input.files = dataTransfer.files;
+            }, 'image/jpeg', 1.0);
+        };
+    };
+
+    reader.readAsDataURL(input.files[0]);
+}
+
+function removeImage() {
+    const input = document.getElementById('input');
+    const cropperContainer = document.getElementById('cropperContainer');
+    const finalPreview = document.getElementById('finalPreview');
+    const deleteIcon = document.getElementById('deleteIcon');
+
+    input.value = '';
+    cropperContainer.style.display = 'none';
+    finalPreview.style.display = 'none';
+    deleteIcon.style.display = 'none';
+
+    if (cropper) {
+        cropper.destroy();
+        cropper = null;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const category_name = document.getElementById("category_name");
+    const category_name_error = document.getElementById("category_name-error");
+    const description = document.getElementById("description");
+    const description_error = document.getElementById("description-error");
+    const image_input = document.querySelector('input[name="image"]');
+    const form = document.getElementById("category-form");
+
+    // Updated Name pattern to allow everything in a typical person's name
+    const namePattern = /^[a-zA-Z\s\.\']+$/;
+
+    // Updated Description pattern to allow commas and standard punctuation
+    const descriptionPattern = /^[a-zA-Z0-9\s\-\.,!?\']+$/;
+
+    // Category Name Validation
+    category_name.addEventListener('input', function () {
+        const value = category_name.value.trim();
+        if (value === "") {
+            category_name_error.innerHTML = "Please enter category name";
+        } else if (!namePattern.test(value)) {
+            category_name_error.innerHTML = "Category name can contain letters, spaces, and dot";
+        } else {
+            category_name_error.innerHTML = "";
+        }
+    });
+
+    // Description Validation
+    description.addEventListener('input', function () {
+        const value = description.value.trim();
+        if (value === "") {
+            description_error.innerHTML = "Please enter category description";
+        } else if (!descriptionPattern.test(value)) {
+            description_error.innerHTML = "Description can contain letters, numbers, spaces, commas, and punctuation";
+        } else {
+            description_error.innerHTML = "";
+        }
+    });
+
+    // Image Validation
+    image_input.addEventListener('change', function () {
+        const imageError = document.getElementById('image-error');
+        if (!image_input.value) {
+            imageError.innerHTML = "Please upload an image.";
+            imageError.style.display = 'block';
+        } else {
+            imageError.innerHTML = "";
+            imageError.style.display = 'none';
+        }
+    });
+
+    form.addEventListener('submit', function (event) {
+        const category_name_value = category_name.value.trim();
+        const description_value = description.value.trim();
+        const image_value = image_input.value;
+
+        let isValid = true;
+
+        if (category_name_value === "" || !namePattern.test(category_name_value)) {
+            category_name_error.innerHTML = "Please enter a valid category name.";
+            isValid = false;
+        }
+
+        if (description_value === "" || !descriptionPattern.test(description_value)) {
+            description_error.innerHTML = "Please enter a valid description.";
+            isValid = false;
+        }
+
+        if (!image_value) {
+            document.getElementById('image-error').innerHTML = "Please upload an image.";
+            document.getElementById('image-error').style.display = 'block';
+            isValid = false;
+        }
+
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission if validation fails
+        }
+    });
+});
+</script>

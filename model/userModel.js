@@ -23,7 +23,9 @@ const user = mongoose.Schema(
     },
     googleId: {
       type: String,
-      unique: true,
+      
+      required: false,
+
     },
     password: {
       type: String,

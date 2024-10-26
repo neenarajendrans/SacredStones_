@@ -1,259 +1,225 @@
 <%- include('../Layout/usertem.ejs') %>
-<%- include ("../layout/cdn")%>
+    <%- include ("../layout/cdn")%>
+    <style>
+        /* Align the radio button and label inline */
+        .radio-inline {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    
+        /* Smaller radio button */
+        input[type="radio"] {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+        <main class="main">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <a class="navbar-brand" href="#">
+                    <img src="/img/logo_main.png" width="400" height="70" class="d-inline-block align-top"
+                        alt="Your Logo">
 
-    <main class="main">
-        <%- include ("../layout/userHeader")%>
-        
-        <div class="page-header breadcrumb-wrap">
-            <div class="container">
-                <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
-                    <span></span> Shop
-                    <span></span> Checkout
+                </a>
+
+            </nav>
+
+            <div class="page-header breadcrumb-wrap">
+                <div class="container">
+                    <div class="breadcrumb">
+                        <a href="/home" rel="nofollow">Home</a>
+                        <span></span> cart
+                        <span></span> Checkout
+                    </div>
                 </div>
             </div>
-        </div>
-        <section class="mt-50 mb-50">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 mb-sm-15">
-                        <!-- <div class="toggle_info">
-                        <span><i class="fi-rs-user mr-10"></i><span class="text-muted">Already have an account?</span> <a href="#loginform" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click here to login</a></span>
-                    </div> -->
-                        <div class="panel-collapse collapse login_form" id="loginform">
-                            <div class="panel-body">
-                                <p class="mb-30 font-sm">If you have shopped with us before, please enter your details
-                                    below. If you are a new customer, please proceed to the Billing &amp; Shipping
-                                    section.</p>
-                                <form method="post">
-                                    <div class="form-group">
-                                        <input type="text" name="email" placeholder="Username Or Email">
-                                    </div>
-                                    <div class="form-group">
-                                        <input type="password" name="password" placeholder="Password">
-                                    </div>
-                                    <div class="login_footer form-group">
-                                        <div class="chek-form">
-                                       
+            <section class="mt-50 mb-50">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-lg-6">
+                            <div class="toggle_info">
+                                <span><i class="fi-rs-label mr-10"></i><span class="text-muted">Have a coupon?</span> <a
+                                        href="#coupon" data-bs-toggle="collapse" class="collapsed"
+                                        aria-expanded="false">Click here to enter your code</a></span>
+                            </div>
+                            <div class="panel-collapse collapse coupon_form " id="coupon">
+                                <div class="panel-body">
+                                    <p class="mb-30 font-sm">If you have a coupon code, please apply it below.</p>
+                                    <form method="post">
+                                        <div class="form-group">
+                                            <input type="text" placeholder="Enter Coupon Code...">
                                         </div>
-                                        <a href="#">Forgot password?</a>
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn btn-md" name="login">Log in</button>
-                                    </div>
-                                </form>
+                                        <div class="form-group">
+                                            <button class="btn  btn-md" name="login">Apply Coupon</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <!-- <div class="toggle_info">
-                        <span><i class="fi-rs-label mr-10"></i><span class="text-muted">Have a coupon?</span> <a href="#coupon" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click here to enter your code</a></span>
-                    </div> -->
-                        <div class="panel-collapse collapse coupon_form " id="coupon">
-                            <div class="panel-body">
-                                <p class="mb-30 font-sm">If you have a coupon code, please apply it below.</p>
-                                <form method="post">
-                                    <div class="form-group">
-                                        <input type="text" placeholder="Enter Coupon Code...">
-                                    </div>
-                                    <div class="form-group">
-                                        <button class="btn  btn-md" name="login">Apply Coupon</button>
-                                    </div>
-                                </form>
-                            </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="divider mt-50 mb-50"></div>
                         </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="divider mt-50 mb-50"></div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6">
 
-                        <div class="row">
-
-
-                            <%// addressData?.forEach((address,index)=> {
-
-                               // if (address.is_listed ) {
-
-
-
-                                %> <div class="col-12">
-                                    <div class="card mb-3 mb-lg-0">
-                                        <div class="card-header">
-                                            <h5 class="mb-0">
-
-                                                <% //const address_id=address.user %>
-
-
-                                                    <% //if (address_id.toString()===userData._id.toString()) { %>
-                                                        <div class="d-flex justify-content-between">
-                                                            <div>
-                                                                <span>
-                                                                    <%=// userData.name %>
-
-                                                                </span>
+                            <div class="row">
+                                <% addressData?.forEach((address, index) => { 
+                                    if (address.is_listed) { %> 
+                                        <div class="col-12">
+                                            <div class="card mb-3 mb-lg-0">
+                                                <div class="card-body d-flex">
+                                                    <address>
+                                                        <h5><%= address.fullName %></h5>
+                                                        <br>
+                                                        <%= address.address %><br>
+                                                        <%= address.landmark %><br>
+                                                        <%= address.city %><br>
+                                                        <%= address.state %><br>
+                                                        <%= address.pincode %><br>
+                                                        <%= address.phoneNumber %>
+                                                        <div class="">
+                                                            <div class="">
+                                                            <a href="/editaddress?id=<%= address._id %>" class="btn-small">Edit</a>
                                                             </div>
-                                                            <div>
-                                                                <span>
-
-                                                                    <%= //userData.mobile %>
-                                                                </span>
-                                                            </div>
+                                                           
                                                         </div>
-
-                                                        <% //} %>
-                                            </h5>
-                                        </div>
-                                        <div class="card-body d-flex">
-                                            <address>
-                                                <%=//address.houseName %>
-                                                    <%=//address.city %>
-                                                        <%=//address.street %>
-
-                                                            <%=//address.state %>
-                                                                <%=//address.pincode %>
-                                            </address>
-                                            <div class="d-flex justify-content-end w-100">
-
-
-                                                <div class="">
-                                  
-<input type="radio" value="<%= //address._id %>" name="checkAddress" id="addressradio">
-
+                                                    </address>
+                                                    <div class="d-flex justify-content-end w-100">
+                                                        <div class="">
+                                                            <input type="radio" value="<%= address._id %>" name="checkAddress" id="addressradio_<%= index %>">
+                                                            <label for="addressradio_<%= index %>"></label>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                <% } }); %>
+                            </div>
+                            
 
+                            <form action="/addAddress" method="post" onsubmit="return validationChecking()">
+
+
+
+                                <div class="ship_detail">
+                                    <div class="form-group">
+                                        <div class="chek-form">
+                                            <div class="custome-checkbox">
+                                                <input class="form-check-input" type="checkbox" name="checkbox"
+                                                    id="differentaddress" data-bs-toggle="collapse"
+                                                    data-bs-target="#collapseAddress">
+                                                <label class="form-check-label label_info"
+                                                    for="differentaddress"><span>Add different
+                                                        address?</span></label>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-
-
-
-
-
-
-
-
-                                <%//} }); %>
-                        </div>
-
-                        <form action="/addAddress" method="post"  onsubmit="return validationChecking()">
-
-
-
-                            <div class="ship_detail">
-                                <div class="form-group">
-                                    <div class="chek-form">
-                                        <div class="custome-checkbox">
-                                            <input class="form-check-input" type="checkbox" name="checkbox"
-                                                id="differentaddress">
-                                            <label class="form-check-label label_info" data-bs-toggle="collapse"
-                                                data-target="#collapseAddress" href="#collapseAddress"
-                                                aria-controls="collapseAddress" for="differentaddress"><span>Ship to a
-                                                    different address?</span></label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="collapseAddress" class="different_address collapse in">
-                                    <div class="row">
-
-
-
-
-
-
-
-                                        <div class="form-group">
-                        <input type="text" id="houseName" name="houseName" placeholder="Enter Name" />
-                        <div id="errorhouseName" class="ms-2 text-danger"></div>
+                                    <div id="collapseAddress" class="different_address collapse in">
+                                        <div class="row">
+                                            <div class="form-group">
+                        <input type="text" id="fullName" name="fullName" placeholder="Enter your Full name" />
+                        <div id="errorfullName" class="ms-2 text-danger"></div>
+                      </div>
+                      <div class="form-group">
+                        <input type="text" id="address" name="address" placeholder="Enter Address" />
+                        <div id="erroraddresss" class="ms-2 text-danger"></div>
                       </div>
                       <div class="form-group ">
-                        <input type="text" id="street" name="street" placeholder="Enter street" />
-                        <div id="errorstreet" class="ms-2 text-danger"></div>
+                        <input type="text" id="landmark" name="landmark" placeholder="Enter landmark" />
+                        <div id="errorlandmark" class="ms-2 text-danger"></div>
+                      </div>
+                      
+                      <div class="form-group ">
+                        <input type="text" id="locality" name="locality" placeholder="Enter your locality" />
+                        <div id="errorlocatity" class="ms-2 text-danger"></div>
                       </div>
                       <div class="form-group ">
                         <input type="text" id="city" name="city" placeholder="Enter city" />
                         <div id="errorcity" class="ms-2 text-danger"></div>
                       </div>
-
-                      <div class="row">
-                        <div class="form-group col-md-6">
-                          <input type="text" id="state" name="state" placeholder="Enter state" />
-                          <div id="errorstate" class="ms-2 text-danger"></div>
-                        </div>
-                        <div class="form-group col-md-6">
-                          <input type="text" id="pincode" name="pincode" placeholder="Enter pincode" />
-                          <div id="errorpincode" class="ms-2 text-danger"></div>
-                        </div>
+                      <div class="form-group ">
+                        <input type="text" id="phoneNumber" name="phoneNumber" placeholder="Enter your phone number" />
+                        <div id="errorphoneNumber" class="ms-2 text-danger"></div>
                       </div>
-                                    </div>
-
-
-                                    <br>
-                                    <div class="text-center">
-                                        <button class="btn btn-primary " type="submit">Save changes</button>
+                                            <div class="row">
+                                                <div class="form-group col-md-6">
+                                                    <input type="text" id="state" name="state"
+                                                        placeholder="Enter state" />
+                                                    <div id="errorstate" class="ms-2 text-danger"></div>
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <input type="text" id="pincode" name="pincode"
+                                                        placeholder="Enter pincode" />
+                                                    <div id="errorpincode" class="ms-2 text-danger"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="text-center">
+                                            <button class="btn btn-primary " type="submit">Save changes</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                        </form>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="order_review">
-                            <div class="mb-20">
-                                <h4>Your Orders</h4>
-                            </div>
-                            <div class="table-responsive order_table text-center">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th colspan="2">Product</th>
-                                            <th>Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-
-
-                                        <%// if (cart.length>0) {
-                                            //cart.forEach((cartData,index)=>{
-                                            %>
-
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="order_review">
+                                <div class="mb-20">
+                                    <h4>Your Orders</h4>
+                                </div>
+                                <div class="table-responsive order_table text-center">
+                                    <table class="table">
+                                        <thead>
                                             <tr>
-                                                <td class="image product-thumbnail">
-                                                    <img src="/assets/imgs/productIMG/<%=//cartData.product.image[0]%>"
-                                                        alt="#">
-                                                </td>
-                                                <td><i class="ti-check-box font-small text-muted mr-10"></i>
-                                                    <h5><a href="shop-product-full.html">
-                                                            <%=//cartData.product.name%>
-                                                        </a></h5>
-                                                    <span class="product-qty">x <%= //cartData.quantity %></span>
-                                                </td>
-                                                <td>$<%=//productTotal[index] %>
-                                                </td>
+                                                <th colspan="2">Product</th>
+                                                <th>Total</th>
                                             </tr>
+                                        </thead>
+                                        <tbody>
 
-                                            <% //}) } %>
+
+
+                                            <% if (cart.length>0) {
+                                                cart.forEach((cartData,index)=>{
+                                                %>
+
                                                 <tr>
-                                                    <th>SubTotal</th>
-                                                    <td class="product-subtotal" colspan="2">$<%=//subtotalWithShipping %>
+                                                    <td class="image product-thumbnail">
+                                                        <img src="/assets/imgs/productIMG/<%= cartData.productData_id.images[0]%>"
+                                                            alt="#">
+                                                    </td>
+                                                    <td><i class="ti-check-box font-small text-muted mr-10"></i>
+                                                        <h5><a href="shop-product-full.html">
+                                                                <%=cartData.productData_id.name%>
+                                                            </a></h5>
+                                                        <span class="product-qty">x <%= cartData.qty %></span>
+                                                    </td>
+                                                    <td>$<%= productTotal[index] %>
                                                     </td>
                                                 </tr>
-                                                <tr>
-                                                    <th>Shipping</th>
-                                                    <td colspan="2"><em>Free Shipping</em></td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Total</th>
-                                                    <td colspan="2" class="product-subtotal"><span
-                                                            class="font-xl text-brand fw-900">$<%=//subtotalWithShipping
-                                                                %></span></td>
-                                                </tr>
+
+                                                <% }) } %>
+                                                    <tr>
+                                                        <th>SubTotal</th>
+                                                        <td class="product-subtotal" colspan="2">$
+                                                            <%=subtotalWithShipping %>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Shipping</th>
+                                                        <td colspan="2"><em>Free Shipping</em></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Total</th>
+                                                        <td colspan="2" class="product-subtotal"><span
+                                                                class="font-xl text-brand fw-900">$
+                                                                <%=subtotalWithShipping %></span></td>
+                                                    </tr>
 
 
 
@@ -261,119 +227,152 @@
 
 
 
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-                            <div class="payment_method">
-                                <div class="mb-25">
-                                    <h5>Payment</h5>
+                                        </tbody>
+                                    </table>
                                 </div>
-                              
+                                <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                                <div class="payment_method">
+                                    <div class="mb-25">
+                                        <h5>Payment</h5>
+                                    </div>
+
                                     <div class="payment_option">
-    <div class="custome-radio">
-        <input class="form-check-input" value="CashOnDelivery" required="" type="radio" name="payment_option" id="exampleRadios1" checked="">
-        <label class="form-check-label" for="exampleRadios1" data-bs-toggle="collapse" data-target="#CashOnDelivery1" aria-controls="CashOnDelivery1">Cash On Delivery</label>
-    </div>
-    <div class="custome-radio">
-        <input class="form-check-input" value="CreditCard" required="" type="radio" name="payment_option" id="exampleRadios2">
-        <label class="form-check-label" for="exampleRadios2" data-bs-toggle="collapse" data-target="#CreditCard" aria-controls="CreditCard">Credit Card</label>
-    </div>
-    <div class="custome-radio">
-        <input class="form-check-input" value="PayPal" required="" type="radio" name="payment_option" id="exampleRadios3">
-        <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#PayPal" aria-controls="PayPal">PayPal</label>
-    </div>
-</div>
-                                
-                             
+                                        <div class="custome-radio">
+                                            <input class="form-check-input" value="CashOnDelivery" required=""
+                                                type="radio" name="payment_option" id="exampleRadios1" checked="">
+                                            <label class="form-check-label" for="exampleRadios1"
+                                                data-bs-toggle="collapse" data-target="#CashOnDelivery1"
+                                                aria-controls="CashOnDelivery1">Cash On Delivery</label>
+                                        </div>
+                                        <div class="custome-radio">
+                                            <input class="form-check-input" value="CreditCard" required="" type="radio"
+                                                name="payment_option" id="exampleRadios2">
+                                            <label class="form-check-label" for="exampleRadios2"
+                                                data-bs-toggle="collapse" data-target="#CreditCard"
+                                                aria-controls="CreditCard">Credit Card</label>
+                                        </div>
+                                        <div class="custome-radio">
+                                            <input class="form-check-input" value="PayPal" required="" type="radio"
+                                                name="payment_option" id="exampleRadios3">
+                                            <label class="form-check-label" for="exampleRadios3"
+                                                data-bs-toggle="collapse" data-target="#PayPal"
+                                                aria-controls="PayPal">PayPal</label>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <a href="/order/checkout" id="btn_checkout" class="btn btn-fill-out btn-block mt-30">Place Order</a>
                             </div>
-                            <a href="#" id="btn_checkout" class="btn btn-fill-out btn-block mt-30">Place Order</a>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    </main>
+            </section>
+        </main>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
-    <script>
+        <script>
 
 
-        let btn_checkout = document.getElementById('btn_checkout');
-        btn_checkout.addEventListener('click', function () {
-        
-                    placeOrder();
-                });
+            let btn_checkout = document.getElementById('btn_checkout');
+            btn_checkout.addEventListener('click', function () {
 
-        function placeOrder() {
-          
-                    const selectedAddress = document.getElementById('addressradio').value;
-                    let selectedPaymentMethod = document.querySelector('input[name="payment_option"]:checked').value;
-    
+                placeOrder();
+            });
 
-console.log(selectedAddress,"akakakk");   
+            function placeOrder() {
 
-                    if (!selectedAddress) {
-                        alert('Please select an address.');
-                        return;
-                    }
-               
-                    const address = selectedAddress;
-    
-                    const requestData = {
-
-                        address: address,
-                        paymentMethod: selectedPaymentMethod,
-                    };
-
-                    fetch('/checkout', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(requestData),
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                window.location.href = '/orderSuccess';
-                            } else {
-                                alert('Error occurred while placing order');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('Error occurred while placing order');
-                        });
+                // Get the selected address radio button
+                const selectedAddress = document.querySelector('input[name="checkAddress"]:checked');
+                
+                // If no address is selected, show an alert
+                if (!selectedAddress) {
+                    alert('Please select an address.');
+                    return;
                 }
-    
+
+                // Get the value (address ID) of the selected radio button
+                const address = selectedAddress.value;
+                
+                // Get the selected payment method
+                let selectedPaymentMethod = document.querySelector('input[name="payment_option"]:checked');
+                
+                // If no payment method is selected, show an alert
+                if (!selectedPaymentMethod) {
+                    alert('Please select a payment method.');
+                    return;
+                }
+
+                selectedPaymentMethod = selectedPaymentMethod.value;
+
+                // Create the request data object
+                const requestData = {
+                    address: address,
+                    paymentMethod: selectedPaymentMethod,
+                };
+                fetch('/order/checkout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '/order/ordersuccess';
+                        } else {
+                            alert('Error occurred while placing order');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error occurred while placing order');
+                    });
+            }
 
 
 
-    
+
+
         </script>
+        
         <script>
 
 
 document.addEventListener('DOMContentLoaded', function () {
-  const houseName = document.getElementById("houseName");
-  const errorhouseName = document.getElementById("errorhouseName");
-  const street = document.getElementById("street");
-  const errorstreet = document.getElementById("errorstreet");
+  const fullName = document.getElementById("fullName");
+  const errorfullName = document.getElementById("errorfullName");
+  const address = document.getElementById("address");
+  const errorsaddress = document.getElementById("erroraddress");
+  const landmark = document.getElementById("landmark");
+  const errorlandmark = document.getElementById("errorlandmark");
+  const locality = document.getElementById("locality");
+  const errorlocality = document.getElementById("errorlocality");
   const city = document.getElementById("city");
   const errorcity = document.getElementById("errorcity");
   const state = document.getElementById("state");
   const errorstate = document.getElementById("errorstate");
   const pincode = document.getElementById("pincode");
   const errorpincode = document.getElementById("errorpincode");
+  const phoneNumber= document.getElementById("phoneNumber");
+  const errorphoneNumber = document.getElementById("errorphoneNumber");
 
-  houseName.addEventListener('input', function () {
-    errorhouseName.innerHTML = houseName.value.trim() === "" ? "Please enter home name" : /^[a-zA-Z ]+$/.test(houseName.value) == false ? "Please enter alphabets only" : "";
+  fullName.addEventListener('input', function () {
+    errorfullName.innerHTML = fullName.value.trim() === "" ? "Please enter full name" : /^[a-zA-Z ]+$/.test(fullName.value) == false ? "Please enter alphabets only" : "";
   });
-  street.addEventListener('input', function () {
-    errorstreet.innerHTML = street.value.trim() === "" ? "Please enter street name" : /^[a-zA-Z ]+$/.test(street.value) == false ? "Please enter alphabets only" : "";
+  address.addEventListener('input', function () {
+    erroraddress.innerHTML = address.value.trim() === "" ? "Please enter street name" : /^[a-zA-Z ]+$/.test(address.value) == false ? "Please enter alphabets only" : "";
+  });
+  landmark.addEventListener('input', function () {
+    errorlandmark.innerHTML = landmark.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(landmark.value) == false ? "Please enter alphabets only" : "";
+  });
+  locality.addEventListener('input', function () {
+    errorlocality.innerHTML =locality.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(locality.value) == false ? "Please enter alphabets only" : "";
   });
   city.addEventListener('input', function () {
-    errorcity.innerHTML = city.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(city.value) == false ? "Please enter alphabets only" : "";
+    errorcity.innerHTML = city.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(city.value) == false ? "Please enter alphabets only" : "";
   });
   state.addEventListener('input', function () {
     errorstate.innerHTML = state.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(state.value) == false ? "Please enter alphabets only" : "";
@@ -382,34 +381,49 @@ document.addEventListener('DOMContentLoaded', function () {
   pincode.addEventListener('input', function () {
     errorpincode.innerHTML = pincode.value.trim() === "" ? "Please enter  number" : /^\d{6}$/.test(pincode.value) == false ? "Please enter valid  number" : "";
   });
+  phoneNumber.addEventListener('input', function () {
+    errorphoneNumber.innerHTML = phoneNumber.value.trim() === "" ? "Please enter  number" : /^\d{10}$/.test(phoneNumber.value) == false ? "Please enter valid  number" : "";
+  });
 
 
 });
 function validationChecking() {
-  const houseName = document.getElementById("houseName");
-  const errorhouseName = document.getElementById("errorhouseName");
-  const street = document.getElementById("street");
-  const errorstreet = document.getElementById("errorstreet");
+  const fullName = document.getElementById("fullName");
+  const errorfullName = document.getElementById("errorfullName");
+  const address = document.getElementById("address");
+  const errorsaddress = document.getElementById("erroraddress");
+  const landmark = document.getElementById("landmark");
+  const errorlandmark = document.getElementById("errorlandmark");
+  const locality = document.getElementById("locality");
+  const errorlocality = document.getElementById("errorlocality");
   const city = document.getElementById("city");
   const errorcity = document.getElementById("errorcity");
   const state = document.getElementById("state");
   const errorstate = document.getElementById("errorstate");
   const pincode = document.getElementById("pincode");
   const errorpincode = document.getElementById("errorpincode");
+  const phoneNumber= document.getElementById("phoneNumber");
+  const errorphoneNumber = document.getElementById("errorphoneNumber");
 
   let isValid = true;
 
-  errorhouseName.innerHTML = houseName.value.trim() === "" ? "Please enter home name" : /^[a-zA-Z ]+$/.test(houseName.value) == false ? "Please enter alphabets only" : "";
-  errorstreet.innerHTML = street.value.trim() === "" ? "Please enter street name" : /^[a-zA-Z ]+$/.test(street.value) == false ? "Please enter alphabets only" : "";
+  errorfullName.innerHTML = fullName.value.trim() === "" ? "Please enter home name" : /^[a-zA-Z ]+$/.test(fullName.value) == false ? "Please enter alphabets only" : "";
+  erroraddress.innerHTML = address.value.trim() === "" ? "Please enter street name" : /^[a-zA-Z ]+$/.test(address.value) == false ? "Please enter alphabets only" : "";
+  errorlandmark.innerHTML = landmark.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(landmark.value) == false ? "Please enter alphabets only" : "";
+  errorlocality.innerHTML =locality.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(locality.value) == false ? "Please enter alphabets only" : "";
   errorcity.innerHTML = city.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(city.value) == false ? "Please enter alphabets only" : "";
   errorstate.innerHTML = state.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(state.value) == false ? "Please enter alphabets only" : "";
   errorpincode.innerHTML = pincode.value.trim() === "" ? "Please enter pincode" : /^\d{6}$/.test(pincode.value) == false ? "Please enter valid pincode" : "";
+  errorphoneNumber.innerHTML = phoneNumber.value.trim() === "" ? "Please enter  number" : /^\d{10}$/.test(phoneNumber.value) == false ? "Please enter valid  phone number" : "";
 
   if (
-    errorhouseName.innerHTML ||
-    errorstreet.innerHTML ||
+    errorfullName.innerHTML ||
+    erroraddress.innerHTML ||
+    errorlandmark.innerHTML ||
+    errorlocality.innerHTML ||
     errorcity.innerHTML ||
     errorstate.innerHTML ||
+    errorphoneNumber.innerHTML ||
     errorpincode.innerHTML
   ) {
     isValid = false;
@@ -418,4 +432,3 @@ function validationChecking() {
   return isValid;
 }
 </script>
-   

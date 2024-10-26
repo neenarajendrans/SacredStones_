@@ -17,8 +17,9 @@ const Category= new mongoose.Schema({
     },
 
     is_listed:{
-        type:Boolean, // need category offer?
-        defalut:true
+        type:Boolean,
+        default:true,
+        required:true,
     },
     createdAt:{
         type:Date,

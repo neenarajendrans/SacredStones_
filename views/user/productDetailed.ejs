@@ -94,7 +94,8 @@
                                             <input type="hidden" value="<%= product._id %>" name="productData_id" id="">
                                             <div class="detail-extralink">
                                                 <% if(product.stock != 0) { %>
-                                                    <input type="number" name="qty" class="w-25 py-4" placeholder="0" min="1" max="10">
+                                                    <input type="hidden" name="stock" value="<%= product.stock %>" >
+                                                    <input type="number" name="qty" class="w-25 py-4" placeholder="0" min="1" max="5" required>
                                                     <div class="product-extra-link2">
                                                         <button type="submit" class="btn-product btn-cart"><span>Add To Cart</span></button>
                                                     </div>
@@ -102,12 +103,18 @@
                                                 <button aria-label="Add To Wishlist" class="btn action-btn hover-up p-2"><i class="fi-rs-heart"></i></button>
                                             </div>
                                         </form>
-                                        
+                                        <% if (product.stock > 0) { %>
+                                            
                                         <ul class="product-meta font-xs color-grey mt-50">
-                                            <!-- <li class="mb-5">SKU: <a href="#">FWM15VKT</a></li> -->
-                                            <!-- <li class="mb-5">Tags: <a href="#" rel="tag">Cloth</a>, <a href="#" rel="tag">Women</a>, <a href="#" rel="tag">Dress</a> </li> -->
+        
                                             <li>Availability:<span class="in-stock text-success ml-5"><%= product.stock %> Items In Stock</span></li>
                                         </ul>
+                                        <% } else{%>
+                                            <ul class="product-meta font-xs color-grey mt-50">
+                                                 <li>Availability:<span class="out-of-stock text-danger ml-5">Out of Stock</span></li>
+                                            </ul>
+                                            <%}%>
+
                                     </div>
                                     <!-- Detail Info -->
                                 </div>

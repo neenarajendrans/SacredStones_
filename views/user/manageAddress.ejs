@@ -14,6 +14,11 @@
             </div>
         </div>
     </div>
+    <div class="d-grid">
+        <a href="/addaddress">
+            <button class="btn btn-primary" style="margin-left: 1200px;">Add new address</button>
+        </a>
+    </div>
   
    
   <section class="pt-20 pb-20">
@@ -26,65 +31,42 @@
               <div class="col-lg-10 m-auto">
                   <div class="row">
                     
-                      <div class="col-md-4">
-                        
-                          <div class="dashboard-menu">
-                            
-                            <ul class="nav flex-column" role="tablist">
-                                <li class="nav-item">
-                                    <a class="nav-link active" style="display: flex; justify-content: center; align-items: center;" id="dashboard-tab" data-bs-toggle="tab" href="/addaddress" role="tab" aria-controls="dashboard" aria-selected="false">Add New Address</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link " id="dashboard-tab" data-bs-toggle="tab" href="/useraccount" role="tab" aria-controls="dashboard" aria-selected="false"><i class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="/orders" role="tab" aria-controls="orders" aria-selected="false"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="/wishlist" role="tab" aria-controls="track-orders" aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="/useraddress" role="tab" aria-controls="address" aria-selected="true"><i class="fi-rs-marker mr-10"></i>My Address</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab" href="/userprofile" role="tab" aria-controls="account-detail" aria-selected="true"><i class="fi-rs-user mr-10"></i>Account details</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="/logout"><i class="fi-rs-sign-out mr-10"></i>Logout</a>
-                                </li>
-                            </ul>
-                            
-                          </div>
-                      </div>
+                    
+                    <%- include ("../layout/accountSideBar")%>
+                    
                       <div class="col-md-8">
-                      
-                             
+                      <%if(addressData.length===0){  %>
+                        <p> Please Add your Address</p>
+                     <%   }%>
+                         
                         <div class="row">
+                            <% addressData?.forEach(address=>{
+                                if (address.is_listed ) {
+                             %>
                             <div class="col-lg-6">
+                                
                                 <div class="card mb-3 mb-lg-0">
                                     <div class="card-header">
-                                        <h5 class="mb-0">Billing Address</h5>
+                                    <h5 class="mb-0"><%= address?.fullName %></h5>
                                     </div>
                                     <div class="card-body">
-                                        <address>3522 Interstate<br> 75 Business Spur,<br> Sault Ste. <br>Marie, MI 49783</address>
-                                        <p>New York</p>
-                                        <a class="btn btn-sm font-sm btn-light rounded" href="#">Edit</a>
+                                        <address><%= address?.address %><br><%= address?.landmark %><br><%= address?.locality %> <br><%= address?.city%><br><%= address?.pincode %><br><%= address?.phoneNumber %></address>
+                                        <p><%= address.state %></p>
+                                        <div class="d-flex justify-content-end w-100">
+                                        <div class="">
+                                        <a href="/editaddress?id=<%= address._id %>" class="btn-small">Edit</a>
+                                        </div>
+                                        <div class="ms-2">
+                                        <a href="/deleteaddress?id=<%= address._id %>" class="btn-small">delete</a>
+                                        </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h5 class="mb-0">Shipping Address</h5>
-                                    </div>
-                                    <div class="card-body">
-                                        <address>4299 Express Lane<br>
-                                            Sarasota, <br>FL 34249 USA <br>Phone: 1.941.227.4444</address>
-                                        <p>Sarasota</p>
-                                        <a href="#" class="btn-small">Edit</a>
-                                    </div>
-                                </div>
-                            </div>
+                            
+                            
+                            
+                              <% } }); %>
                         </div>  
                      
                       </div>
@@ -92,9 +74,11 @@
               </div>
           </div>
       </div>
+     
 
       
   </section>
+ 
 </main>
 
 

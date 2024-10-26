@@ -9,11 +9,11 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.1.3/assets/owl.carousel.min.css" />
 
    <%- include ("../layout/cdn")%>
-
+    
 </head>
 
 <body>
-
+    
     <div class="hero_area">
 
         <%- include ("../layout/userHeader")%>
@@ -176,11 +176,25 @@
                     </div>
                 </div>
                 <%} })%>
-               
+                <% if(category.length ===0) {%>
+                    <p>No Products</p>
+               <% } %>
                
                 
            
         </div>
+        <!-- <div class="pagination-area mt-30 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start">
+                    <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                    <li class="page-item"><a class="page-link" href="#">02</a></li>
+                    <li class="page-item"><a class="page-link" href="#">03</a></li>
+                    <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                    <li class="page-item"><a class="page-link" href="#">16</a></li>
+                    <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                </ul>
+            </nav>
+        </div> -->
     </section>
 
     <!-- end All Product section -->
@@ -408,13 +422,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="map_container">
-                        <div class="map-responsive">
-                            <iframe
-                                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA0s1a7phLN0iaD6-UE7m4qP-z21pH0eSc&q=Eiffel+Tower+Paris+France"
-                                width="600" height="300" frameborder="0" style="border:0; width: 100%; height:100%"
-                                allowfullscreen></iframe>
-                        </div>
-                    </div>
+                       <!-- add something at the right of the contact page -->
                 </div>
             </div>
         </div>

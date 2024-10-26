@@ -55,12 +55,20 @@ const Product = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
   status:{
     type: String,
     enum: ['Available', 'out of stock','Discontinued'],
     required:true,
     default:'Available',
-  }
+  },
+  createdOn: {
+    type: Date,
+    default: Date.now()
+},
 },{timestamps:true});
 
 module.exports = mongoose.model("Product", Product);
