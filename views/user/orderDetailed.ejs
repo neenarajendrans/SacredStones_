@@ -21,11 +21,11 @@
         </div>
     </div>
 
-    <section class="content-main">
+    <section class="content-main" >
         <div class="content-header">
             <div>
-                <h5 class="content-title card-title">Order detail</h5>
-                <p>Details for Order ID: <%= order._id %></p>
+                <h3 class="content-title card-title" style="margin-left: 20px;">Order detail</h3>
+                
             </div>
         </div>
         <div class="card">
@@ -33,14 +33,17 @@
                 <div class="row align-items-center">
                     <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
                         <span>
-                            <i class="material-icons md-calendar_today"></i> <b>Wed, Aug 13, 2020, 4:34PM</b>
-                        </span> <br>
-                        <small class="text-muted">Order ID: 3453012</small>
+                            <h5><i class="material-icons md-calendar_today"></i> <b> Date of order: <%= new Date(order.orderDate).toLocaleDateString() %></b></h5>
+                        </span> <br> 
+                        <span>
+                            <h4><i class="material-icons md-calendar_today"></i> <b> Expected Delivery Data: <%= new Date(order.deliveryDate).toLocaleDateString() %></b></h4>
+                        </span><br>
+                        <small class="text-muted">Order ID:<%= order._id %></small>
                     </div>
                     <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                  
                         <a  class="btn bg-danger" href="/orderCancel?id=<%= order._id %>">cancel</a>
-                        <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i></a>
+                        <!-- <a class="btn btn-secondary print ms-2" href="#"><i class="icon material-icons md-print"></i>Print</a> -->
                     </div>
                 </div>
             </header>
@@ -54,10 +57,10 @@
                             <div class="text">
                                 <h6 class="mb-1">Customer</h6>
                                 <p class="mb-1">
-                                    <%=userData?.fullName %> <br> <%=userData?.phoneNumber %>
+                                    <%=userData?.fullName %> 
                                 </p>
                                 <br>
-                                <a href="#">View profile</a>
+                                <a href="/useraccount">View profile</a>
                             </div>
                         </article>
                     </div> 
@@ -69,9 +72,11 @@
                             <div class="text">
                                 <h6 class="mb-1">Order info</h6>
                                 <p class="mb-1">
-                                    Shipping: Fargo express <br> Pay method: <%=order?.paymentMethod %> <br> Status: <%=order?.orderStatus %>
+                                   Pay method: <%=order?.paymentMethod %> 
+                                   <br> Payment status:<%= order.paymentStatus%>
+                                   <br> Order status: <%=order?.orderStatus %>
                                 </p>
-                                <a href="#">Download info</a>
+                                <!-- <a href="#">Download info</a> -->
                             </div>
                         </article>
                     </div> 
@@ -83,16 +88,31 @@
                             <div class="text">
                                 <h6 class="mb-1">Deliver to</h6>
                                 <p class="mb-1">
-                                    City:   <%= order.address %>,<br> <%=order?.address?.street %> <br><%=order?.address?.houseName %> <br> <%=order?.address?.pincode %>
+                                    Receiver name:  <%= order.address.fullName %>
+                                    <br>
+                                      Address: <%= order.address.address %>
+                                      <br>
+                                      locality: <%= order.address.locality %>
+                                      <br>
+                                      City: <%= order.address.city %>
+                                      <br>
+                                      Landmark: <%= order.address.landmark %>
+                                      <br>
+                                      State: <%= order.address.state %>
+                                      <br>
+                                      PIN code:<%= order.address.pincode %>
+                                      <br>
+                                      Moblie number:  <%= order.address.phoneNumber %>
+                                      
                                 </p>
-                                <a href="#">View profile</a>
+                                
                             </div>
                         </article>
                     </div> 
                 </div> 
-                <div class="row">
+                <div class="row" style="width: 1650px;">
                     <div class="col-lg-11">
-                        <div class="table-responsive">
+                        <div class="table-responsive" >
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -104,13 +124,13 @@
                                 </thead>
                                 <tbody>
                                     <% let subtotal=0; order?.items.forEach(function(item) { 
-                                       let total=item?.product?.discount_price * item?.quantity; subtotal +=total; %>
+                                       let total=item?.product?.discount_price * item?.qty; subtotal +=total; %>
                                             <tr>
                                                 <td>
-                                                    <a class="itemside" href="#">
+                                                    <a class="itemside" href="/productdetail?id=<%= item?.product?._id %>">
                                                         <div class="left">
-                                                            <img src="/assets/imgs/productIMG/<%=item?.product?.image[0]%>"
-                                                                width="40" height="40" class="img-xs" alt="Item">
+                                                            <img src="/assets/imgs/productIMG/<%=item?.product?.images[0]%>"
+                                                                width="200" height="200" class="img-xs" alt="Item">
                                                         </div>
                                                         <div class="info">
                                                             <%=item?.product?.name %>
@@ -118,10 +138,10 @@
                                                     </a>
                                                 </td>
                                                 <td>
-                                                    ₹<%=item?.product?.discount_price %>
+                                                    ₹<%= item?.product?.discount_price %>
                                                 </td>
                                                 <td>
-                                                    <%=item.quantity %>
+                                                    <%=item.qty %>
                                                 </td>
                                                 <td class="text-end">
                                                     ₹<%= total %>
@@ -130,7 +150,7 @@
                                             <% 
                                                 }) %>
                                     <tr>
-                                        <td colspan="4">
+                                        <td colspan="4" style="width: 500px;">
                                             <article class="float-end">
                                                 <dl class="dlist">
                                                     <dt>Subtotal:</dt>

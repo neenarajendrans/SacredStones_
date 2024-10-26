@@ -33,7 +33,7 @@ const upload = multer({
     storage: productStorage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 10 * 1024 * 1024, // 10MB limit
+        fileSize: 20 * 1024 * 1024, // 20MB limit
         files: 3 // Maximum 3 files
     }
 });
@@ -42,7 +42,7 @@ const editProductUpload = multer({
     storage: productStorage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 10 * 1024 * 1024,
+        fileSize: 20 * 1024 * 1024,
     }
 }).fields([
     { name: 'newImage_0', maxCount: 1 },
@@ -70,7 +70,7 @@ const categoryUpload = multer({
     storage: categoryStorage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 10 * 1024 * 1024, // 10MB limit
+        fileSize: 20 * 1024 * 1024, // 20MB limit
         files: 1 // Maximum 1 files
     }
 });
@@ -79,7 +79,7 @@ const editCategoryUpload = multer({
     storage: categoryStorage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 10 * 1024 * 1024, // 10MB limit
+        fileSize: 20 * 1024 * 1024, // 20MB limit
     }
 }).fields([
     { name: 'newImage', maxCount: 1 }
