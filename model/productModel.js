@@ -51,6 +51,18 @@ const Product = new mongoose.Schema({
     // product offer is required?
     type: String,
   },
+  productoffer: {
+    type:Number,
+    default:0,
+  },
+  popularity:{
+    type:Number,
+    default:0
+  },
+  averagerating: {
+    type:Number,
+    default:0,
+  },
   is_listed: {
     type: Boolean,
     default: true,
@@ -65,6 +77,7 @@ const Product = new mongoose.Schema({
     required:true,
     default:'Available',
   },
+  
   createdOn: {
     type: Date,
     default: Date.now()

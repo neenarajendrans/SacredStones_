@@ -1,0 +1,432 @@
+<%- include ("../layout/admintemHeader") %>
+<%- include ("../layout/sideBar") %>
+    <main class="main-wrap">
+<style>
+    .order-details-page {
+        padding: 30px;
+        background: #f8f9fa;
+    }
+
+    .card {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        border: none;
+        margin-bottom: 20px;
+    }
+
+    .order-status {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .status-Pending {
+        background-color: #fff3cd;
+        color: #664d03;
+    }
+
+    .status-Processing {
+        background-color: #cff4fc;
+        color: #055160;
+    }
+
+    .status-Shipped {
+        background-color: #e2e3e5;
+        color: #41464b;
+    }
+
+    .status-Delivered {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .status-Cancelled {
+        background-color: #f8d7da;
+        color: #842029;
+    }
+
+    .product-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .timeline {
+        border-left: 2px solid #dee2e6;
+        padding: 0 20px;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    .timeline-item:before {
+        content: '';
+        position: absolute;
+        left: -27px;
+        top: 0;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #0d6efd;
+    }
+
+    .payment-label {
+        font-weight: 500;
+        min-width: 120px;
+        display: inline-block;
+    }
+    .status-Return-Request {
+background-color: #fff3cd;
+color: #664d03;
+}
+
+.status-Returned {
+background-color: #d1e7dd;
+color: #0f5132;
+}
+</style>
+
+<section class="order-details-page">
+    <div class="content-header mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="content-title">Order Details</h2>
+                <p class="text-muted">Order ID: #<%= order?.orderId %>
+                </p>
+            </div>
+          
+        </div>
+    </div>
+    <div>
+        <a href="/admin/ordermanagement" class="btn btn-primary" style="margin: 10px; ">
+            <i class="bi bi-arrow-left"></i> Back to Orders
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Order Status Card -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Order Status</h5>
+                    <div class="mb-4">
+                        <span class="order-status status-<%= order?.orderStatus %>">
+                            <%= order?.orderStatus %>
+                        </span>
+                    </div>
+                    
+
+                    <% if (order?.OrderStatus !=='Delivered' && order?.orderStatus !=='Cancelled' ) { %>
+                        <form action="/admin/order/update/<%= order?._id %>" method="POST">
+                            <div class="mb-3">
+                                <select name="status" class="form-select">
+                                    <option value="Placed" <%= order?.orderStatus === 'Placed' ? 'selected' : '' %>>
+                                        Placed
+                                    </option>
+                            
+                                    <option value="Processing" <%= order?.orderStatus === 'Processing' ? 'selected' : '' %>>
+                                        Processing
+                                    </option>
+                                    <option value="Shipped" <%= order?.orderStatus === 'Shipped' ? 'selected' : '' %>>
+                                        Shipped
+                                    </option>
+                                    <option value="Confirmed" <%= order?.orderStatus === 'Confirmed' ? 'selected' : '' %>>
+                                        Confirmed
+                                    </option>
+                                    <option value="Delivered" <%= order?.orderStatus === 'Delivered' ? 'selected' : '' %>>
+                                        Delivered
+                                    </option>
+                                    <option value="Cancelled" <%= order?.orderStatus === 'Cancelled' ? 'selected' : '' %>>
+                                        Cancelled
+                                    </option>
+                                    <option value="Return Request" <%= order?.orderStatus === 'Return Request' ? 'selected' : '' %>>
+                                        Return Request
+                                    </option>
+                                    <% if (order.orderStatus === 'Return Request') { %>
+                                        <option value="Returned" <%= order?.orderStatus === 'Returned' ? 'selected' : '' %>>
+                                            Returned
+                                        </option>
+                                    <% } %>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 mb-2">
+                                Update Status
+                            </button>
+                        </form>
+
+                        <% if (order.orderStatus !== 'Return Request') { %>
+                            <form action="/admin/order/cancel/<%= order?._id %>" method="POST">
+                                <button type="submit" class="btn btn-danger w-100"
+                                    onclick="return confirm('Are you sure you want to cancel this order?')">
+                                    Cancel Order
+                                </button>
+                            </form>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Details Card -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Customer Details</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong>
+                                <%= order?.address?.user_id?.fullName %>
+                            </p>
+                            <p><strong>Email:</strong>
+                                <%= order?.address?.user_id?.email %>
+                            </p>
+                            
+                           
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Shipping Address</h6>
+                            <p>
+                                <%= order?.address?.fullName %><br>
+                                    <%= order?.address.address%><br>
+                                    <%= order?.address.landmark %><br>
+                                    <%= order?.address?.locality %><br>
+                                        <%= order?.address?.city %><br>
+                                            
+                                                <%= order?.address?.state %> <br>
+                                             PIN code:   <%= order?.address?.pincode %><br>
+                                                        Phone: <%= order?.address?.phoneNumber %><br>
+                                                            <!-- <% //if (order?.deliveryAddress?.altPhone) { %>
+                                                                Alt Phone: <%= //order?.deliveryAddress?.altPhone %>
+                                                                    <% //} %> -->
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Order Items Card -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Order Items</h5>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th class="text-end">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% order?.items?.forEach(item=> { %>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img  width="60"
+                                        height="60" src="/assets/imgs/productIMG/<%= item.product.images[0] %>"
+                                            alt="<%= item?.product?.name %>" class="product-img me-3">
+                                        <div>
+                                            <h6 class="mb-0">
+                                                <%= item?.product?.name %>
+                                            </h6>
+                                            <small class="text-muted">
+                                                <%= item?.product?.category?.name %>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>₹<%= item?.price %>
+                                </td>
+                                <td>
+                                    <%= item?.qty %>
+                                </td>
+                                <td class="text-end">₹<%= item?.price * item?.qty %>
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
+                            <td class="text-end">₹<%= order?.totalAmount %>
+                            </td>
+                        </tr>
+                        <% if (order?.discount> 0) { %>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Discount:</strong></td>
+                                <td class="text-end">-₹<%= order?.discount %>
+                                </td>
+                            </tr>
+                            <% } %>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                    <td class="text-end"><strong>₹<%= order?.finalAmount %></strong></td>
+                                </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Information -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Payment Information</h5>
+                    <p>
+                        <span class="payment-label">Payment Method:</span>
+                        <%= order?.paymentMethod %>
+                    </p>
+                    <p>
+                        <span class="payment-label">Payment Status:</span>
+                        <span class="badge <%= order?.paymentStatus === 'Paid' ? 'bg-success' : 'bg-warning' %>">
+                            <%= order?.paymentStatus %>
+                        </span>
+                    </p>
+
+                </div>
+            </div>
+           
+        </div>
+        <% if (order.returnReason) { %>
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">Return Information</h5>
+                        <p><strong>Return Reason:</strong> <%= order?.returnReason %></p>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
+        <!-- Order Timeline -->
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Order Timeline</h5>
+                    <div class="timeline">
+                        <!-- Order Placed - Always shown -->
+                        <div class="timeline-item">
+                            <p class="mb-0"><strong>Order Placed</strong></p>
+                            <small class="text-muted">
+                                <%= new Date(order?.orderDate).toLocaleDateString() %>
+                            </small>
+                        </div>
+        
+                        <!-- Processing -->
+                        <% if (['Processing','Confirmed', 'Shipped', 'Delivered', 'Return Request', 'Returned'].includes(order?.orderStatus)) { %>
+                            <div class="timeline-item">
+                                <p class="mb-0"><strong>Order Processing</strong></p>
+                                <small class="text-muted">Status updated to Processing</small>
+                            </div>
+                        <% } %>
+        
+                        <!-- Shipped -->
+                        <% if (['Shipped', 'Delivered', 'Return Request', 'Returned'].includes(order?.orderStatus)) { %>
+                            <div class="timeline-item">
+                                <p class="mb-0"><strong>Order Shipped</strong></p>
+                                <small class="text-muted">Your order is on the way</small>
+                            </div>
+                        <% } %>
+        
+                        <!-- Delivered -->
+                        <% if (['Delivered', 'Return Request', 'Returned'].includes(order?.orderStatus)) { %>
+                            <div class="timeline-item">
+                                <p class="mb-0"><strong>Order Delivered</strong></p>
+                                <small class="text-muted">Delivered successfully</small>
+                            </div>
+                        <% } %>
+        
+                        <!-- Return Request -->
+                        <% if (['Return Request', 'Returned'].includes(order?.orderStatus)) { %>
+                            <div class="timeline-item">
+                                <p class="mb-0"><strong>Return Requested</strong></p>
+                                <small class="text-muted">Customer requested a return</small>
+                            </div>
+                        <% } %>
+        
+                        <!-- Returned -->
+                        <% if (order?.orderStatus === 'Returned') { %>
+                            <div class="timeline-item">
+                                <p class="mb-0"><strong>Return Approved</strong></p>
+                                <small class="text-muted">Return request approved</small>
+                            </div>
+                        <% } %>
+        
+                        <!-- Cancelled - Show only if order is cancelled -->
+                        <% if (order?.orderStatus === 'Cancelled') { %>
+                            <div class="timeline-item">
+                                <p class="mb-0"><strong>Order Cancelled</strong></p>
+                                <small class="text-muted">Order has been cancelled</small>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <style>
+            .timeline {
+                border-left: 2px solid #dee2e6;
+                padding: 0 20px;
+                margin-left: 20px;
+            }
+        
+            .timeline-item {
+                position: relative;
+                padding-bottom: 25px;
+            }
+        
+            .timeline-item:before {
+                content: '';
+                position: absolute;
+                left: -26px;
+                top: 0;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: #0d6efd;
+            }
+        
+            .timeline-item:last-child {
+                padding-bottom: 0;
+            }
+        
+            .timeline-item p {
+                margin-bottom: 0;
+            }
+        
+            .timeline-item strong {
+                color: #495057;
+            }
+        
+            .timeline-item small {
+                display: block;
+                margin-top: 5px;
+                color: #6c757d;
+            }
+        
+            @media (max-width: 768px) {
+                .timeline {
+                    margin-left: 10px;
+                    padding: 0 10px;
+                }
+        
+                .timeline-item:before {
+                    left: -16px;
+                }
+        
+                .timeline-item {
+                    padding-bottom: 20px;
+                }
+            }
+        </style>
+    </div>
+</section>

@@ -284,14 +284,121 @@ const getContactPage = asyncHandler(async (req, res) => {
   res.render("user/contact");
 });
 
-//@des Get Jewellery page
+//@des Get Jewellery page/product listing page
 //@route Get /jewellery
 //@access authorized User
 const getJewelleryPage = asyncHandler(async (req, res) => {
-  const product = await Product.find({});
-  const category = await Category.find({});
-  res.render("user/jewellery", { product, category });
+  const userId = req.session.user_id;
+  const userData = await User.findById({ _id: userId });
+
+  // Pagination parameters
+  const page = Math.max(1, parseInt(req.query.page) || 1);
+  const limit = Math.max(1, Math.min(50, parseInt(req.query.limit) || 12));
+  const skip = (page - 1) * limit;
+
+  // Filter parameters
+  const searchQuery = req.query.search?.trim() || '';
+  const category = req.query.category;
+  const sortBy = req.query.sortBy || 'new-arrivals';
+  const minPrice = parseFloat(req.query.minPrice) || 0;
+  const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice) : Number.MAX_VALUE;
+
+  // Build query
+  const baseQuery = {
+      is_listed: true,
+      isDeleted: false
+  };
+
+  // Add search conditions
+  if (searchQuery) {
+      baseQuery.$or = [
+          { name: { $regex: new RegExp(searchQuery, 'i') } },
+          { description: { $regex: new RegExp(searchQuery, 'i') } }
+      ];
+  }
+
+  // Add category filter
+  if (category) {
+      baseQuery.category = category;
+  }
+
+  // Add price filter
+  baseQuery.discount_price = {
+      $gte: minPrice,
+      $lte: maxPrice
+  };
+
+  // Sort configuration
+  const sortConfig = {
+      'popularity': { popularity: -1 },
+      'price-low-high': { discount_price: 1 },
+      'price-high-low': { discount_price: -1 },
+      'new-arrivals': { createdAt: -1 },
+      'a-z': { name: 1 },
+      'z-a': { name: -1 }
+  };
+
+  try {
+      // Execute queries in parallel
+      const [products, totalProducts, categories] = await Promise.all([
+          Product.find(baseQuery)
+              .sort(sortConfig[sortBy] || sortConfig['new-arrivals'])
+              .skip(skip)
+              .limit(limit)
+              .populate('category')
+              .lean(),
+          Product.countDocuments(baseQuery),
+          Category.find({ is_listed: true }).lean()
+      ]);
+
+      // Calculate pagination
+      const totalPages = Math.ceil(totalProducts / limit);
+      
+      // Add search to user's history if logged in
+      if (userId && searchQuery) {
+          await User.findByIdAndUpdate(userId, {
+              $push: {
+                  searchHistory: {
+                      query: searchQuery,
+                      category: category,
+                      timestamp: new Date()
+                  }
+              }
+          });
+      }
+
+      // Prepare response
+      const responseData = {
+          products,
+          pagination: {
+              currentPage: page,
+              totalPages,
+              totalProducts,
+              hasNextPage: page < totalPages,
+              hasPrevPage: page > 1
+          },
+          filters: {
+              searchQuery,
+              category,
+              sortBy,
+              minPrice,
+              maxPrice
+          },
+          categories,
+          user: userData
+      };
+
+      res.render("user/jewellery", responseData);
+
+  } catch (error) {
+      console.error('Error in getJewelleryPage:', error);
+      res.status(500).render('error', { message: 'Internal server error' });
+  }
 });
+
+module.exports = {
+  getJewelleryPage
+};
 
 //@des Get product details page
 //@route Get /productdetails
@@ -375,18 +482,53 @@ const updatePassword = asyncHandler(async (req, res) => {
 //@des Get orders page
 //@route Get /userorders
 //@access public
-const renderUserOrders = asyncHandler((req, res) => {
+const renderUserOrders = asyncHandler(async(req, res) => {
   res.render("user/orders")
 })
 //@des Get track order page
 //@route Get /usertrackorders
 //@access public
-const renderUserTrackOrder = asyncHandler((req, res) => {
+const renderUserTrackOrder = asyncHandler(async(req, res) => {
   res.render("user/orderPlaced")
+})
+//get edit profile
+const getEditProfile = asyncHandler(async(req, res) => {
+  
+const user = await User.findById({ _id:req.session.user_id });
+console.log(user);
+
+  res.render("user/editprofile",{user})
+})
+//edit user
+const editUser = asyncHandler(async(req, res) => {
+  
+const user = await User.findById({ _id:req.session.user_id });
+console.log(user);
+const { fullName, email, phoneNumber } = req.body;
+const updateData = await User.findByIdAndUpdate(
+  { _id: req.session.user_id },
+  {
+    $set: {
+      fullName,
+      email,
+      phoneNumber,
+ 
+    },
+  }
+);
+console.log(updateData+'3333333333333333333333 updated profile');
+
+
+res.redirect("/useraccount");
 })
 
 
+    
+ 
+
 module.exports = {
+  editUser,
+  getEditProfile,
   renderForgotPasswordEmail,
   getIndexPage,
   getHomePage,

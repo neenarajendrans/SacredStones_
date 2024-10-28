@@ -30,8 +30,14 @@
                           <h5 class="mb-0">Hello, <%= user.fullName.split(' ')[0] %> !</h5>
                         </div>
                         <div class="card-body">
-                          <p>From your account dashboard. you can easily check &amp; view your <a href="#">recent orders</a>, manage your <a href="#">shipping and billing addresses</a> and <a href="#">edit your password and account details.</a></p>
+                          <p>From your account dashboard. you can easily check &amp; view your recent orders, manage your shipping and billing addresses and edit your password and account details.</p>
                         </div>
+                        <% if (user.password) { %>
+                          <a href="/editprofile"><button name="userId" style="margin: 20px;" type="submit" class="edit-btn">
+                            <i class="fas fa-user-edit me-2"></i>Edit Profile
+                        </button></a>
+                           
+                      <% } %>
                       </div>
                     </div>
                   </div>

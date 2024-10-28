@@ -32,20 +32,22 @@
                       <div class="col-md-8">
                       
                         <% if(order.length>0){ %>
-                        <div class="card">
+                        <div class="card" style="width: 900px;">
                             
-                            <div class="card-header">
+                            <div class="card-header" >
                                 <h5>Your Orders</h5>
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive">
+                                <div class="table-responsive" >
                                     <table class="table">
                                         <thead>
                                             <tr>
                                                 <th>Order Id</th>
                                                 <th>Date of Order</th>
                                                 <th>Delivery date</th>
-                                                <th>Status</th>
+                                                <th>Customer name</th>
+                                                <th>Payment Status</th>
+                                                <th>Order Status</th>
                                                 <th>Total</th>
                                                 <th>Actions</th>
                                             </tr>
@@ -59,7 +61,9 @@
                                                 <td>     <%= new Date(order_data.orderDate).toLocaleDateString() %></td>
                                                 <td>     <%= new Date(order_data.deliveryDate).toLocaleDateString() %></td>
                                                
-                                                <td><%= order_data.status %></td>
+                                                <td><%= order_data.user_id.fullName %></td>
+                                                <td><%= order_data.paymentStatus %></td>
+                                                <td><%= order_data.orderStatus %></td>
                                                 <td><%= order_data.totalAmount %></td>
                                                 <td><a href="/order/orderdetails/<%= order_data?._id%>" class="btn-small d-block">View</a></td>
                                             </tr>

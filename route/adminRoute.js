@@ -3,6 +3,7 @@ const adminRoute = express.Router();
 const adminController = require('../controller/admin/adminController');
 const categoryController = require('../controller/admin/categoryController');
 const productController = require('../controller/admin/productController');
+const orderController = require('../controller/admin/orderController');
 
 const {upload,categoryUpload,editCategoryUpload,editProductUpload} = require('../middleware/multer');
 const { isAdminLoggedin } = require('../middleware/authenticationMiddleware');
@@ -37,8 +38,14 @@ adminRoute.get('/blockuser',isAdminLoggedin,adminController.blockUser)
 adminRoute.get('/unblockuser',isAdminLoggedin,adminController.unblockUser)
 // adminRoute.get('/users',adminController.getPermittedUsers)
 
-adminRoute.get("/ordermanagement", isAdminLoggedin, adminController.getOrderManagement);
-// adminRoute.get('/unlistUser',isAdminLoggedin,adminController.listUser)
+
+// Order Mananagemet Route
+adminRoute.get("/ordermanagement", isAdminLoggedin, orderController.getOrderPage);
+adminRoute.get('/orders/:orderId', isAdminLoggedin,orderController.getOrderDetails);
+
+
+adminRoute.post('/order/update/:id', isAdminLoggedin,orderController.updateOrderStatus); 
+adminRoute.post('/order/cancel/:id', isAdminLoggedin, orderController.cancelOrder);
 
 
 

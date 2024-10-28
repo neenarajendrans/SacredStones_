@@ -130,9 +130,7 @@ const ErrorPage = asyncHandler(async (req, res) => {
 const Page = asyncHandler(async (req, res) => {
   res.render("admin/adminPanel");
 });
-const getOrderManagement = asyncHandler(async (req, res) => {
-  res.render("admin/orderManagement");
-});
+
 // const getAdminDashboardPage = asyncHandler(async (req, res) => {
 //   res.render("admin/adminPanel");
 // });
@@ -142,4 +140,4 @@ const getOrderManagement = asyncHandler(async (req, res) => {
 
 
 
-module.exports = { getOrderManagement, ErrorPage,logout,getAdminLoginPage, getAdminDashboardPage, adminLogin ,loadUserManagement , blockUser,unblockUser};
+module.exports = { ErrorPage,logout,getAdminLoginPage, getAdminDashboardPage, adminLogin ,loadUserManagement , blockUser,unblockUser};

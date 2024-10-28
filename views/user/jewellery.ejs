@@ -161,35 +161,131 @@
 <body>
     <%- include ("../layout/userHeader")%>
     
-    <div class="filter-sort-container">
-        <label for="product-type">
-            Filter by
-            <select name="product-type" id="product-type" class="filter">
-                <option value="0">All Jewellery</option>
-                <option value="1">Earrings</option>
-                <option value="2">Hand chain</option>
-                <option value="3">Bangles</option>
-                <option value="3">Necklaces</option>
-                <option value="3">Rings</option>
-                <option value="3">Pendent Necklaces</option>
-            </select>
-        </label>
-        <label for="sort">
-            Sort by
-            <select name="sort" id="sort">
-                <option value="name">Name</option>
-                <option value="price">Price</option>
-                <option value="date">New</option>
-            </select>
-        </label>
-    </div>
+    <style>
+        .filter-sort-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #f5f5f5;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-group {
+            flex: 1;
+            max-width: 400px;
+            display: flex;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+
+        .search-button {
+            padding: 8px 15px;
+            background-color: #e4a333;
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+
+        .price-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .price-input {
+            width: 100px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .filter-sort-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-group {
+                max-width: 100%;
+            }
+        }
+
+        .apply-filters {
+            padding: 8px 20px;
+            background-color: #e4a333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+        
+        <div class="filter-sort-container">
+            <div class="filter-group">
+                <select class="filter-select" id="category">
+                    <option value="">All Categories</option>
+                    
+                    <% categories.forEach(element => { %>
+                        <option value=<%= element._id %>><%= element.name %></option>
+                    <% }) %>
+                </select>
+    
+                <select class="filter-select" id="sortBy">
+                    <option value="popularity">Popularity</option>
+                    <option value="price-low-high">Price: Low to High</option>
+                    <option value="price-high-low">Price: High to Low</option>
+                    <option value="new-arrivals">New Arrivals</option>
+                    <option value="a-z">A to Z</option>
+                    <option value="z-a">Z to A</option>
+                </select>
+            </div>
+    
+            <div class="price-filter">
+                <input type="number" id="minPrice" class="price-input" placeholder="Min Price">
+                <span>-</span>
+                <input type="number" id="maxPrice" class="price-input" placeholder="Max Price">
+            </div>
+    
+            <div class="search-group">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search jewelry...">
+                <button class="search-button">
+                    <i class="fa fa-search"></i>
+                </button>
+            </div>
+    
+            <button class="apply-filters" onclick="applyFilters()">Apply Filters</button>
+            <button class="apply-filters" onclick="clearFilters()">Clear Filters</button>
+        </div>
 <section class="price_section layout_padding">
     <div class="container">
         <div class="heading_container">
             <h2>All Products</h2>
         </div>
         <div class="price_container">
-            <% product.forEach((ele) => { %>
+            <% products.forEach((ele) => { %>
                 <% if(ele.is_listed) { %>
                     <div class="product-box">
                         <div class="product-image">
@@ -226,7 +322,7 @@
                 <% } %>
             <% }) %>
         </div>
-        <% if(product.length ===0) {%>
+        <% if(products.length ===0) {%>
             <p>No Products</p>
        <% } %>
     </div>
@@ -356,5 +452,80 @@
     <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="js/bootstrap.js"></script>
     <script type="text/javascript" src="js/custom.js"></script>
+    <script>
+        function applyFilters() {
+            const currentUrl = new URL(window.location.href);
+            
+            // Get filter values
+            const category = document.getElementById('category').value;
+            const sortBy = document.getElementById('sortBy').value;
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+            const searchQuery = document.getElementById('searchInput').value;
+
+            // Clear existing parameters
+            currentUrl.searchParams.delete('category');
+            currentUrl.searchParams.delete('sortBy');
+            currentUrl.searchParams.delete('minPrice');
+            currentUrl.searchParams.delete('maxPrice');
+            currentUrl.searchParams.delete('search');
+            currentUrl.searchParams.delete('page');
+
+            // Add new parameters if they have values
+            if (category) currentUrl.searchParams.set('category', category);
+            if (sortBy) currentUrl.searchParams.set('sortBy', sortBy);
+            if (minPrice) currentUrl.searchParams.set('minPrice', minPrice);
+            if (maxPrice) currentUrl.searchParams.set('maxPrice', maxPrice);
+            if (searchQuery) currentUrl.searchParams.set('search', searchQuery);
+
+            // Navigate to filtered URL
+            window.location.href = currentUrl.toString();
+        }
+
+        function clearFilters() {
+        // Clear input fields
+        document.getElementById('category').value = '';
+        document.getElementById('sortBy').value = 'popularity';
+        document.getElementById('minPrice').value = '';
+        document.getElementById('maxPrice').value = '';
+        document.getElementById('searchInput').value = '';
+
+        // Reload the page without query parameters
+        const baseUrl = window.location.origin + window.location.pathname;
+        window.location.href = baseUrl;
+    }
+
+        // Add event listener for search button
+        document.querySelector('.search-button').addEventListener('click', applyFilters);
+        
+        // Add event listener for Enter key in search input
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyFilters();
+            }
+        });
+
+        // Load saved filters from URL on page load
+        window.addEventListener('load', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Set values from URL parameters
+            if (urlParams.has('category')) {
+                document.getElementById('category').value = urlParams.get('category');
+            }
+            if (urlParams.has('sortBy')) {
+                document.getElementById('sortBy').value = urlParams.get('sortBy');
+            }
+            if (urlParams.has('minPrice')) {
+                document.getElementById('minPrice').value = urlParams.get('minPrice');
+            }
+            if (urlParams.has('maxPrice')) {
+                document.getElementById('maxPrice').value = urlParams.get('maxPrice');
+            }
+            if (urlParams.has('search')) {
+                document.getElementById('searchInput').value = urlParams.get('search');
+            }
+        });
+    </script>
 </body>
 </html>

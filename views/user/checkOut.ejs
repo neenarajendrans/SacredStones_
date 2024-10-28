@@ -1,19 +1,20 @@
 <%- include('../Layout/usertem.ejs') %>
     <%- include ("../layout/cdn")%>
-    <style>
-        /* Align the radio button and label inline */
-        .radio-inline {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-    
-        /* Smaller radio button */
-        input[type="radio"] {
-            width: 20px;
-            height: 20px;
-        }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <style>
+            /* Align the radio button and label inline */
+            .radio-inline {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            /* Smaller radio button */
+            input[type="radio"] {
+                width: 20px;
+                height: 20px;
+            }
+        </style>
         <main class="main">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <a class="navbar-brand" href="#">
@@ -67,39 +68,43 @@
                         <div class="col-md-6">
 
                             <div class="row">
-                                <% addressData?.forEach((address, index) => { 
-                                    if (address.is_listed) { %> 
-                                        <div class="col-12">
-                                            <div class="card mb-3 mb-lg-0">
-                                                <div class="card-body d-flex">
-                                                    <address>
-                                                        <h5><%= address.fullName %></h5>
-                                                        <br>
-                                                        <%= address.address %><br>
+                                <% addressData?.forEach((address, index)=> {
+                                    if (address.is_listed) { %>
+                                    <div class="col-12">
+                                        <div class="card mb-3 mb-lg-0">
+                                            <div class="card-body d-flex">
+                                                <address>
+                                                    <h5>
+                                                        <%= address.fullName %>
+                                                    </h5>
+                                                    <br>
+                                                    <%= address.address %><br>
                                                         <%= address.landmark %><br>
-                                                        <%= address.city %><br>
-                                                        <%= address.state %><br>
-                                                        <%= address.pincode %><br>
-                                                        <%= address.phoneNumber %>
-                                                        <div class="">
-                                                            <div class="">
-                                                            <a href="/editaddress?id=<%= address._id %>" class="btn-small">Edit</a>
-                                                            </div>
-                                                           
-                                                        </div>
-                                                    </address>
-                                                    <div class="d-flex justify-content-end w-100">
-                                                        <div class="">
-                                                            <input type="radio" value="<%= address._id %>" name="checkAddress" id="addressradio_<%= index %>">
-                                                            <label for="addressradio_<%= index %>"></label>
-                                                        </div>
+                                                            <%= address.city %><br>
+                                                                <%= address.state %><br>
+                                                                    <%= address.pincode %><br>
+                                                                        <%= address.phoneNumber %>
+                                                                            <div class="">
+                                                                                <div class="">
+                                                                                    <a href="/editaddress?id=<%= address._id %>"
+                                                                                        class="btn-small">Edit</a>
+                                                                                </div>
+
+                                                                            </div>
+                                                </address>
+                                                <div class="d-flex justify-content-end w-100">
+                                                    <div class="">
+                                                        <input type="radio" value="<%= address._id %>"
+                                                            name="checkAddress" id="addressradio_<%= index %>">
+                                                        <label for="addressradio_<%= index %>"></label>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                <% } }); %>
+                                    </div>
+                                    <% } }); %>
                             </div>
-                            
+
 
                             <form action="/addAddress" method="post" onsubmit="return validationChecking()">
 
@@ -121,30 +126,35 @@
                                     <div id="collapseAddress" class="different_address collapse in">
                                         <div class="row">
                                             <div class="form-group">
-                        <input type="text" id="fullName" name="fullName" placeholder="Enter your Full name" />
-                        <div id="errorfullName" class="ms-2 text-danger"></div>
-                      </div>
-                      <div class="form-group">
-                        <input type="text" id="address" name="address" placeholder="Enter Address" />
-                        <div id="erroraddresss" class="ms-2 text-danger"></div>
-                      </div>
-                      <div class="form-group ">
-                        <input type="text" id="landmark" name="landmark" placeholder="Enter landmark" />
-                        <div id="errorlandmark" class="ms-2 text-danger"></div>
-                      </div>
-                      
-                      <div class="form-group ">
-                        <input type="text" id="locality" name="locality" placeholder="Enter your locality" />
-                        <div id="errorlocatity" class="ms-2 text-danger"></div>
-                      </div>
-                      <div class="form-group ">
-                        <input type="text" id="city" name="city" placeholder="Enter city" />
-                        <div id="errorcity" class="ms-2 text-danger"></div>
-                      </div>
-                      <div class="form-group ">
-                        <input type="text" id="phoneNumber" name="phoneNumber" placeholder="Enter your phone number" />
-                        <div id="errorphoneNumber" class="ms-2 text-danger"></div>
-                      </div>
+                                                <input type="text" id="fullName" name="fullName"
+                                                    placeholder="Enter your Full name" />
+                                                <div id="errorfullName" class="ms-2 text-danger"></div>
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="text" id="address" name="address"
+                                                    placeholder="Enter Address" />
+                                                <div id="erroraddresss" class="ms-2 text-danger"></div>
+                                            </div>
+                                            <div class="form-group ">
+                                                <input type="text" id="landmark" name="landmark"
+                                                    placeholder="Enter landmark" />
+                                                <div id="errorlandmark" class="ms-2 text-danger"></div>
+                                            </div>
+
+                                            <div class="form-group ">
+                                                <input type="text" id="locality" name="locality"
+                                                    placeholder="Enter your locality" />
+                                                <div id="errorlocatity" class="ms-2 text-danger"></div>
+                                            </div>
+                                            <div class="form-group ">
+                                                <input type="text" id="city" name="city" placeholder="Enter city" />
+                                                <div id="errorcity" class="ms-2 text-danger"></div>
+                                            </div>
+                                            <div class="form-group ">
+                                                <input type="text" id="phoneNumber" name="phoneNumber"
+                                                    placeholder="Enter your phone number" />
+                                                <div id="errorphoneNumber" class="ms-2 text-danger"></div>
+                                            </div>
                                             <div class="row">
                                                 <div class="form-group col-md-6">
                                                     <input type="text" id="state" name="state"
@@ -218,7 +228,8 @@
                                                         <th>Total</th>
                                                         <td colspan="2" class="product-subtotal"><span
                                                                 class="font-xl text-brand fw-900">$
-                                                                <%=subtotalWithShipping %></span></td>
+                                                                <%=subtotalWithShipping %>
+                                                            </span></td>
                                                     </tr>
 
 
@@ -262,7 +273,9 @@
 
 
                                 </div>
-                                <a href="/order/checkout" id="btn_checkout" class="btn btn-fill-out btn-block mt-30">Place Order</a>
+                                <button type="button" id="btn_checkout" class="btn btn-fill-out btn-block mt-30">Place
+                                    Order</button>
+
                             </div>
                         </div>
                     </div>
@@ -274,161 +287,197 @@
 
         <script>
 
+            document.addEventListener('DOMContentLoaded', function() {
+    let btn_checkout = document.getElementById('btn_checkout');
+    btn_checkout.addEventListener('click', function(e) {
+        e.preventDefault();
+        placeOrder();
+    });
 
-            let btn_checkout = document.getElementById('btn_checkout');
-            btn_checkout.addEventListener('click', function () {
+    function placeOrder() {
+        // Get the selected address radio button
+        const selectedAddress = document.querySelector('input[name="checkAddress"]:checked');
 
-                placeOrder();
+        // If no address is selected, show an alert
+        if (!selectedAddress) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Address Required',
+                text: 'Please select a delivery address.',
             });
+            return;
+        }
 
-            function placeOrder() {
+        // Get the value (address ID) of the selected radio button
+        const address = selectedAddress.value;
 
-                // Get the selected address radio button
-                const selectedAddress = document.querySelector('input[name="checkAddress"]:checked');
-                
-                // If no address is selected, show an alert
-                if (!selectedAddress) {
-                    alert('Please select an address.');
-                    return;
-                }
+        // Get the selected payment method
+        let selectedPaymentMethod = document.querySelector('input[name="payment_option"]:checked');
 
-                // Get the value (address ID) of the selected radio button
-                const address = selectedAddress.value;
-                
-                // Get the selected payment method
-                let selectedPaymentMethod = document.querySelector('input[name="payment_option"]:checked');
-                
-                // If no payment method is selected, show an alert
-                if (!selectedPaymentMethod) {
-                    alert('Please select a payment method.');
-                    return;
-                }
+        // If no payment method is selected, show an alert
+        if (!selectedPaymentMethod) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Payment Method Required',
+                text: 'Please select a payment method.',
+            });
+            return;
+        }
 
-                selectedPaymentMethod = selectedPaymentMethod.value;
+        selectedPaymentMethod = selectedPaymentMethod.value;
 
-                // Create the request data object
-                const requestData = {
-                    address: address,
-                    paymentMethod: selectedPaymentMethod,
-                };
-                fetch('/order/checkout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestData),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            window.location.href = '/order/ordersuccess';
-                        } else {
-                            alert('Error occurred while placing order');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Error occurred while placing order');
-                    });
+        // Create the request data object
+        const requestData = {
+            address: address,
+            paymentMethod: selectedPaymentMethod,
+        };
+
+        // Show loading state
+        Swal.fire({
+            title: 'Processing Order',
+            text: 'Please wait...',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            willOpen: () => {
+                Swal.showLoading();
             }
+        });
 
-
-
-
-
+        // Make the POST request
+        fetch('/order/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message with SweetAlert2
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Order Placed Successfully!',
+                    text: 'Thank you for your purchase.',
+                    confirmButtonText: 'View Order',
+                    allowOutsideClick: false,
+                    showCancelButton: false,
+                }).then((result) => {
+                    // Redirect to success page after user clicks button
+                    window.location.href = `/order/ordersuccess`;
+                });
+            } else {
+                // Show error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Order Failed',
+                    text: data.error || 'Failed to place order. Please try again.',
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'An unexpected error occurred. Please try again.',
+            });
+        });
+    }
+});
         </script>
-        
+
         <script>
 
 
-document.addEventListener('DOMContentLoaded', function () {
-  const fullName = document.getElementById("fullName");
-  const errorfullName = document.getElementById("errorfullName");
-  const address = document.getElementById("address");
-  const errorsaddress = document.getElementById("erroraddress");
-  const landmark = document.getElementById("landmark");
-  const errorlandmark = document.getElementById("errorlandmark");
-  const locality = document.getElementById("locality");
-  const errorlocality = document.getElementById("errorlocality");
-  const city = document.getElementById("city");
-  const errorcity = document.getElementById("errorcity");
-  const state = document.getElementById("state");
-  const errorstate = document.getElementById("errorstate");
-  const pincode = document.getElementById("pincode");
-  const errorpincode = document.getElementById("errorpincode");
-  const phoneNumber= document.getElementById("phoneNumber");
-  const errorphoneNumber = document.getElementById("errorphoneNumber");
+            document.addEventListener('DOMContentLoaded', function () {
+                const fullName = document.getElementById("fullName");
+                const errorfullName = document.getElementById("errorfullName");
+                const address = document.getElementById("address");
+                const errorsaddress = document.getElementById("erroraddress");
+                const landmark = document.getElementById("landmark");
+                const errorlandmark = document.getElementById("errorlandmark");
+                const locality = document.getElementById("locality");
+                const errorlocality = document.getElementById("errorlocality");
+                const city = document.getElementById("city");
+                const errorcity = document.getElementById("errorcity");
+                const state = document.getElementById("state");
+                const errorstate = document.getElementById("errorstate");
+                const pincode = document.getElementById("pincode");
+                const errorpincode = document.getElementById("errorpincode");
+                const phoneNumber = document.getElementById("phoneNumber");
+                const errorphoneNumber = document.getElementById("errorphoneNumber");
 
-  fullName.addEventListener('input', function () {
-    errorfullName.innerHTML = fullName.value.trim() === "" ? "Please enter full name" : /^[a-zA-Z ]+$/.test(fullName.value) == false ? "Please enter alphabets only" : "";
-  });
-  address.addEventListener('input', function () {
-    erroraddress.innerHTML = address.value.trim() === "" ? "Please enter street name" : /^[a-zA-Z ]+$/.test(address.value) == false ? "Please enter alphabets only" : "";
-  });
-  landmark.addEventListener('input', function () {
-    errorlandmark.innerHTML = landmark.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(landmark.value) == false ? "Please enter alphabets only" : "";
-  });
-  locality.addEventListener('input', function () {
-    errorlocality.innerHTML =locality.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(locality.value) == false ? "Please enter alphabets only" : "";
-  });
-  city.addEventListener('input', function () {
-    errorcity.innerHTML = city.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(city.value) == false ? "Please enter alphabets only" : "";
-  });
-  state.addEventListener('input', function () {
-    errorstate.innerHTML = state.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(state.value) == false ? "Please enter alphabets only" : "";
-  });
+                fullName.addEventListener('input', function () {
+                    errorfullName.innerHTML = fullName.value.trim() === "" ? "Please enter full name" : /^[a-zA-Z ]+$/.test(fullName.value) == false ? "Please enter alphabets only" : "";
+                });
+                address.addEventListener('input', function () {
+                    erroraddress.innerHTML = address.value.trim() === "" ? "Please enter street name" : /^[a-zA-Z ]+$/.test(address.value) == false ? "Please enter alphabets only" : "";
+                });
+                landmark.addEventListener('input', function () {
+                    errorlandmark.innerHTML = landmark.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(landmark.value) == false ? "Please enter alphabets only" : "";
+                });
+                locality.addEventListener('input', function () {
+                    errorlocality.innerHTML = locality.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(locality.value) == false ? "Please enter alphabets only" : "";
+                });
+                city.addEventListener('input', function () {
+                    errorcity.innerHTML = city.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(city.value) == false ? "Please enter alphabets only" : "";
+                });
+                state.addEventListener('input', function () {
+                    errorstate.innerHTML = state.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(state.value) == false ? "Please enter alphabets only" : "";
+                });
 
-  pincode.addEventListener('input', function () {
-    errorpincode.innerHTML = pincode.value.trim() === "" ? "Please enter  number" : /^\d{6}$/.test(pincode.value) == false ? "Please enter valid  number" : "";
-  });
-  phoneNumber.addEventListener('input', function () {
-    errorphoneNumber.innerHTML = phoneNumber.value.trim() === "" ? "Please enter  number" : /^\d{10}$/.test(phoneNumber.value) == false ? "Please enter valid  number" : "";
-  });
+                pincode.addEventListener('input', function () {
+                    errorpincode.innerHTML = pincode.value.trim() === "" ? "Please enter  number" : /^\d{6}$/.test(pincode.value) == false ? "Please enter valid  number" : "";
+                });
+                phoneNumber.addEventListener('input', function () {
+                    errorphoneNumber.innerHTML = phoneNumber.value.trim() === "" ? "Please enter  number" : /^\d{10}$/.test(phoneNumber.value) == false ? "Please enter valid  number" : "";
+                });
 
 
-});
-function validationChecking() {
-  const fullName = document.getElementById("fullName");
-  const errorfullName = document.getElementById("errorfullName");
-  const address = document.getElementById("address");
-  const errorsaddress = document.getElementById("erroraddress");
-  const landmark = document.getElementById("landmark");
-  const errorlandmark = document.getElementById("errorlandmark");
-  const locality = document.getElementById("locality");
-  const errorlocality = document.getElementById("errorlocality");
-  const city = document.getElementById("city");
-  const errorcity = document.getElementById("errorcity");
-  const state = document.getElementById("state");
-  const errorstate = document.getElementById("errorstate");
-  const pincode = document.getElementById("pincode");
-  const errorpincode = document.getElementById("errorpincode");
-  const phoneNumber= document.getElementById("phoneNumber");
-  const errorphoneNumber = document.getElementById("errorphoneNumber");
+            });
+            function validationChecking() {
+                const fullName = document.getElementById("fullName");
+                const errorfullName = document.getElementById("errorfullName");
+                const address = document.getElementById("address");
+                const errorsaddress = document.getElementById("erroraddress");
+                const landmark = document.getElementById("landmark");
+                const errorlandmark = document.getElementById("errorlandmark");
+                const locality = document.getElementById("locality");
+                const errorlocality = document.getElementById("errorlocality");
+                const city = document.getElementById("city");
+                const errorcity = document.getElementById("errorcity");
+                const state = document.getElementById("state");
+                const errorstate = document.getElementById("errorstate");
+                const pincode = document.getElementById("pincode");
+                const errorpincode = document.getElementById("errorpincode");
+                const phoneNumber = document.getElementById("phoneNumber");
+                const errorphoneNumber = document.getElementById("errorphoneNumber");
 
-  let isValid = true;
+                let isValid = true;
 
-  errorfullName.innerHTML = fullName.value.trim() === "" ? "Please enter home name" : /^[a-zA-Z ]+$/.test(fullName.value) == false ? "Please enter alphabets only" : "";
-  erroraddress.innerHTML = address.value.trim() === "" ? "Please enter street name" : /^[a-zA-Z ]+$/.test(address.value) == false ? "Please enter alphabets only" : "";
-  errorlandmark.innerHTML = landmark.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(landmark.value) == false ? "Please enter alphabets only" : "";
-  errorlocality.innerHTML =locality.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(locality.value) == false ? "Please enter alphabets only" : "";
-  errorcity.innerHTML = city.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(city.value) == false ? "Please enter alphabets only" : "";
-  errorstate.innerHTML = state.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(state.value) == false ? "Please enter alphabets only" : "";
-  errorpincode.innerHTML = pincode.value.trim() === "" ? "Please enter pincode" : /^\d{6}$/.test(pincode.value) == false ? "Please enter valid pincode" : "";
-  errorphoneNumber.innerHTML = phoneNumber.value.trim() === "" ? "Please enter  number" : /^\d{10}$/.test(phoneNumber.value) == false ? "Please enter valid  phone number" : "";
+                errorfullName.innerHTML = fullName.value.trim() === "" ? "Please enter home name" : /^[a-zA-Z ]+$/.test(fullName.value) == false ? "Please enter alphabets only" : "";
+                erroraddress.innerHTML = address.value.trim() === "" ? "Please enter street name" : /^[a-zA-Z ]+$/.test(address.value) == false ? "Please enter alphabets only" : "";
+                errorlandmark.innerHTML = landmark.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(landmark.value) == false ? "Please enter alphabets only" : "";
+                errorlocality.innerHTML = locality.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(locality.value) == false ? "Please enter alphabets only" : "";
+                errorcity.innerHTML = city.value.trim() === "" ? "Please enter city name" : /^[a-zA-Z ]+$/.test(city.value) == false ? "Please enter alphabets only" : "";
+                errorstate.innerHTML = state.value.trim() === "" ? "Please enter state name" : /^[a-zA-Z ]+$/.test(state.value) == false ? "Please enter alphabets only" : "";
+                errorpincode.innerHTML = pincode.value.trim() === "" ? "Please enter pincode" : /^\d{6}$/.test(pincode.value) == false ? "Please enter valid pincode" : "";
+                errorphoneNumber.innerHTML = phoneNumber.value.trim() === "" ? "Please enter  number" : /^\d{10}$/.test(phoneNumber.value) == false ? "Please enter valid  phone number" : "";
 
-  if (
-    errorfullName.innerHTML ||
-    erroraddress.innerHTML ||
-    errorlandmark.innerHTML ||
-    errorlocality.innerHTML ||
-    errorcity.innerHTML ||
-    errorstate.innerHTML ||
-    errorphoneNumber.innerHTML ||
-    errorpincode.innerHTML
-  ) {
-    isValid = false;
-  }
+                if (
+                    errorfullName.innerHTML ||
+                    erroraddress.innerHTML ||
+                    errorlandmark.innerHTML ||
+                    errorlocality.innerHTML ||
+                    errorcity.innerHTML ||
+                    errorstate.innerHTML ||
+                    errorphoneNumber.innerHTML ||
+                    errorpincode.innerHTML
+                ) {
+                    isValid = false;
+                }
 
-  return isValid;
-}
-</script>
+                return isValid;
+            }
+        </script>
