@@ -140,14 +140,23 @@
                         <div class="product-info">
                             <h6 class="product-name"><%= ele.name %></h6>
                             <div class="price-box">
-                                
+                                <% if(ele.total_price > ele.discount_price) {%>
+                                <span class="text-decoration-line-through text-muted me-2">₹<%=
+                                                ele.total_price %></span>
                                     <span class="discount-price">₹<%= ele.discount_price %></span>
-                                
+                                <%}else { %>
+                                    <span class="discount-price">₹<%= ele.discount_price %></span>
+                                    <% } %>
                             </div>
-                            <div class="action-box">
-                                <button class="add-to-cart-btn" data-product-id="<%= ele._id %>">
-                                    Add to Cart
-                                </button>
+                            
+                                <div class="action-box">
+                                    <form action="/cart" method="post">
+                                        <input type="text" name="qty" value="1" hidden>
+                                        <button class="add-to-cart-btn" name="productData_id" value="<%= ele._id %>">
+                                            Add to Cart
+                                        </button>
+                                    </form>
+                                   
                                 <a href="/productdetail?id=<%= ele._id %>" class="view-details-btn">View Details</a>
                             </div>
                         </div>

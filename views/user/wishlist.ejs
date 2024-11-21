@@ -1,0 +1,229 @@
+<%- include('../Layout/usertem.ejs') %>
+  <%- include ("../layout/cdn")%>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<div class="container mt-3">
+    <h1 class="text-center mb-3">My Wishlist</h1>
+    
+    <% if (!wishlist || wishlist.length === 0) { %>
+        <div class="alert alert-info" role="alert">
+            Your wishlist is empty. Start adding some products!
+        </div>
+        <a href="/jewellery"><button class="btn btn-primary">Start Shopping</button></a> 
+    <% } else { %>
+        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+            <% wishlist.forEach(item => { %>
+                <div class="col">
+                    <div class="card h-100 wishlist-item">
+                        <!-- Product Image -->
+                        <% if (item.images && item.images.length > 0) { %>
+                            <img src="/assets/imgs/productIMG/<%= item.images[0] %>" 
+                                 class="card-img-top" 
+                                 alt="<%= item.name %>"
+                                 style="height: 300px; object-fit: cover;">
+                        <% } else { %>
+                            <img src="/path/to/default-image.jpg" 
+                                 class="card-img-top" 
+                                 alt="Product Image">
+                        <% } %>
+                        
+                        
+
+                        <div class="card-body">
+                            <!-- Product Details -->
+                            <h5 class="card-title text-center"><%= item.name %></h5>
+                            <div class="product-details text-center">
+                                <p class="mb-1">
+                                    <small class="text-muted">Weight: <%= item.gross_weight %>g</small>
+                                </p>
+                                <p class="mb-1">
+                                    <small class="text-muted">Purity: <%= item.gold_purity %>K</small>
+                                </p>
+                                
+                                <!-- Price Display -->
+                                <div class="price-section mb-2">
+                                    <% if (item.discount_price && item.discount_price < item.total_price) { %>
+                                        <span class="text-decoration-line-through text-muted me-2">
+                                            ₹<%= item.total_price.toLocaleString() %>
+                                        </span>
+                                        <span class="text-primary fw-bold">
+                                            ₹<%= item.discount_price.toLocaleString() %>
+                                        </span>
+                                    <% } else { %>
+                                        <span class="text-primary fw-bold">
+                                            ₹<%= item.total_price.toLocaleString() %>
+                                        </span>
+                                    <% } %>
+                                </div>
+
+                                <!-- Added Date -->
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        <i class="far fa-calendar-alt me-1"></i>
+                                        Added: <%= new Date(item.addedOn).toLocaleDateString() %>
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Add to Cart Button -->
+                        <div class="card-footer bg-transparent border-top-0">
+                            <form action="/cart" method="post">
+                                <input type="text" name="qty" value="1" hidden>
+                                
+                                <button class="btn btn-remove w-100" name="productData_id" value="<%= item.productId %>"><i class="fi-rs-shopping-bag-add me-2"></i>
+                                    Add to Cart
+                                </button>
+                            </form>
+                            
+                            <!-- Remove Button -->
+                        <button onclick="removeFromWishlist('<%= item.productId %>')" 
+                            class="btn btn-remove w-100" style="margin-top: 20px;">
+                       remove
+                    </button>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+
+        <!-- Pagination -->
+        <% if (totalPages > 1) { %>
+            <nav aria-label="Wishlist pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                            <a class="page-link" href="/wishlist?page=<%= i %>"><%= i %></a>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
+        <% } %>
+    <% } %>
+</div>
+<script>
+    function removeFromWishlist(productId) {
+    // Show SweetAlert2 confirmation dialog
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you want to remove this item from your wishlist?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, remove it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/removefromwishlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ productId: productId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Removed!',
+                        text: 'Item has been removed from your wishlist.',
+                        showConfirmButton: false,
+                        
+                    });
+
+                    // Remove the product card from the DOM
+                    const productCard = document.querySelector(`button[onclick="removeFromWishlist('${productId}')"]`)
+                        .closest('.col');
+                    
+                    productCard.remove();
+
+                    // Check if wishlist is empty after removal
+                    const wishlistContainer = document.querySelector('.row');
+                    if (!wishlistContainer.children.length) {
+                        // If wishlist is empty, refresh the page to show empty state
+                        setTimeout(() => {
+                        location.reload()
+                         }, 2000);
+                    }
+                } else {
+                    // Show error message
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: data.message || 'Failed to remove item from wishlist'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Something went wrong! Please try again later.'
+                });
+            });
+        }
+    });
+}
+</script>
+<!-- <script>
+
+    // Client-side JavaScript function
+function removeFromWishlist(productId) {
+    // Show confirmation dialog
+    if (!confirm('Are you sure you want to remove this item from your wishlist?')) {
+        return;
+    }
+
+    fetch('/removefromwishlist', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId: productId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.message,
+                showConfirmButton: false,
+                timer: 2000
+            });
+
+            // Remove the product card from the DOM
+            const productCard = document.querySelector(`button[onclick="removeFromWishlist('${productId}')"]`)
+                .closest('.col');
+            
+            productCard.remove();
+
+            // Check if wishlist is empty after removal
+            const wishlistContainer = document.querySelector('.row');
+            if (!wishlistContainer.children.length) {
+                // If wishlist is empty, refresh the page to show empty state
+                location.reload();
+            }
+        } else {
+            // Show error message
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: data.message || 'Failed to remove item from wishlist'
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Something went wrong! Please try again later.'
+        });
+    });
+}
+</script> -->

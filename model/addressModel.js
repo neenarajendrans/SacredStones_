@@ -17,7 +17,7 @@ const address = new mongoose.Schema({
     pincode:{
         type:Number,
         required:true
-    },//is this correct or we have to use a single address array and inside it all the other details like pin locatity ...?
+    },
     locality:{
         type:String,
         required:true,

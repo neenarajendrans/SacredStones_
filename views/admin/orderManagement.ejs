@@ -6,35 +6,10 @@
             <div>
                 <h2 class="content-title card-title">Order List </h2>
             </div>
-            <div>
-                <input type="text" placeholder="Search order ID" class="form-control bg-white">
-            </div>
+            
         </div>
         <div class="card mb-4">
-            <header class="card-header">
-                <div class="row gx-3">
-                    <div class="col-lg-4 col-md-6 me-auto">
-                        <input type="text" placeholder="Search..." class="form-control">
-                    </div>
-                    <div class="col-lg-2 col-6 col-md-3">
-                        <select class="form-select">
-                            <option>Order Status</option>
-                            <option>Pending</option>
-                            <option>Processing</option>
-                            <option>Delivered</option>
-                            <option>Cancelled</option>
-                        </select>
-                    </div>
-                    <div class="col-lg-2 col-6 col-md-3">
-                        <select class="form-select">
-                            <option>Payment Status</option>
-                            <option>Paid</option>
-                            <option>Pending</option>
-                            <option>Failed</option>
-                        </select>
-                    </div>
-                </div>
-            </header>
+       
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -118,6 +93,16 @@
                 </div>
             </div>
         </div>
-        <!-- Pagination section remains the same -->
+        <div class="container mt-3">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-start mb-20" style="margin-right: 200px;">
+                  <% for(let i=1; i<=totalPages;i++){ %>
+                    <li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
+                      <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                    </li>
+                    <% } %>
+                </ul>
+            </nav>
+        </div>
     </section>
 </main

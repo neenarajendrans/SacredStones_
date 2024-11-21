@@ -33,12 +33,12 @@ const Product = new mongoose.Schema({
     required: true,
   },
   total_price: {
-    // regular price
+    // regular price / unit price
     type: Number,
     required: true,
   },
   discount_price: {
-    type: Number, // sale price
+    type: Number, 
     required: true,
   },
   stock: {
@@ -47,21 +47,9 @@ const Product = new mongoose.Schema({
     min: 0,
     max: 100,
   },
-  review: {
-    // product offer is required?
-    type: String,
-  },
-  productoffer: {
-    type:Number,
-    default:0,
-  },
   popularity:{
     type:Number,
     default:0
-  },
-  averagerating: {
-    type:Number,
-    default:0,
   },
   is_listed: {
     type: Boolean,
@@ -76,6 +64,10 @@ const Product = new mongoose.Schema({
     enum: ['Available', 'out of stock','Discontinued'],
     required:true,
     default:'Available',
+  },
+  isWishlisted: {
+    type: Boolean,
+    default: false,
   },
   
   createdOn: {

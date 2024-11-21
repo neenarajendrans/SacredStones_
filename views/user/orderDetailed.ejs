@@ -172,25 +172,20 @@
     </style>
 </head>
 <body>
-   <nav>
-    <%- include('../Layout/usertem.ejs') %>
-   </nav>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">
+            <img src="/img/logo_main.png" width="400" height="70" class="d-inline-block align-top" alt="Your Logo">
+            
+        </a>
+      
+    </nav>
 
-    <div class="page-header">
-        <div class="container">
-            <div class="breadcrumb">
-                <a href="/" class="text-decoration-none text-muted">Home</a>
-                <span>/</span>
-                <span class="text-primary">Order Details</span>
-            </div>
-        </div>
-    </div>
 
     <div class="container mt-4">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <div>
-                    <h4 class="mb-1">Order #<%= order._id.toString().slice(-8).toUpperCase() %></h4>
+                    <h4 class="mb-1">Order Id :<%= order.orderId%></h4>
                     <div class="text-muted">
                         Placed on: <%= new Date(order.orderDate).toLocaleDateString('en-US', { 
                             year: 'numeric', 
@@ -314,15 +309,19 @@
                                 <tfoot class="border-top">
                                     <tr>
                                         <td colspan="3" class="text-end">Subtotal:</td>
-                                        <td class="text-end">₹<%= subtotal.toLocaleString() %></td>
+                                        <td class="text-end">₹<%= order?.totalAmount %></td>
                                     </tr>
                                     <tr>
                                         <td colspan="3" class="text-end">Shipping:</td>
                                         <td class="text-end">₹0.00</td>
                                     </tr>
                                     <tr>
+                                        <td colspan="3" class="text-end" >Discount:</td>
+                                        <td class="text-end" style="color: rgb(8, 238, 58);">₹<%= order?.discount %></td>
+                                    </tr>
+                                    <tr>
                                         <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                        <td class="text-end"><strong>₹<%= subtotal.toLocaleString() %></strong></td>
+                                        <td class="text-end"><strong>₹<%= order?.finalAmount %></strong></td>
                                     </tr>
                                 </tfoot>
                             </table>

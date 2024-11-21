@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .summary-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .summary-card h3 {
+            color: #344767;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        .summary-stat {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .summary-stat p {
+            margin: 0;
+            color: #344767;
+        }
+        .summary-stat .stat-label {
+            font-size: 0.9rem;
+            color: #777;
+        }
+        .summary-stat .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .data-table {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .btn-download {
+            padding: 8px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .go-back-btn {
+            margin-bottom: 20px;
+        }
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body>
+   
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">
+        <img src="/img/logo_main.png" width="400" height="70" class="d-inline-block align-top" alt="Your Logo">
+        
+    </a>
+  
+</nav>
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3">Sales Report</h1>
+            <div>
+                <button type="button" class="btn btn-success btn-download" onclick="downloadReport('excel')">
+                    <i class="fas fa-file-excel"></i>
+                    Download Excel
+                </button>
+                <button type="button" class="btn btn-danger btn-download" onclick="downloadReport('pdf')">
+                    <i class="fas fa-file-pdf"></i>
+                    Download PDF
+                </button>
+                <a href="/admin/dashboard"><button  class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Go Back
+                </button></a>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <form id="reportForm">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <select id="reportType" name="reportType" class="form-select">
+                                <option value="">Select Report Type</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                                <option value="custom">Custom Date Range</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 custom-date d-none">
+                            <input type="date" id="startDate" name="startDate" class="form-control">
+                        </div>
+                        <div class="col-md-3 custom-date d-none">
+                            <input type="date" id="endDate" name="endDate" class="form-control">
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary w-100">Generate Report</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="summary-card">
+                    <h3>Total Sales</h3>
+                    <div class="summary-stat">
+                        <p class="stat-label">Number of Orders</p>
+                        <p class="stat-value"><%= salesReport?.totalSales || 0 %></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="summary-card">
+                    <h3>Total Amount</h3>
+                    <div class="summary-stat">
+                        <p class="stat-label">Revenue</p>
+                        <p class="stat-value">₹<%= salesReport?.totalAmount?.toLocaleString() || 0 %></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="summary-card">
+                    <h3>Total Discount</h3>
+                    <div class="summary-stat">
+                        <p class="stat-label">Savings Provided</p>
+                        <p class="stat-value">₹<%= salesReport?.totalDiscount?.toLocaleString() || 0 %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="data-table">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Total Price</th>
+                        <th>Final Amount</th>
+                        <th>Discount</th>
+                        <th>Coupon Code</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (salesReport?.orders?.length > 0) { %>
+                        <% salesReport.orders.forEach(order => { %>
+                            <tr>
+                                <td><%= order.orderId %></td>
+                                <td><%= new Date(order.date).toLocaleDateString() %></td>
+                                <td>₹<%= order.amount.toLocaleString() %></td>
+                                <td>₹<%= order.finalAmount.toLocaleString() %></td>
+                                <td>₹<%= order.discount.toLocaleString() %></td>
+                                <td><%= order.couponCode %></td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" class="text-center">No orders found</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Show/hide custom date inputs based on report type
+            $('#reportType').change(function() {
+                if ($(this).val() === 'custom') {
+                    $('.custom-date').removeClass('d-none');
+                } else {
+                    $('.custom-date').addClass('d-none');
+                    $('#startDate').val('');
+                    $('#endDate').val('');
+                }
+            });
+
+            // Handle form submission
+            $('#reportForm').submit(function(e) {
+                e.preventDefault();
+                const formData = $(this).serialize();
+               
+                window.location.href = `/admin/sales-report?${formData}`;
+            });
+
+            // Set form values from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentReportType = urlParams.get('reportType');
+            const currentStartDate = urlParams.get('startDate');
+            const currentEndDate = urlParams.get('endDate');
+
+            if (currentReportType) {
+                $('#reportType').val(currentReportType);
+                if (currentReportType === 'custom') {
+                    $('.custom-date').removeClass('d-none');
+                    $('#startDate').val(currentStartDate);
+                    $('#endDate').val(currentEndDate);
+                }
+            }
+        });
+
+        // Handle report downloads
+        function downloadReport(format) {
+            const reportType = $('#reportType').val();
+            const startDate = $('#startDate').val();
+            const endDate = $('#endDate').val();
+
+            const params = new URLSearchParams();
+            params.append('format', format);
+
+            if (reportType === 'custom' && startDate && endDate) {
+                params.append('startDate', startDate);
+                params.append('endDate', endDate);
+            } else if (reportType && reportType !== 'custom') {
+                params.append('reportType', reportType);
+            }
+
+           
+            window.location.href = `/admin/download-report?${params.toString()}`;
+        }
+
+        
+    </script>
+</body>
+</html>

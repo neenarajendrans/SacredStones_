@@ -8,6 +8,8 @@ orderRoute.get('/ordersuccess',orderController.loadOrderDetails);
 orderRoute.get('/orderdetails/:id',orderController.singleOrderDetails); 
 orderRoute.get('/cancelorder',orderController.getCancelOrderPage);
 orderRoute.post('/cancelorder',orderController.orderCancel);
+orderRoute.post('/updatestatus',orderController.updateOrderStatus);
+
 
 
 module.exports= orderRoute;

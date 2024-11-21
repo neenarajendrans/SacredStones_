@@ -5,11 +5,12 @@ const session = require('express-session')
 // User Authentication Middleware
 const isLoggedin = async(req, res, next) => {
   
-  if (req.session.user_id) {
+  if (req?.session?.user_id) {
     return next();
   } else {
+
     res.redirect("/login");
-  }
+  } // can i render login here are send the message?
 };
 
 // Cache-Control middleware

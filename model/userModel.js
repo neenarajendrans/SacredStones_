@@ -23,7 +23,6 @@ const user = mongoose.Schema(
     },
     googleId: {
       type: String,
-      
       required: false,
 
     },
@@ -47,8 +46,8 @@ const user = mongoose.Schema(
       },
     ],
     wallet: {
-      type: Number,
-      // default: 0,
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Wallet"
     },
     wishlist: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -62,9 +61,9 @@ const user = mongoose.Schema(
         type:Date,
         default:Date.now,
     },
-    referalCode:{   // not decided yet
+    referalCode:{  
         type:String,
-
+        required: false,
     },
     redeemed:{
         type:Boolean,
@@ -75,7 +74,7 @@ const user = mongoose.Schema(
     }],
     searchHistory:[{
         category:{
-            type:mongoose.Schema.Types.ObjectId, // for every search topic like popularity, featured... eveything need to be recorded?
+            type:mongoose.Schema.Types.ObjectId,
             ref:"Category",
         },
         searchOn:{
@@ -84,6 +83,6 @@ const user = mongoose.Schema(
         }
     }]
   },
-  { timestamps: true } // timestamp and createdOn required?
+  { timestamps: true } 
 );
 module.exports = mongoose.model("User", user);

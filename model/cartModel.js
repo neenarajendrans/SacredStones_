@@ -18,18 +18,6 @@ const cartSchema = new mongoose.Schema({
             min: 1,
 
         },
-        // price:{
-        //     type:Number,
-        //     required:true
-        // },
-        // status:{
-        //     type:String,
-        //     default:'Placed'
-        // },
-        // cancellationReason:{
-        //     type:String,
-        //     default:'none'
-        // }
     }],
     total:{
         type:Number,

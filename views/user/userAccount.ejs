@@ -1,18 +1,62 @@
 <%- include('../Layout/usertem.ejs') %>
 <%- include ("../layout/cdn")%>
+<style>
+  .referral-container {
+      background: linear-gradient(135deg, #6366f1, #818cf8);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.2);
+      text-align: center;
+      max-width: 400px;
+      margin: 2rem auto;
+      color: white;
+  }
 
+  .referral-title {
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      color: rgba(255, 255, 255, 0.9);
+      
+      letter-spacing: 1px;
+  }
+
+  .referral-code {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 1rem 2rem;
+      border-radius: 10px;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      margin: 1rem 0;
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+  }
+
+  .referral-code:hover {
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+  }
+
+  .copy-text {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 0.5rem;
+  }
+
+  @keyframes copyAnimation {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
+  }
+
+  .copied {
+      animation: copyAnimation 0.3s ease-in-out;
+  }
+</style>
 <main class="main">
   <%- include ("../layout/userHeader")%>
-  <div class="page-header breadcrumb-wrap">
-    <div class="container">
-      <div class="breadcrumb">
-        <a href="index.html" rel="nofollow">Home</a>
-        <span></span> Pages
-        <span></span>My Account
-        <span style="color: #395ae0;">Dashboard</span>
-      </div>
-    </div>
-  </div>
+
 
   <section class="pt-20 pb-20">
     <div class="container">
@@ -32,6 +76,13 @@
                         <div class="card-body">
                           <p>From your account dashboard. you can easily check &amp; view your recent orders, manage your shipping and billing addresses and edit your password and account details.</p>
                         </div>
+                        <div class="referral-container">
+                          <h3 class="referral-title">Your Referral Code</h3>
+                          <div class="referral-code" id="referralCode" onclick="copyToClipboard()">
+                              <%= user.referalCode %>
+                          </div>
+                          <p class="copy-text" id="copyText">Click to copy</p>
+                      </div>
                         <% if (user.password) { %>
                           <a href="/editprofile"><button name="userId" style="margin: 20px;" type="submit" class="edit-btn">
                             <i class="fas fa-user-edit me-2"></i>Edit Profile
@@ -44,6 +95,21 @@
                 </section> 
              
 </main>
+<script>
+  function copyToClipboard() {
+      const referralCode = document.getElementById('referralCode').innerText;
+      navigator.clipboard.writeText(referralCode).then(() => {
+          const copyText = document.getElementById('copyText');
+          copyText.innerText = 'Copied!';
+          copyText.classList.add('copied');
+          
+          setTimeout(() => {
+              copyText.innerText = 'Click to copy';
+              copyText.classList.remove('copied');
+          }, 2000);
+      });
+  }
+</script>
 
 
 

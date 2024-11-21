@@ -5,20 +5,26 @@ const OrdersSchema = new mongoose.Schema({
 
 
     orderId:{
-        type:String,
-        
-        
+        type:String, 
     },
     user_id:{
-        type:mongoose.mongo.ObjectId,
+        type:mongoose.Schema.Types.ObjectId,
         required:true,
         ref:"User"
     },
     items:[{
         product:{
-            type:mongoose.mongo.ObjectId,
+            type:mongoose.Schema.Types.ObjectId,
             required:true,
             ref:"Product"
+        },
+        name: {                 
+            type: String,
+            required: true
+        },
+        image: {              
+            type:[String],
+            required: true
         },
         qty:{
             type:Number,
@@ -65,14 +71,18 @@ const OrdersSchema = new mongoose.Schema({
     },
     orderStatus:{
         type:String,
-        enum : ['Placed','Processing','Shipped','Confirmed','Delivered','Cancelled','Return Request','Returned'],
+        enum : ['Pending','Placed','Processing','Shipped','Confirmed','Delivered','Cancelled','Return Request','Returned'],
         default: "Placed",
         required:true
     },
-    // invoiceDate:{
-    //     type:Date,
+    invoiceDate:{
+        type:Date,
 
-    // },
+    },
+      paymentFailureReason :{
+        type : String,
+        default : ''
+    },
     cancellationReason: {
         type: String,
         default: ''

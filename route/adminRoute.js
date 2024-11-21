@@ -4,6 +4,10 @@ const adminController = require('../controller/admin/adminController');
 const categoryController = require('../controller/admin/categoryController');
 const productController = require('../controller/admin/productController');
 const orderController = require('../controller/admin/orderController');
+const salesController = require('../controller/admin/salesController');
+const couponController = require('../controller/admin/couponController');
+const offerController = require('../controller/admin/offerController');
+const salesReportController = require('../controller/admin/salesController')
 
 const {upload,categoryUpload,editCategoryUpload,editProductUpload} = require('../middleware/multer');
 const { isAdminLoggedin } = require('../middleware/authenticationMiddleware');
@@ -42,14 +46,30 @@ adminRoute.get('/unblockuser',isAdminLoggedin,adminController.unblockUser)
 // Order Mananagemet Route
 adminRoute.get("/ordermanagement", isAdminLoggedin, orderController.getOrderPage);
 adminRoute.get('/orders/:orderId', isAdminLoggedin,orderController.getOrderDetails);
-
-
 adminRoute.post('/order/update/:id', isAdminLoggedin,orderController.updateOrderStatus); 
 adminRoute.post('/order/cancel/:id', isAdminLoggedin, orderController.cancelOrder);
 
+//salesReport mgmt
+adminRoute.get('/sales-report', salesReportController.getSalesReport);
+adminRoute.get('/download-report', salesReportController.downloadReport);
 
 
 
+//Offer Management
+adminRoute.get('/offer',offerController.offerPageLoad)//offerpage
+adminRoute.post('/offer', offerController.addOffer);//createoffer
+adminRoute.get('/activateoffer/:id', offerController.activateOffer);
+adminRoute.get('/deactivateoffer/:id', offerController.deactivateOffer);
+adminRoute.delete('/offer', offerController.deleteOffer);//deleteoffer
+
+// Supporting routes for products and categories
+// adminRoute.get('/products', offerController.getProducts);
+// adminRoute.get('/categories', offerController.getCategories);
+
+// Coupon Management
+adminRoute.get('/coupon',couponController.getCouponManagement)
+adminRoute.post('/createCoupons', couponController.createCoupon);
+adminRoute.post('/deleteCoupons/:id', couponController.deleteCoupon);
 
 
 module.exports = adminRoute;

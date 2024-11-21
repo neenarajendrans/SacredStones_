@@ -1,169 +1,204 @@
 <%- include('../Layout/usertem.ejs') %>
-  <%- include ("../layout/cdn")%>
-  <%- include ("../layout/userHeader.ejs")%>
-  
-    <main class="main">
-      
-        <div class="page-header breadcrumb-wrap">
-          <div class="container">
-            <div class="breadcrumb">
-              <a href="index.html" rel="nofollow">Home</a>
-              <span></span> Pages
-              <span></span> Account
-              <span style="color: #395ae0;">ACCOUNT DETAILS</span>
-            </div>
-          </div>
-        </div>
-        
+<%- include ("../layout/cdn")%>
+<%- include ("../layout/userHeader.ejs")%>
 
-        <section class="pt-50 pb-50">
+<main class="main">
+  <div class="page-header breadcrumb-wrap">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html" rel="nofollow">Home</a>
+        <span></span> Pages
+        <span></span> Account
+        <span style="color: #395ae0;">ACCOUNT DETAILS</span>
+      </div>
+    </div>
+  </div>
 
-          <div class="container">
-            <div class="row">
-              <div class="col-lg-10 m-auto">
-                <div class="row">
-                  <%- include ("../layout/accountSideBar")%>
-                    <div class="col-md-8">
-                      <div class="card">
-                        <div class="card-header">
-                          <h5>Edit Details</h5>
-                        </div>
-                        <div class="card-body">
-
-                          <form method="POST" id="myForm" action="/editprofile" onchange="return validation(event)">
-                            <div class="row">
-                              <div class="form-group col-md-12">
-                                <label>Full Name <span class="required">*</span></label>
-                                <input required="" id="name" class="form-control square" name="fullName" value="<%=user?.fullName%>"
-                                  type="text">
-                                  <div id="errorname" class="ms-2 text-danger"></div>
-                              </div>
-
-                              <div class="form-group col-md-12">
-                                <label>Email Address <span class="required">*</span></label>
-                                <input required="" id="email" class="form-control square" name="email" value="<%=user?.email%>"
-                                  type="email">
-                                  <div id="errorphone" class="ms-2 text-danger"></div>
-                              </div>
-                              <div class="form-group col-md-12">
-                                <label class="form-label">Phone</label>
-                                <input class="form-control" id="phoneNumber" type="tel" name="phoneNumber" value="<%= user?.phoneNumber %>"
-                                  id="user_phone" required>
-                                <div id="errorphoneNumber" class="ms-2 text-danger"> </div>
-                               
-                                <div class="col-md-12">
-                                  <button style="margin: 10px;" type="submit" class="btn btn-fill-out submit" name="submit"
-                                    value="Submit">Save
-                                    Changes</button>
-                                </div>
-                              </div>
-                          </form>
-                          <small><a href="/forgotpassword">Forgot password</a></small>
-                        </div>
+  <section class="pt-50 pb-50">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-10 m-auto">
+          <div class="row">
+            <%- include ("../layout/accountSideBar")%>
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-header">
+                  <h5>Edit Details</h5>
+                </div>
+                <div class="card-body">
+                  <form id="editProfileForm" novalidate>
+                    <div class="row">
+                      <div class="form-group col-md-12">
+                        <label>Full Name <span class="required">*</span></label>
+                        <input id="name" class="form-control square" name="fullName" value="<%=user?.fullName%>" type="text">
+                        <div id="nameError" class="error-message text-danger mt-1"></div>
                       </div>
 
+                      <div class="form-group col-md-12">
+                        <label>Email Address <span class="required">*</span></label>
+                        <input id="email" class="form-control square" name="email" value="<%=user?.email%>" type="email">
+                        <div id="emailError" class="error-message text-danger mt-1"></div>
+                      </div>
 
+                      <div class="form-group col-md-12">
+                        <label>Phone Number <span class="required">*</span></label>
+                        <input class="form-control" id="phoneNumber" type="tel" name="phoneNumber" value="<%= user?.phoneNumber %>">
+                        <div id="phoneError" class="error-message text-danger mt-1"></div>
+                      </div>
+
+                      <div class="col-md-12 mt-3">
+                        <button type="submit" class="btn btn-fill-out submit" id="submitBtn">
+                          Save Changes
+                        </button>
+                        <div id="formError" class="error-message text-danger mt-2"></div>
+                        <div id="formSuccess" class="success-message text-success mt-2"></div>
+                      </div>
                     </div>
-
-
+                  </form>
+                  <div class="mt-3">
+                    <small><a href="/forgotPasswordEmail">Forgot password?</a></small>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </section>
-    </main>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
 
-    <script>
-        // Form validation on input
-        document.getElementById('name').addEventListener('input', nameChecking);
-        document.getElementById('email').addEventListener('input', emailChecking);
-        document.getElementById('phoneNumber').addEventListener('input', phoneNumberChecking);
-        
-        // Main validation function
-        function validation(event) {
-            event.preventDefault(); // Prevent default form submission
-        
-            // Check all validations
-            const isNameValid = nameChecking();
-            const isEmailValid = emailChecking();
-            const isPhoneValid = phoneNumberChecking();
-        
-            // Only submit if all validations pass
-            if (isNameValid && isEmailValid && isPhoneValid) {
-                document.getElementById("myForm").submit();
-                return true;
-            }
-            return false;
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('editProfileForm');
+  const submitBtn = document.getElementById('submitBtn');
+  
+  // Validation rules
+  const validators = {
+    name: {
+      element: document.getElementById('name'),
+      errorElement: document.getElementById('nameError'),
+      validate: (value) => {
+        const trimmed = value.trim();
+        if (!trimmed) return 'Name is required';
+        if (trimmed.length < 3) return 'Name must be at least 3 characters';
+        if (trimmed.length > 50) return 'Name must be less than 50 characters';
+        if (!/^[A-Za-z\s]+$/.test(trimmed)) return 'Name can only contain letters and spaces';
+        return null;
+      }
+    },
+    email: {
+      element: document.getElementById('email'),
+      errorElement: document.getElementById('emailError'),
+      validate: (value) => {
+        const trimmed = value.trim();
+        if (!trimmed) return 'Email is required';
+        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(trimmed)) {
+          return 'Please enter a valid email address';
         }
-        
-        // Name validation
-        function nameChecking() {
-            const name = document.getElementById("name").value;
-            const errorName = document.getElementById("errorname");
-            const namePattern = /^[A-Za-z\s]+$/;
-            // Remove leading/trailing spaces for validation
-            if (name.trim() === "") {
-                errorName.innerHTML = "Please enter your name";
-                return false;
-            } else if (!namePattern.test(name)) {
-                errorName.innerHTML = "Name should contain only alphabets";
-                return false;
-            } else if (name.trim().length > 50) {
-                errorName.innerHTML = "Name is too long (maximum 50 characters)";
-                return false;
-            } else if (name.trim().length < 3) {
-                errorName.innerHTML = "Name must be at least 3 characters long";
-                return false;
-            } else {
-                errorName.innerHTML = "";
-                return true;
-            }
+        return null;
+      }
+    },
+    phone: {
+      element: document.getElementById('phoneNumber'),
+      errorElement: document.getElementById('phoneError'),
+      validate: (value) => {
+        const trimmed = value.trim();
+        if (!trimmed) return 'Phone number is required';
+        if (!/^[1-9]\d{9}$/.test(trimmed)) {
+          return 'Please enter a valid 10-digit phone number starting with 1-9';
         }
-        
-        // Email validation
-        function emailChecking() {
-            const email = document.getElementById("email").value;
-            const errorEmail = document.getElementById("erroremail");
-            
-            // Email regex pattern
-            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            
-            if (email.trim() === "") {
-                errorEmail.innerHTML = "Please enter your email";
-                return false;
-            } else if (!emailPattern.test(email)) {
-                errorEmail.innerHTML = "Please enter a valid email address";
-                return false;
-            } else {
-                errorEmail.innerHTML = "";
-                return true;
-            }
+        if (/^(\d)\1{9}$/.test(trimmed)) {
+          return 'Invalid phone number - cannot be all same digits';
         }
-        
-        // Phone number validation
-        function phoneNumberChecking() {
-            const phoneNumber = document.getElementById("phoneNumber").value;
-            const errorPhone = document.getElementById("errorphoneNumber");
-            
-            // Remove any non-digit characters for validation
-            const cleanNumber = phoneNumber.replace(/\D/g, '');
-            
-            if (phoneNumber.trim() === "") {
-                errorPhone.innerHTML = "Please enter your phone number";
-                return false;
-            } else if (cleanNumber.length !== 10) {
-                errorPhone.innerHTML = "Phone number must be 10 digits";
-                return false;
-            } else if (!/^[1-9]\d{9}$/.test(cleanNumber)) {
-                errorPhone.innerHTML = "Please enter a valid phone number";
-                return false;
-            } else {
-                errorPhone.innerHTML = "";
-                return true;
-            }
-        }
-        </script>
+        return null;
+      }
+    }
+  };
+
+  // Add input event listeners for real-time validation
+  Object.entries(validators).forEach(([key, validator]) => {
+    validator.element.addEventListener('input', () => {
+      validateField(key);
+      updateSubmitButton();
+    });
+  });
+
+  function validateField(fieldName) {
+    const validator = validators[fieldName];
+    const error = validator.validate(validator.element.value);
+    validator.errorElement.textContent = error || '';
+    return !error;
+  }
+
+  function validateForm() {
+    let isValid = true;
+    Object.keys(validators).forEach(fieldName => {
+      if (!validateField(fieldName)) {
+        isValid = false;
+      }
+    });
+    return isValid;
+  }
+
+  function updateSubmitButton() {
+    submitBtn.disabled = !validateForm();
+  }
+
+  // Form submission handler
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
     
-    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.js"></script>
-    <script type="text/javascript" src="js/custom.js"></script>
+    const formError = document.getElementById('formError');
+    const formSuccess = document.getElementById('formSuccess');
+    formError.textContent = '';
+    formSuccess.textContent = '';
+
+    if (!validateForm()) {
+      formError.textContent = 'Please fix the errors before submitting.';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+
+    try {
+      const formData = {
+        fullName: validators.name.element.value.trim(),
+        email: validators.email.element.value.trim(),
+        phoneNumber: validators.phone.element.value.trim()
+      };
+
+      const response = await fetch('/editprofile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to update profile');
+      }
+
+      formSuccess.textContent = 'Profile updated successfully!';
+      
+      // Optional: Redirect after success
+      setTimeout(() => {
+        window.location.href = '/useraccount'; // Adjust the redirect URL as needed
+      }, 1500);
+
+    } catch (error) {
+      formError.textContent = error.message || 'An error occurred while updating your profile';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Save Changes';
+    }
+  });
+
+  // Initial validation on page load
+  updateSubmitButton();
+});
+</script>

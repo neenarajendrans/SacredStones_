@@ -28,21 +28,16 @@
                                 <div class="error-message" style="color: red;" id="description-error"></div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-4">
+                                <div class="col">
                                     <div class="mb-4">
                                         <label class="form-label">Total Price</label>
                                         <input name="total_price" placeholder="" type="text" class="form-control">
                                         <div class="error-message" style="color: red;" id="total_price-error"></div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
-                                    <div class="mb-4">
-                                        <label class="form-label">Discount price</label>
-                                        <input name="discount_price" placeholder="" type="text" class="form-control">
-                                        <div class="error-message" style="color: red;" id="discount_price-error"></div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
+                                
+                               
+                                <div class="col">
                                     <label class="form-label">Category</label>
                                     <select name="category" class="form-select" aria-label="Default select example" required>
                                         <option selected>Category</option>
@@ -233,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const productName = document.getElementById("product_name");
         const description = document.querySelector('textarea[name="description"]');
         const totalPrice = document.querySelector('input[name="total_price"]');
-        const discountPrice = document.querySelector('input[name="discount_price"]');
+        
         const goldPurity = document.querySelector('input[name="gold_purity"]');
         const grossWeight = document.querySelector('input[name="gross_weight"]');
         const makingCharge = document.querySelector('input[name="making_charge"]');
@@ -273,11 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('total_price-error').textContent = "Total Price must be a valid number.";
             }
 
-            // Discount Price validation (optional)
-            if (discountPrice.value.trim() && !numberPattern.test(discountPrice.value.trim())) {
-                isValid = false;
-                document.getElementById('discount_price-error').textContent = "Discount Price must be a valid number.";
-            }
+           
 
             // Gold Purity validation
             if (!numberPattern.test(goldPurity.value.trim())) {

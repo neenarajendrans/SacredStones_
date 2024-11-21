@@ -20,13 +20,7 @@
                 <div class="card mb-4">
                  <!-- card-header end// -->
                     <div class="card-body">
-                        <form action="" method="get">
-                            <div style="display: flex; align-items: center;">
-                                <input type="text" id="searchInput" class="form-control" placeholder="Search User...">
-                                <input type="submit" class="btn btn-md font-sm rounded btn-brand" style="margin-left: 10px;" value="Filter">
-                            </div>
-                        </form>
-                       <br>
+                      
                        
                         <table class="table">
                             <thead>
@@ -52,7 +46,7 @@
                                     </td>
                                    
                                     
-                                    <td><img   width="60"
+                                    <td><img   width="50"
                                         height="60" src="/assets/imgs/productIMG/<%= ele.images[0] %>"></td>
                                     
                                     <td><%= ele.name %></td>
@@ -62,8 +56,8 @@
                                     <td><%= ele.making_charge %></td>
                                     <td><%= ele.category.name %></td>
                                     <td><%= ele.stock %></td>
-                                    <td><span class="badge rounded-pill alert-success">Active</span></td>
-                                    <td></td>
+                                   
+                                    
                                     <td>
                                         
                                         <a class="btn btn-sm font-sm btn-light rounded" href="/admin/editproduct/<%=ele._id %>">Edit</a>
@@ -92,34 +86,20 @@
                     </div> <!-- card-body end// -->
                     
                 </div> <!-- card end// -->
-                <div class="pagination-area mt-30 mb-50">
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-start">
-                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                            <li class="page-item"><a class="page-link" href="#">02</a></li>
-                            <li class="page-item"><a class="page-link" href="#">03</a></li>
-                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                            <li class="page-item"><a class="page-link" href="#">16</a></li>
-                            <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                <div class="container mt-3">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-start mb-20" style="margin-right: 200px;">
+                          <% for(let i=1; i<=totalPages;i++){ %>
+                            <li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
+                              <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                            </li>
+                            <% } %>
                         </ul>
                     </nav>
                 </div>
                 
             </section> <!-- content-main end// -->
-            <footer class="main-footer font-xs">
-                <div class="row pb-30 pt-15">
-                    <div class="col-sm-6">
-                        <script>
-                            document.write(new Date().getFullYear())
-                        </script> ©, Evara - HTML Ecommerce Template .
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="text-sm-end">
-                            All rights reserved
-                        </div>
-                    </div>
-                </div>
-            </footer>
+          
         </main>
         <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
         <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
