@@ -28,12 +28,12 @@
 
             </nav>
 
-          
+
             <section class="mt-50 mb-50">
                 <div class="container">
                     <div class="row">
 
-                       
+
                         <div class="card mb-4">
                             <div class="card-body">
                                 <div class="mb-30">
@@ -333,15 +333,15 @@
                     }
 
                     // Show loading state
-                    Swal.fire({
-                        title: 'Processing Order',
-                        text: 'Please wait...',
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        willOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
+                    // Swal.fire({
+                    //     title: 'Processing Order',
+                    //     text: 'Please wait...',
+                    //     allowOutsideClick: false,
+                    //     showConfirmButton: false,
+                    //     willOpen: () => {
+                    //         Swal.showLoading();
+                    //     }
+                    // });
 
                     // Make the POST request to create order
                     fetch('/order/checkout', {
@@ -358,7 +358,7 @@
                         .then(data => {
                             if (data.success) {
                                 if (paymentMethod === 'Online') {
-                                    // For online payment, initiate Razorpay
+                                    // For online payment, initiate Razorpay // try catch plus then cancelorder
                                     fetch('/createRazorpayOrder', {
                                         method: 'POST',
                                         headers: {
@@ -390,7 +390,6 @@
                                         confirmButtonText: 'View Order',
                                     }).then(() => {
                                         //update payment status here as placed
-                                     
                                         window.location.href = '/order/ordersuccess?orderId=' + data.orderId;
                                     });
                                 } else if (paymentMethod === 'Wallet') {
@@ -400,7 +399,7 @@
                                         headers: {
                                             'Content-Type': 'application/json',
                                         },
-                                        body: JSON.stringify({ orderId: data.orderId })
+                                        body: JSON.stringify({ orderId: data.orderId }),
                                     })
                                         .then(response => response.json())
                                         .then(data => {
@@ -413,28 +412,47 @@
                                                     window.location.href = '/order/ordersuccess?orderId=' + data.orderId;
                                                 });
                                             } else {
+                                                // Handle wallet payment failure due to insufficient balance
                                                 Swal.fire({
                                                     icon: 'error',
-                                                    title: 'Payment Failed, insuffient balance',
-                                                    text: data.message || 'Unable to verify payment',
+                                                    title: 'Payment Failed',
+                                                    text: data.message || 'Insufficient balance in wallet.',
+                                                    confirmButtonText: 'Ok',
+                                                }).then(() => {
+                                                    window.history.back()
                                                 });
                                             }
                                         })
                                         .catch(error => {
-                                            console.error('Error:', error);
+                                            console.error('Error during wallet payment:', error);
                                             Swal.fire({
                                                 icon: 'error',
-                                                title: 'Verification Error',
-                                                text: 'Failed to verify payment',
+                                                title: 'Payment Error',
+                                                text: 'An unexpected error occurred during wallet payment.',
+                                                confirmButtonText: 'Ok',
+                                            }).then(() => {
+                                                window.history.back()
                                             });
                                         });
+                                }
+                                else {
+                                    //payment unsuccessful cancel order
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Payment Failed',
+                                        text: data.message || 'Payment failed due to some error',
+                                        confirmButtonText: 'Ok',
+                                    }).then(() => {
+                                        window.history.back()
+                                    });
                                 }
                             } else {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Order Failed',
-                                    text: data.message || 'Failed to place order',
-                                });
+                                    title: 'Payment Failed',
+                                    text: data.message || 'Payment failed due to some error',
+                                    confirmButtonText: 'Ok',
+                                })
                             }
                         })
                         .catch(error => {
@@ -442,10 +460,46 @@
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Oops...',
-                                text: 'An unexpected error occurred',
+                                text: 'An unexpected error occurred while placing order',
                             });
                         });
+
                 }
+                // // Function to handle order cancellation write the route and controller for this  ========================
+                // function cancelOrder(orderId, reason) {
+                //     console.log(orderId, reason + "check ---------------------")
+                //     return fetch('/order/cancelorder', {
+                //         method: 'POST',
+                //         headers: {
+                //             'Content-Type': 'application/json',
+                //         },
+                //         body: JSON.stringify({ orderId: orderId, reason: reason }),
+                //     })
+                //         .then(res => res.json())
+                //         .then(cancelData => {
+                //             if (cancelData.success) {
+                //                 Swal.fire({
+                //                     icon: 'success',
+                //                     title: 'Order Cancelled',
+                //                     text: 'The order has been cancelled due to payment failure.',
+                //                 });
+                //             } else {
+                //                 Swal.fire({
+                //                     icon: 'error',
+                //                     title: 'Order Cancellation Failed',
+                //                     text: cancelData.message || 'Unable to cancel the order.',
+                //                 });
+                //             }
+                //         })
+                //         .catch(error => {
+                //             console.error('Cancellation Error:', error);
+                //             Swal.fire({
+                //                 icon: 'error',
+                //                 title: 'Cancellation Error',
+                //                 text: 'Failed to cancel the order due to an unexpected error.',
+                //             });
+                //         });
+                // }
 
                 function initiateRazorpayPayment(data) {
                     const options = {
@@ -469,41 +523,71 @@
                     };
 
                     const rzp = new Razorpay(options);
+                    rzp.originalOrderId = data.orderId;
                     //what to do when payment failed?
                     rzp.on('payment.failed', function (response) {
                         Swal.fire({
-                                        icon: 'error',
-                                        title: 'Payment Failed',
-                                        text: response.error.description,
-                                        confirmButtonText: 'Retry payemnt',
-                                    }).then(() => {
-                                        fetch('/createRazorpayOrder', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                        },
-                                        body: JSON.stringify({ orderId: data.orderId })
-                                    })
-                                        .then(res => res.json())
-                                        .then(razorpayData => {
-                                            if (razorpayData.success) {
-                                                initiateRazorpayPayment(razorpayData);
-                                            } else {
-                                                throw new Error(razorpayData.message);
-                                            }
-                                        })
-                                        .catch(error => {
-                                            Swal.fire({
-                                                icon: 'error',
-                                                title: 'Payment Initialization Failed',
-                                                text: error.message || 'Failed to initialize payment',
-                                            });
-                                        });
-                                    });
+                            icon: 'error',
+                            title: 'Payment Failed',
+                            text: response.error.description,
+                            showCancelButton: true,
+                            confirmButtonText: 'Retry Payment',
+                            cancelButtonText: 'Cancel Order',
+                            reverseButtons: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                // Explicitly call a function to handle retry
+                                retryRazorpayPayment(rzp.originalOrderId);
+                            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                                window.history.back()
+                            }
+                        });
                     });
-                   
+
 
                     rzp.open();
+                }
+
+
+                function retryRazorpayPayment(orderId) {
+                    // Show loading state
+                    Swal.fire({
+                        title: 'Retrying Payment',
+                        text: 'Please wait...',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Recreate Razorpay order
+                    fetch('/createRazorpayOrder', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ orderId: orderId })
+                    })
+                        .then(res => res.json())
+                        .then(razorpayData => {
+                            if (razorpayData.success) {
+                                // Use the new Razorpay order details to initiate payment
+                                initiateRazorpayPayment(razorpayData);
+                            } else {
+                                throw new Error(razorpayData.message || 'Failed to create new order');
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Retry Failed',
+                                text: error.message || 'Unable to retry payment',
+                                confirmButtonText: 'Try Again'
+                            });
+                        });
+
+
                 }
 
                 // Improve the payment verification function

@@ -311,7 +311,7 @@
                                                         </button>
                                                         <input type="number" class="form-control" name="qty"
                                                             value="<%= cartData.qty %>" min="1"
-                                                            max="<%= Math.min(6, cartData.productData_id.stock) %>"
+                                                            max="<%= Math.min(5, cartData.productData_id.stock) %>"
                                                             step="1" required
                                                             onchange="validateAndUpdateCart('<%= cartData.productData_id._id %>', this.value, <%= cartData.productData_id.stock %>)">
                                                         <button type="button" class="quantity-btn"

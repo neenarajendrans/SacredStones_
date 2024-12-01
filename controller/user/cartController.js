@@ -72,7 +72,10 @@ const addtoCart = asyncHandler(async (req, res) => {
 
   // Guest User
   if (!req.session.user_id) {
-    return res.redirect("/signup?message=User+Doesn't+Exist");
+    return res.status(200).json({
+      success: false,
+      message: "User Doesn't Exists",
+  });
   }
 
   const userId = req.session.user_id;
@@ -95,7 +98,7 @@ const addtoCart = asyncHandler(async (req, res) => {
   if (!product || product.stock < qty) {
     return res
       .status(400)
-      .json({ success: false, error: "Insufficient stock" });
+      .json({ success: false, message: "Insufficient stock" });
   }
 
   //check product status
@@ -120,15 +123,23 @@ const addtoCart = asyncHandler(async (req, res) => {
 
       // Check if the new quantity exceeds maximum limit
       if (newQuantity > maxQuantityPerUser) {
-        const availableToAdd = maxQuantityPerUser - existingCartItem.qty;
+        const availableToAdd = product.stock < maxQuantityPerUser? product.stock - existingCartItem.qty : maxQuantityPerUser - existingCartItem.qty;
 
         return res
           .status(400)
           .json({
             success: false,
-            error: `Cannot add ${qty} more items. you can only add ${availableToAdd} more items to this product`,
+            message: `Cannot add ${qty} more items. you can only add ${availableToAdd} more items to this product`,
           });
-      }
+      } else if (newQuantity > product.stock) {
+        // ask chat gpt to help to set a limit to the cart item quantity here somewhere
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "Requested quantity exceeds available stock",
+          });
+        }
 
       existingCartItem.qty = newQuantity;
     } else {
@@ -138,7 +149,7 @@ const addtoCart = asyncHandler(async (req, res) => {
           .status(400)
           .json({
             success: false,
-            error: "Requested quantity exceeds available stock",
+            message: "Requested quantity exceeds available stock",
           });
       }
 
@@ -165,7 +176,11 @@ const addtoCart = asyncHandler(async (req, res) => {
     await newCart.save();
   }
 
-  res.redirect("/cart");
+  return res.status(200).json({
+    success: true,
+    message: "Product added to cart successfully",
+    
+});
 });
 
 // update cart

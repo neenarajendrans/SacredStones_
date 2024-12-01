@@ -8,6 +8,7 @@ const {
   calculateSubtotal,
 } = require("../../config/cartSum");
 const Order = require("../../model/orderModel");
+const {handleWalletTransaction} = require("./walletController"); 
 
 
 function generateOrderId (){
@@ -118,20 +119,21 @@ const checkOutPost = asyncHandler(async (req, res) => {
     if (!user || !cart) {
       return res
         .status(404)
-        .json({ success: false, error: "User or cart not found" });
+        .json({ success: false, message: "User or cart not found" });
     }
     if (!cart.products || cart.products.length === 0) {
-      return res.status(400).json({ error: "Your cart is empty" });
+      return res.status(400).json({ message: "Your cart is empty" });
     }
     if (!address) {
-      return res.status(400).json({ error: "Billing address not selected" });
+      return res.status(400).json({ message: "Billing address not selected" });
     }
+    
     // Check product stock before proceeding
     for (const item of cart.products) {
       const product = await Product.findById(item.productData_id._id);
       if (!product || product.stock < item.qty) {
         return res.status(400).json({
-          error: `Insufficient stock for product ${
+          message: `Insufficient stock for product ${
             product ? product.name : "Unknown"
           }`,
         });
@@ -148,21 +150,36 @@ const checkOutPost = asyncHandler(async (req, res) => {
     let couponCode = null;
     let couponDiscount = 0;
     let total = totalAmount;
+    let orderstatus = "Pending";
+    let paymentstatus = "Pending"
     // If coupon is applied, calculate the discounted total
     if (appliedCoupon) {
       couponCode = appliedCoupon.couponCode;
       couponDiscount = appliedCoupon.discount;
       total = totalAmount - couponDiscount;
     }
+    if(paymentMethod==="CashOnDelivery"){
+      orderstatus = "Placed"
+      paymentstatus = "Pending" 
+
+    }else if(paymentMethod === "Online"){
+      orderstatus = "Pending"
+      paymentstatus = "Pending"
+
+    }else if(paymentMethod ==="Wallet"){
+      orderstatus = "Pending"
+      paymentstatus = "Pending"
+    }
+
     // Create new order
     const order = new Order({
       orderId: generateOrderId(),
       user_id: userId,
       address: address,
       orderDate: new Date(),
-      orderStatus: "Pending",
+      orderStatus: orderstatus,
       paymentMethod: paymentMethod,
-      paymentStatus: "Pending",
+      paymentStatus: paymentstatus,
       deliveryDate: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000),
       totalAmount: totalAmount,
       finalAmount: total,
@@ -188,6 +205,7 @@ const checkOutPost = asyncHandler(async (req, res) => {
         )
       )
     );
+
     // Clear cart
     if (savedOrder.orderStatus === "Placed") {
       await Cart.findByIdAndUpdate(
@@ -205,7 +223,7 @@ const checkOutPost = asyncHandler(async (req, res) => {
     console.error("Error placing order:", error);
     res.status(500).json({
       success: false,
-      error: "Failed to place order",
+      message: "Failed to place order",
       details: error.message,
     });
   }
@@ -338,6 +356,28 @@ const orderCancel = asyncHandler(async (req, res) => {
         });
       })
     );
+    //refund
+    if (order.paymentStatus === "Paid") {
+      const refundAmount = order.finalAmount;
+      
+      try {
+        await handleWalletTransaction(
+          order.user_id,
+          refundAmount,
+          "credit",
+          `Refund for order ${orderId}`
+        );
+        order.paymentStatus = "Refunded";
+        await order.save();
+      } catch (error) {
+        console.error("Error processing wallet refund:", error);
+        return res.status(500).json({
+          success: false,
+          message: "Failed to process wallet refund",
+          error: error.message,
+        });
+      }
+    }
     res.status(200).json({
       success: true,
       message: "Order cancelled successfully",

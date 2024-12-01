@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Return Request</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-md p-8 max-w-md w-full">
         <div class="text-center mb-6">
@@ -13,37 +16,33 @@
             <p class="text-gray-600 mt-2">Please tell us why you want to return your item</p>
         </div>
 
+        <!-- Alert Messages -->
+        <div id="errorAlert" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4"></div>
+        <div id="successAlert" class="hidden bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
+        </div>
+
         <form id="returnRequestForm" class="space-y-6">
             <div class="mb-4">
                 <div class="bg-gray-100 p-4 rounded-md mb-6">
                     <h2 class="font-semibold text-gray-700">Order Details</h2>
-                    <p class="text-gray-600">Order #: <span id="orderId">12345</span></p>
-                    <p class="text-gray-600 mt-1">Delivered on: <span id="deliveryDate">Oct 25, 2024</span></p>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Select items to return</label>
-                <div class="border rounded-md divide-y">
-                    <div class="p-4 flex items-center">
-                        <input type="checkbox" id="item1" name="returnItems" value="item1" class="h-4 w-4 text-blue-600">
-                        <label for="item1" class="ml-3 flex-grow">
-                            <span class="block text-sm font-medium text-gray-700">Blue T-Shirt - Size M</span>
-                            <span class="block text-sm text-gray-500">Qty: 1</span>
-                        </label>
-                    </div>
+                    <p class="text-gray-600">Order ID: <span id="orderId">
+                            <%= order?.orderId %>
+                        </span></p>
+                    <input type="hidden" name="orderId" value="<%= order?._id %>">
                 </div>
             </div>
 
             <div class="space-y-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Return reason*</label>
                 <div class="flex items-center">
-                    <input type="radio" id="wrongSize" name="reason" value="wrongSize" class="h-4 w-4 text-blue-600" required>
+                    <input type="radio" id="wrongSize" name="reason" value="wrongSize" class="h-4 w-4 text-blue-600"
+                        required>
                     <label for="wrongSize" class="ml-3 text-gray-700">Wrong size</label>
                 </div>
 
                 <div class="flex items-center">
-                    <input type="radio" id="notAsDescribed" name="reason" value="notAsDescribed" class="h-4 w-4 text-blue-600">
+                    <input type="radio" id="notAsDescribed" name="reason" value="notAsDescribed"
+                        class="h-4 w-4 text-blue-600">
                     <label for="notAsDescribed" class="ml-3 text-gray-700">Item not as described</label>
                 </div>
 
@@ -53,7 +52,8 @@
                 </div>
 
                 <div class="flex items-center">
-                    <input type="radio" id="qualityIssue" name="reason" value="qualityIssue" class="h-4 w-4 text-blue-600">
+                    <input type="radio" id="qualityIssue" name="reason" value="qualityIssue"
+                        class="h-4 w-4 text-blue-600">
                     <label for="qualityIssue" class="ml-3 text-gray-700">Quality not as expected</label>
                 </div>
 
@@ -69,46 +69,19 @@
             </div>
 
             <div class="mt-4">
-                <label for="condition" class="block text-sm font-medium text-gray-700 mb-2">Item condition*</label>
-                <select id="condition" name="condition" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500" required>
-                    <option value="">Select condition</option>
-                    <option value="unused">Unused with tags</option>
-                    <option value="unopened">Unopened in original packaging</option>
-                    <option value="opened">Opened but unused</option>
-                    <option value="used">Used</option>
-                    <option value="damaged">Damaged</option>
-                </select>
-            </div>
-
-            <div class="mt-4">
                 <label for="details" class="block text-sm font-medium text-gray-700 mb-2">Additional details*</label>
-                <textarea id="details" name="details" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500" placeholder="Please provide more details about your return reason..." required></textarea>
-            </div>
-
-            <div class="mt-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Upload photos (optional)</label>
-                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                    <div class="space-y-1 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <div class="flex text-sm text-gray-600">
-                            <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                <span>Upload images</span>
-                                <input id="file-upload" name="file-upload" type="file" class="sr-only" multiple accept="image/*">
-                            </label>
-                            <p class="pl-1">or drag and drop</p>
-                        </div>
-                        <p class="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                    </div>
-                </div>
+                <textarea id="details" name="details" rows="3"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Please provide more details about your return reason..." required></textarea>
             </div>
 
             <div class="flex flex-col sm:flex-row gap-4">
-                <button type="button" onclick="window.history.back()" class="w-full sm:w-1/2 px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                <button type="button" onclick="window.history.back()"
+                    class="w-full sm:w-1/2 px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                     Back to Order
                 </button>
-                <button type="submit" class="w-full sm:w-1/2 px-4 py-2 border border-transparent rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <button type="submit" id="submitButton"
+                    class="w-full sm:w-1/2 px-4 py-2 border border-transparent rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                     Submit Return
                 </button>
             </div>
@@ -116,22 +89,79 @@
     </div>
 
     <script>
-        document.getElementById('returnRequestForm').addEventListener('submit', function(e) {
+        document.getElementById('returnRequestForm').addEventListener('submit', async function (e) {
             e.preventDefault();
-            const returnData = {
-                orderId: document.getElementById('orderId').textContent,
-                deliveryDate: document.getElementById('deliveryDate').textContent,
-                items: Array.from(document.querySelectorAll('input[name="returnItems"]:checked')).map(item => item.value),
-                reason: document.querySelector('input[name="reason"]:checked')?.value,
-                condition: document.getElementById('condition').value,
-                details: document.getElementById('details').value,
-                timestamp: new Date().toISOString()
-            };
-            
-            console.log('Return request data:', returnData);
-            
-            alert('Your return request has been submitted. We will review it and get back to you soon.');
+
+            // Reset alerts
+            const errorAlert = document.getElementById('errorAlert');
+            const successAlert = document.getElementById('successAlert');
+            const submitButton = document.getElementById('submitButton');
+
+            errorAlert.classList.add('hidden');
+            successAlert.classList.add('hidden');
+
+            // Validate form
+            const reason = document.querySelector('input[name="reason"]:checked')?.value;
+            const orderId = document.querySelector('input[name="orderId"]').value;
+            const details = document.getElementById('details').value.trim();
+
+            if (!reason) {
+                errorAlert.textContent = 'Please select a reason for return';
+                errorAlert.classList.remove('hidden');
+                return;
+            }
+
+            if (!details) {
+                errorAlert.textContent = 'Please provide additional details';
+                errorAlert.classList.remove('hidden');
+                return;
+            }
+
+            try {
+                // Disable submit button and show loading state
+                submitButton.disabled = true;
+                submitButton.textContent = 'Processing...';
+
+                // Send return request
+                const response = await fetch('/order/returnorder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        orderId: orderId,
+                        reason: reason,
+                        details: details,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to submit return request');
+                }
+
+                // Show success message and redirect
+                successAlert.textContent = 'Return request submitted successfully. Redirecting...';
+                successAlert.classList.remove('hidden');
+
+                setTimeout(() => {
+                    const orderId = document.querySelector('input[name="orderId"]').value;
+                    window.location.href = `/order/orderdetails/${orderId}`;
+                }, 2000);
+
+            } catch (error) {
+                // Show error message
+                errorAlert.textContent = error.message || 'An error occurred while submitting return request';
+                errorAlert.classList.remove('hidden');
+
+                // Reset submit button
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit Return';
+            }
         });
     </script>
 </body>
+
 </html>

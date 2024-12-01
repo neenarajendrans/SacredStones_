@@ -1,5 +1,6 @@
 const Wallet = require("../../model/walletModel");
 const Order = require("../../model/orderModel");
+const Product = require("../../model/productModel");
 
 const getWallet = async (req, res) => {
   try {
@@ -78,8 +79,16 @@ const handleWalletPayment = async (req, res) => {
   try {
     const userId = req.session.user_id;
     const { orderId } = req.body;
+    
+    // Validate input
+    if (!userId || !orderId) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID and Order ID are required"
+      });
+    }
 
-    // Get the order details
+    // Get the order details with error handling
     const order = await Order.findById(orderId);
     if (!order) {
       return res.status(404).json({
@@ -91,7 +100,7 @@ const handleWalletPayment = async (req, res) => {
     // Get the order amount
     const orderAmount = order.totalAmount;
 
-    // Get user's wallet
+    // Get user's wallet with error handling
     const wallet = await Wallet.findOne({ userId });
     if (!wallet) {
       return res.status(400).json({
@@ -102,6 +111,17 @@ const handleWalletPayment = async (req, res) => {
 
     // Check if wallet has sufficient balance
     if (wallet.balance < orderAmount) {
+      // Rollback order status
+      order.orderStatus = "Cancelled";
+      order.paymentStatus = "Failed";
+      order.items.map(async (item) => {
+          await Product.findByIdAndUpdate(item.product, {
+            $inc: { stock: item.qty },
+          });
+        })
+        await order.save()
+      
+
       return res.status(400).json({
         success: false,
         message: "Insufficient wallet balance",
@@ -110,6 +130,7 @@ const handleWalletPayment = async (req, res) => {
 
     // Process the wallet transaction
     try {
+      // Ensure handleWalletTransaction is properly defined
       await handleWalletTransaction(
         userId,
         orderAmount,
@@ -118,8 +139,8 @@ const handleWalletPayment = async (req, res) => {
       );
 
       // Update order status
-      order.paymentStatus = "Completed";
-      order.orderStatus = "Confirmed";
+      order.paymentStatus = "Paid";
+      order.orderStatus = "Placed";
       order.paymentMethod = "Wallet";
       await order.save();
 
@@ -128,18 +149,38 @@ const handleWalletPayment = async (req, res) => {
         message: "Payment successful",
         orderId: order._id,
       });
-    } catch (error) {
-      console.error("Transaction failed:", error);
+    } catch (transactionError) {
+      // More detailed error logging
+      console.error("Wallet Transaction Error:", {
+        message: transactionError.message,
+        stack: transactionError.stack,
+        userId,
+        orderId,
+        orderAmount
+      });
+
+      // Rollback any partial changes
+      order.paymentStatus = "Failed";
+      await order.save();
+
       return res.status(400).json({
         success: false,
-        message: error.message || "Transaction failed",
+        message: "Wallet transaction failed",
+        error: transactionError.message
       });
     }
   } catch (error) {
-    console.error("Error in wallet payment:", error);
+    // Comprehensive error logging
+    console.error("Wallet Payment Error:", {
+      message: error.message,
+      stack: error.stack,
+      requestBody: req.body
+    });
+
     return res.status(500).json({
       success: false,
       message: "Internal server error",
+      error: error.message
     });
   }
 };

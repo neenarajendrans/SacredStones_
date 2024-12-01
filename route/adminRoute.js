@@ -7,7 +7,9 @@ const orderController = require('../controller/admin/orderController');
 const salesController = require('../controller/admin/salesController');
 const couponController = require('../controller/admin/couponController');
 const offerController = require('../controller/admin/offerController');
-const salesReportController = require('../controller/admin/salesController')
+const salesReportController = require('../controller/admin/salesController');
+const returnController = require('../controller/admin/returnController');
+
 
 const {upload,categoryUpload,editCategoryUpload,editProductUpload} = require('../middleware/multer');
 const { isAdminLoggedin } = require('../middleware/authenticationMiddleware');
@@ -62,9 +64,10 @@ adminRoute.get('/activateoffer/:id', offerController.activateOffer);
 adminRoute.get('/deactivateoffer/:id', offerController.deactivateOffer);
 adminRoute.delete('/offer', offerController.deleteOffer);//deleteoffer
 
-// Supporting routes for products and categories
-// adminRoute.get('/products', offerController.getProducts);
-// adminRoute.get('/categories', offerController.getCategories);
+//Return Request Management
+adminRoute.get('/return', returnController.getRequestPage);
+adminRoute.post('/returnapprove/:orderId', returnController.approveReturnRequest);
+
 
 // Coupon Management
 adminRoute.get('/coupon',couponController.getCouponManagement)

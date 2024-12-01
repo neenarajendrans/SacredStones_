@@ -5,6 +5,7 @@ const message = require("../../config/mailer");
 const Product = require("../../model/productModel");
 const Category = require("../../model/categoryModel");
 const Cart = require("../../model/cartModel");
+const Offer = require("../../model/offerModel");
 const Wallet = require("../../model/walletModel");
 const { v4: uuidv4 } = require("uuid");
 const mongoose = require("mongoose");
@@ -387,7 +388,7 @@ const getHomePage = asyncHandler(async (req, res) => {
       Product.find({}),
       cartQuery,
     ]);
-    console.log(category, products);
+    
     // Render the home page with the fetched data, including the cart
     res.render("user/home", { category, products, cart, message });
   } catch (error) {
@@ -511,6 +512,7 @@ const getJewelleryPage = asyncHandler(async (req, res) => {
 // Get product details page
 const getProductDetailPage = asyncHandler(async (req, res) => {
   const product = await Product.findOne({ _id: req.query.id });
+
   res.render("user/productDetailed", { product });
 });
 

@@ -205,6 +205,78 @@
                 <div class="row">
                     <!-- Timeline Column -->
                     <div class="col-md-4">
+                        <% if (['Return Request', 'Returned', 'Cancelled'].includes(order.orderStatus)) { %>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="order-status-banner 
+                                            <%= 
+                                                order.orderStatus === 'Cancelled' ? 'status-Cancelled' : 
+                                                order.orderStatus === 'Return Request' ? 'status-Returned' : 
+                                                'status-Returned'
+                                            %>">
+                                            <div class="d-flex align-items-center justify-content-between">
+                                                <div class="d-flex align-items-center">
+                                                    <% if (order.orderStatus === 'Cancelled') { %>
+                                                        <i class="fas fa-times-circle me-3"></i>
+                                                        <span>Order Cancelled</span>
+                                                    <% } else if (order.orderStatus === 'Return Request') { %>
+                                                        <i class="fas fa-exchange-alt me-3"></i>
+                                                        <span>Return Requested</span>
+                                                    <% } else if (order.orderStatus === 'Returned') { %>
+                                                        <i class="fas fa-undo me-3"></i>
+                                                        <span>Return Confirmed</span>
+                                                    <% } %>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                   
+                                                    <% if (order.orderStatus === 'Cancelled') { %>
+                                                        <div class="col-md-6">
+                                                            <h6 class="text-muted">Cancellation Reason</h6>
+                                                            <p><%= order.cancellationReason || 'No specific reason provided' %></p>
+                                                        </div>
+                                                    <% } else if (['Return Request', 'Returned'].includes(order.orderStatus)) { %>
+                                                        <div class="col-md-6">
+                                                            <h6 class="text-muted">Return Details</h6>
+                                                            <p><strong>Reason:</strong> <%= order.returnReason || 'Not specified' %></p>
+                                                         
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            <style>
+                                .order-status-banner {
+                                    padding: 15px;
+                                    border-radius: 4px;
+                                    margin-bottom: 15px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: space-between;
+                                }
+                        
+                                .order-status-banner i {
+                                    font-size: 1.25rem;
+                                }
+                            </style>
+                        
+                            
+                        <% } %>
+                        <% if (!['Return Request', 'Returned', 'Cancelled'].includes(order.orderStatus)) { %> 
                         <div class="timeline">
                             <div class="timeline-item <%= order.orderStatus === 'Placed' ? 'active' : 
                                     (order.orderStatus === 'Cancelled' ? 'cancelled' : 
@@ -234,9 +306,13 @@
                                 </p>
                             </div>
                         </div>
+                        <% } %>
 
                         <!-- Action Buttons -->
                         <div class="mt-4">
+                            <a href="/order/ordersuccess"><button class="btn btn-primary w-100 mb-2">
+                                 Go Back
+                            </button></a>
                             <% if(order.orderStatus === 'Placed' || order.orderStatus === 'Processing' ) { %>
                                 <button onclick="confirmCancel('<%= order._id %>')" class="btn btn-danger w-100 mb-2">
                                     <i class="fas fa-times-circle"></i> Cancel Order
@@ -360,7 +436,7 @@
                 confirmButtonText: 'Yes, request return'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    window.location.href = `/return-request?id=${orderId}`;
+                    window.location.href = `/order/returnreason?id=${orderId}`;
                 }
             });
         }

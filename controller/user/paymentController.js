@@ -1,9 +1,10 @@
 const env = require("dotenv").config();
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
-
+const Cart = require("../../model/cartModel")
 const User = require("../../model/userModel");
 const Order = require("../../model/orderModel");
+const Product = require("../../model/productModel");
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -13,9 +14,19 @@ const razorpay = new Razorpay({
 const createRazorpayOrder = async (req, res) => {
   try {
     const { orderId } = req.body;
-
+    console.log(`orderID : ${req.body.orderId}`)
+    const isRazorpayOrderId = orderId.startsWith('order_');
+    
+    let order;
+    if (isRazorpayOrderId) {
+      // If it's a Razorpay order ID, find the order by razorpayOrderId
+      order = await Order.findOne({ razorpayOrderId: orderId });
+    } else {
+      // If it's a MongoDB Order ID, find by _id
+      order = await Order.findById(orderId);
+    }
     // Fetch the order details from your database
-    const order = await Order.findById(orderId);
+    // const order = await Order.findById(orderId);
     if (!order) {
       return res
         .status(404)
@@ -67,15 +78,23 @@ const verifyRazorpayPayment = async (req, res) => {
     if (generatedSignature === razorpay_signature) {
       // Payment is successful
       const order = await Order.findOne({ razorpayOrderId: razorpay_order_id });
+      const cart = await Cart.findOne({ user_id: req.session.user_id })
       if (!order) {
         return res
           .status(404)
           .json({ success: false, message: "Order not found" });
+      }else{
+        await Cart.findByIdAndUpdate(
+          cart._id,
+          { $set: { products: [], total: 0 } },
+          { new: true }
+        );
       }
-
+      
       // Update order status and payment status
+      order.orderStatus = "Placed";
       order.paymentStatus = "Paid";
-      order.status = "Confirmed";
+      // order.status = "Confirmed";
       await order.save();
 
       res.json({
@@ -88,9 +107,14 @@ const verifyRazorpayPayment = async (req, res) => {
       const order = await Order.findOne({ razorpayOrderId: razorpay_order_id });
       if (order) {
         order.paymentStatus = "Failed";
-        order.status = "Cancelled";
-        await order.save();
+        order.orderStatus = "Cancelled";
+        order.items.map(async (item) => {
+          await Product.findByIdAndUpdate(item.product, {
+            $inc: { stock: item.qty },
+          });
+        })
       }
+      await order.save()
 
       res.status(400).json({ success: false, message: "Invalid signature" });
     }
