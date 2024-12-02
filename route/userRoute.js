@@ -10,6 +10,7 @@ const wishlistController = require('../controller/user/wishlistController')
 const paymentController = require('../controller/user/paymentController')
 const walletController = require('../controller/user/walletController')
 const couponController = require('../controller/user/couponController')
+const changePasswordController = require('../controller/user/changePasswordController')
 
 
 userRoute.get('/', userController.getIndexPage);
@@ -56,6 +57,12 @@ userRoute.get("/forgotPasswordEmail", userController.renderForgotPasswordEmail);
 userRoute.post("/sendforgotEmail", userController.forgotOTP);
 userRoute.get("/resetpassword", userController.getResetPassword);
 userRoute.post("/updatepassword", userController.updatePassword);
+
+//Change Password
+userRoute.get("/currentpassword", changePasswordController.getCurrentPasswordPage);
+userRoute.post("/changepassword", changePasswordController.verifyPassword);
+userRoute.get("/newpassword", changePasswordController.getNewPasswordPage);
+userRoute.post("/newpassword", changePasswordController.changePassword);
 
 //Error Pages
 userRoute.get('/errorpage', userController.getErrorPage);

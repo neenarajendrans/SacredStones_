@@ -81,7 +81,7 @@
                
             </li>
             <li class="menu-item">
-                <a class="menu-link" href="/admin/logout"> 
+                <a class="menu-link" id="logoutLink" href="/admin/logout"> 
                     <button class="btn btn-md font-sm rounded btn-brand"><span class="text">Logout</span></button>
                 </a>
                
@@ -140,4 +140,26 @@
         <br>
         <br>
     </nav>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.getElementById('logoutLink').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent immediate navigation
+
+    Swal.fire({
+        title: 'Logout Confirmation',
+        text: 'Are you sure you want to log out?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, Logout',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // If confirmed, redirect to logout route
+            window.location.href = '/admin/logout';
+        }
+    });
+});
+</script>
 </aside>

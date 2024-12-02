@@ -196,6 +196,7 @@ const checkOutPost = asyncHandler(async (req, res) => {
     // Save order
     const savedOrder = await order.save();
     // Update product stock - FIXED VERSION
+    if (savedOrder.orderStatus === "Placed") {
     await Promise.all(
       cartItems.map((item) =>
         Product.findByIdAndUpdate(
@@ -205,6 +206,7 @@ const checkOutPost = asyncHandler(async (req, res) => {
         )
       )
     );
+  }
 
     // Clear cart
     if (savedOrder.orderStatus === "Placed") {
@@ -238,7 +240,7 @@ const loadOrderDetails = asyncHandler(async (req, res) => {
     page = req.query.page;
   }
   const limitno = 5;
-  const order = await Order.find({ user_id: userData._id })
+  const order = await Order.find({ user_id: userData._id, orderStatus: { $ne: 'Pending' }})
     .populate("user_id")
     .populate({
       path: "items.product",
@@ -248,7 +250,7 @@ const loadOrderDetails = asyncHandler(async (req, res) => {
     .skip((page - 1) * limitno)
     .sort({ createdAt: -1 });
   console.log(order, " Details");
-  const count = await Order.find({user_id: userData._id }).countDocuments();
+  const count = await Order.find({user_id: userData._id, orderStatus: { $ne: 'Pending' }}).countDocuments();
   let totalPages = Math.ceil(count / limitno);
   if (userData) {
     res.render("user/orders", { userData, order,totalPages, currentPage: page });

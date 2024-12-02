@@ -4,6 +4,7 @@ const Product = require("../../model/productModel");
 const Category = require("../../model/categoryModel");
 const Order = require("../../model/orderModel");
 const Address = require("../../model/addressModel");
+const {handleWalletTransaction} = require("../user/walletController"); 
 
 //Get order management page
 const getOrderPage = async (req, res) => {
@@ -13,18 +14,9 @@ const getOrderPage = async (req, res) => {
     const limit = 7; // Number of orders per page
     // Get filter parameters
     const { orderStatus, paymentStatus, search } = req.query;
-    // Build filter object
-    let filter = {};
-    if (orderStatus) filter.status = orderStatus;
-    if (paymentStatus) filter.paymentStatus = paymentStatus;
-    if (search) {
-      filter.$or = [
-        { _id: { $regex: search, $options: "i" } },
-        { "user_id.fullName": { $regex: search, $options: "i" } },
-      ];
-    }
+   
     // Get orders with pagination
-    const orders = await Order.find(filter)
+    const orders = await Order.find({orderStatus: { $ne: 'Pending' }})
       .populate("user_id", "fullName email") // Populate user details
       .sort({ orderDate: -1 }) // Sort by order date descending
       .skip((page - 1) * limit)
@@ -32,18 +24,14 @@ const getOrderPage = async (req, res) => {
       .lean(); // Use lean() for better performance
 
     // Get total count for pagination
-    const totalOrders = await Order.countDocuments(filter);
+    const totalOrders = await Order.countDocuments({orderStatus: { $ne: 'Pending' }});
     const totalPages = Math.ceil(totalOrders / limit);
     res.render("admin/orderManagement", {
       orders,
       currentPage: page,
       totalPages,
       totalOrders,
-      filter: {
-        orderStatus,
-        paymentStatus,
-        search,
-      },
+     
     });
   } catch (error) {
     console.error("Error in getOrderPage:", error);
@@ -142,24 +130,29 @@ const cancelOrder = async (req, res) => {
       return res.send("order not found");
     }
 
-    // // If the payment method was online and payment status is paid
-    // if (order.paymentMethod === 'Online' && order.paymentStatus === 'Paid') {
-    //     // Add the amount back to user's wallet
-    //     await User.findByIdAndUpdate(
-    //         order.user_id,
-    // {
-    //     $inc: { walletBalance: order.finalAmount },
-    //     $push: {
-    //         walletHistory: {
-    //             amount: order.finalAmount,
-    //             type: 'Credit',
-    //             description: `Refund for cancelled order #${order.orderId}`
-    //         }
-    //     }
-    // }
-    //     );
-    // }
 
+//refund
+if (order.paymentStatus === "Paid") {
+  const refundAmount = order.finalAmount;
+  
+  try {
+    await handleWalletTransaction(
+      order.user_id,
+      refundAmount,
+      "credit",
+      `Refund for order ${orderId}`
+    );
+    order.paymentStatus = "Refunded";
+    await order.save();
+  } catch (error) {
+    console.error("Error processing wallet refund:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to process wallet refund",
+      error: error.message,
+    });
+  }
+}
     // Update product stock
     for (const item of order.items) {
       await Product.findByIdAndUpdate(

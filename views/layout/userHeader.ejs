@@ -31,7 +31,7 @@
                 <a class="nav-link" href="/useraccount" style="color: black;font-size: medium;">My Account</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/logout" style="color: black;font-size: medium;">Logout</a>
+                <a class="nav-link" id="logoutLink" href="/logout" style="color: black;font-size: medium;">Logout</a>
               </li>
             </ul>
 
@@ -64,4 +64,26 @@
         </ol>
       </nav> -->
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      // Frontend JavaScript (on the page where logout link/button is)
+  document.getElementById('logoutLink').addEventListener('click', function(event) {
+      event.preventDefault(); // Prevent immediate navigation
+  
+      Swal.fire({
+          title: 'Logout Confirmation',
+          text: 'Are you sure you want to log out?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, Logout'
+      }).then((result) => {
+          if (result.isConfirmed) {
+              // If confirmed, redirect to logout route
+              window.location.href = '/logout';
+          }
+      });
+  });
+    </script>
   </header>
