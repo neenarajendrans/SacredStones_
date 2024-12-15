@@ -32,17 +32,11 @@ const getCategoryManagement = asyncHandler(async (req, res) => {
 const addCategory = asyncHandler(async (req, res) => {
   try {
     if (!req.body.name || !req.body.description) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing required fields",
-      });
+      return res.redirect('/admin/errorpage');
     }
     const categoryExists = await Category.findOne({ name: req.body.name });
     if (categoryExists) {
-      return res.status(400).json({
-        success: false,
-        message: "Category already exists with this name",
-      });
+      res.render("admin/errorPage", { message: "Category already exists with this name" });
     }
     // Process image
     let processedImage = null;
@@ -65,18 +59,12 @@ const addCategory = asyncHandler(async (req, res) => {
         processedImage = processedFileName;
       } catch (err) {
         console.error(`Error processing image ${req.file.filename}:`, err);
-        return res.status(400).json({
-          success: false,
-          message: "Failed to process image",
-        });
+        res.render("admin/errorPage", { message: "Failed to Process the Image" });
       }
     }
     // If no image was processed successfully
     if (!processedImage) {
-      return res.status(400).json({
-        success: false,
-        message: "Category image is required",
-      });
+      res.render("admin/errorPage", { message: "Category image is required" });
     }
     // Create category object
     const categoryData = {
@@ -89,20 +77,13 @@ const addCategory = asyncHandler(async (req, res) => {
     const newCategory = new Category(categoryData);
     const savedCategory = await newCategory.save();
     if (!savedCategory) {
-      return res.status(400).json({
-        success: false,
-        message: "Failed to save category",
-      });
+      res.render("admin/errorPage", { message: "Failed to save the category" });
     }
     // Success response - redirect to categories page
     return res.status(201).redirect("/admin/category");
   } catch (error) {
     console.error("Error in addCategory:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-      error: error.message,
-    });
+    res.render("admin/errorPage", { message: "Server Error" });
   }
 });
 
@@ -111,9 +92,20 @@ const getAddCategory = asyncHandler(async (req, res) => {
   res.render("admin/addCategory");
 });
 const getEditCategory = asyncHandler(async (req, res) => {
-  console.log("inside edit catge");
-  const category = await Category.findOne({ _id: req.params.id });
-  res.render("admin/editcategory", { category });
+  try {
+    const category = await Category.findOne({ _id: req.params.id });
+    
+    // If no category is found, redirect to error page
+    if (!category) {
+      return res.redirect('/admin/errorpage');
+    }
+    
+    res.render("admin/editcategory", { category });
+  } catch (error) {
+    // Handle any potential errors (like invalid ObjectId)
+    console.error('Error fetching category:', error);
+    res.redirect('/admin/errorpage');
+  }
 });
 
 // UPDATE CATEGORY
@@ -123,8 +115,7 @@ const editCategory = asyncHandler(async (req, res) => {
     // Find the category
     let category = await Category.findById(categoryId);
     if (!category) {
-      req.session.message = "Category not found";
-      return res.redirect("/admin/category");
+      return res.render("admin/errorPage", { message: "Category not found" });
     }
     // Check for duplicate category name (excluding current category)
     const existingCategory = await Category.findOne({
@@ -133,7 +124,7 @@ const editCategory = asyncHandler(async (req, res) => {
     });
     if (existingCategory) {
       req.session.message = "Category name already exists";
-      return res.redirect(`/admin/editcategory/${categoryId}`);
+      return res.render("admin/errorPage", { message: "Category already exists" });
     }
     // Update basic category information
     category.name = req.body.name.trim().toLowerCase();
@@ -181,8 +172,7 @@ const editCategory = asyncHandler(async (req, res) => {
     res.redirect("/admin/category");
   } catch (error) {
     console.error("Error updating category:", error);
-    req.session.message = "Error updating category";
-    res.redirect(`/admin/editcategory/${req.params.id}`);
+    return res.render("admin/errorPage", { message: "Error" });
   }
 });
 

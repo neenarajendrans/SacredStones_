@@ -61,7 +61,7 @@ const createCoupon = async (req, res) => {
     res.redirect("/admin/coupon");
   } catch (error) {
     console.error("Error creating coupon:", error);
-    res.status(500).send("An error occurred while creating the coupon");
+    res.render("admin/errorPage", { message: "An error occurred while creating the coupon" });
   }
 };
 
@@ -73,7 +73,7 @@ const deleteCoupon = async (req, res) => {
     res.redirect("/admin/coupon");
   } catch (error) {
     console.error("Error deleting coupon:", error);
-    res.status(500).send("An error occurred while deleting the coupon");
+    res.render("admin/errorPage", { message: "An error occurred while deleting the coupon" });
   }
 };
 

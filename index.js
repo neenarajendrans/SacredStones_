@@ -47,10 +47,11 @@ app.set("views","./views")
 
 app.use(fetchCartData);
 
-app.use("/", userRoute);
+
 app.use("/admin", adminRoute); 
 app.use("/order", orderRoute);
 app.use("/cart", cartRoute);
+app.use("/", userRoute);
 
 
 app.listen(port,()=>{

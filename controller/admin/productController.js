@@ -22,7 +22,12 @@ const getProductManagement = asyncHandler(async (req, res) => {
   const count = await Product.find({}).countDocuments();
   let totalPages = Math.ceil(count / limitno);
 
-  res.render("admin/productManagement", { product,totalPages, currentPage: page , message: "" });
+  res.render("admin/productManagement", {
+    product,
+    totalPages,
+    currentPage: page,
+    message: "",
+  });
 });
 
 //add product
@@ -39,10 +44,8 @@ const addProduct = asyncHandler(async (req, res) => {
     // Check for product existence
     const productExists = await Product.findOne({ name: req.body.name });
     if (productExists) {
-      return res.status(400).json({
-        success: false,
-        message: "Product already exists with this name",
-      });
+      return res.render("admin/errorPage", { message: "Product Already exists with this name" });
+      
     }
 
     // Process images
@@ -125,14 +128,22 @@ const getAddProduct = asyncHandler(async (req, res) => {
   res.render("admin/addProduct", { category });
 });
 
-// Get edit product page
 const getEditProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findOne({ _id: req.params.id });
-  console.log(product);
-  const category = await Category.find();
-  console.log(product);
-  console.log(category);
-  res.render("admin/editProduct", { product, category });
+  try {
+    const product = await Product.findOne({ _id: req.params.id });
+    
+    // If no product is found, redirect to error page or product list
+    if (!product) {
+      return res.redirect('/admin/errorpage');
+    }
+    
+    const category = await Category.find();
+    res.render("admin/editProduct", { product, category });
+  } catch (error) {
+    // Handle any potential errors (like invalid ObjectId)
+    console.error('Error fetching product:', error);
+    res.redirect('/admin/errorpage');
+  }
 });
 
 // Updating product

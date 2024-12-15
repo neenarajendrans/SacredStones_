@@ -349,8 +349,10 @@ const forgotOTP = asyncHandler(async (req, res) => {
   const { email } = req.body;
   const userExist = await User.findOne({ email });
   if (userExist) {
-    if(!userExist?.password){
-      return res.redirect("/signup?message=You+can+login+through+your+google+account");
+    if (!userExist?.password) {
+      return res.redirect(
+        "/signup?message=You+can+login+through+your+google+account"
+      );
     }
     req.session.email = userExist.email; // Set the email in session
     req.session.userData = userExist;
@@ -364,33 +366,86 @@ const forgotOTP = asyncHandler(async (req, res) => {
 });
 
 // logout user
-const logout = asyncHandler((req, res) => {
-  console.log("inside logout");
-  console.log(req.session);
-  req.session.userId = null;
-  req.session.isAdmin = null;
-  req.session.destroy();
-  res.redirect("/");
-});
+const logout = asyncHandler(async (req, res) => {
+  try {
+    console.log("Inside logout");
+    console.log("Current session:", req.session);
 
-// Get home page
+    // Check if session exists
+    if (req.session && req.session.user_id) {
+      // Clear specific session properties
+      req.session.user_id = null;
+      req.session.isAdmin = null;
+
+      // Use a promise-based approach for session destruction
+      await new Promise((resolve, reject) => {
+        req.session.destroy((err) => {
+          if (err) {
+            console.error("Error destroying session:", err);
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
+
+      // Clear session cookie
+      res.clearCookie('connect.sid'); // Adjust cookie name if different
+      
+      // Redirect to home page after successful logout
+      res.redirect("/");
+    } else {
+      // If no session exists, directly redirect
+      res.redirect("/signup");
+    }
+  } catch (error) {
+    console.error("Logout error:", error);
+    
+    // Comprehensive error handling
+    res.status(500).redirect("/errorpage");
+  }
+});
+// get home page
 const getHomePage = asyncHandler(async (req, res) => {
   try {
     const message = req.query.message || null;
-    // Extract user ID from session
     const user_id = req?.session?.user_id;
-    // Use Promise.all to run all queries concurrently
-    const cartQuery = user_id
+
+    // Find active offers for categories
+    const currentDate = new Date();
+    const categoryOffers = await Offer.find({
+      type: 'Category',
+      status: true,
+      validFrom: { $lte: currentDate },
+      validity: { $gte: currentDate }
+    }).populate('categoryId');
+
+    const cartQuery = user_id 
       ? Cart.findOne({ user_id }).populate("products.productData_id")
       : null;
+
     const [category, products, cart] = await Promise.all([
       Category.find({}),
       Product.find({}),
       cartQuery,
     ]);
-    
-    // Render the home page with the fetched data, including the cart
-    res.render("user/home", { category, products, cart, message });
+
+    // Create a map of category offers for easy lookup
+    const categoryOffersMap = categoryOffers.reduce((acc, offer) => {
+      if (offer.categoryId) {
+        acc[offer.categoryId._id] = offer;
+      }
+      return acc;
+    }, {});
+
+    // Render the home page with the fetched data, including category offers
+    res.render("user/home", { 
+      category, 
+      products, 
+      cart, 
+      message,
+      categoryOffers: categoryOffersMap 
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send("Server Error");
@@ -402,10 +457,7 @@ const getAboutPage = asyncHandler(async (req, res) => {
   res.render("user/about");
 });
 
-// Get contact page
-const getContactPage = asyncHandler(async (req, res) => {
-  res.render("user/contact");
-});
+
 
 // Get Jewellery page/product listing page
 const getJewelleryPage = asyncHandler(async (req, res) => {
@@ -414,6 +466,7 @@ const getJewelleryPage = asyncHandler(async (req, res) => {
   const limit = Math.max(1, Math.min(50, parseInt(req.query.limit) || 12));
   const skip = (page - 1) * limit;
   // Filter parameters
+  let userpresent = false;
   const searchQuery = req.query.search?.trim() || "";
   const category = req.query.category;
   const sortBy = req.query.sortBy || "new-arrivals";
@@ -471,7 +524,11 @@ const getJewelleryPage = asyncHandler(async (req, res) => {
     // Calculate pagination
     const totalPages = Math.ceil(totalProducts / limit);
     // Add search to user's history if logged in
+    if(req.session.user_id){
+      userpresent = true;
+    }
     if (req.session.user_id && searchQuery) {
+      
       const userId = req.session.user_id;
       await User.findByIdAndUpdate(userId, {
         $push: {
@@ -483,10 +540,11 @@ const getJewelleryPage = asyncHandler(async (req, res) => {
         },
       });
     }
-    console.log(processedProducts);
+    
     // Prepare response
     const responseData = {
       products: processedProducts,
+      userpresent,
       pagination: {
         currentPage: page,
         totalPages,
@@ -622,7 +680,7 @@ module.exports = {
   getIndexPage,
   getHomePage,
   getAboutPage,
-  getContactPage,
+ 
   getJewelleryPage,
   getLoginPage,
   getSignupPage,

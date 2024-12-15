@@ -10,57 +10,47 @@ const applyCoupon = async (req, res) => {
     console.log("Extracted couponCode:", couponCode);
 
     if (!couponCode) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Missing coupon code",
-          requiresRefresh: false,
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Missing coupon code",
+        requiresRefresh: false,
+      });
     }
     const userId = req.session.user_id;
     console.log("User ID from session:", userId);
 
     if (!userId) {
-      return res
-        .status(401)
-        .json({
-          success: false,
-          message: "User not authenticated",
-          requiresRefresh: false,
-        });
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated",
+        requiresRefresh: false,
+      });
     }
     const coupon = await Coupon.findOne({ code: couponCode, isList: true });
 
     if (!coupon) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "Invalid coupon code",
-          requiresRefresh: false,
-        });
+      return res.status(404).json({
+        success: false,
+        message: "Invalid coupon code",
+        requiresRefresh: false,
+      });
     }
 
     // Check if coupon is expired
     if (coupon.expireOn < new Date()) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Coupon has expired",
-          requiresRefresh: false,
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Coupon has expired",
+        requiresRefresh: false,
+      });
     }
 
     if (coupon.userId.includes(userId)) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "You have already used this coupon",
-          requiresRefresh: false,
-        });
+      return res.status(400).json({
+        success: false,
+        message: "You have already used this coupon",
+        requiresRefresh: false,
+      });
     }
 
     // Get cart total

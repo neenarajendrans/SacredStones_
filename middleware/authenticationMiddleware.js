@@ -1,14 +1,12 @@
 const User = require("../model/userModel");
-const Cart = require('../model/cartModel');
-const session = require('express-session')
+const Cart = require("../model/cartModel");
+const session = require("express-session");
 
 // User Authentication Middleware
-const isLoggedin = async(req, res, next) => {
-  
+const isLoggedin = async (req, res, next) => {
   if (req?.session?.user_id) {
     return next();
   } else {
-
     res.redirect("/login");
   } // can i render login here are send the message?
 };
@@ -33,19 +31,14 @@ const isAdminLoggedin = (req, res, next) => {
   }
 };
 
-
-
-
 // // Admin Logout Middleware
 // const isAdminLoggedOut = (req, res, next) => {
-//   if (!req.session.isAdmin) {                   Is these two middleware required 
+//   if (!req.session.isAdmin) {                   Is these two middleware required
 //     next();
 //   } else {
 //     res.redirect("/admin/login");
 //   }
 // };
-
-
 
 // // User Logout Middleware
 // const isLoggedOut = (req, res, next) => {
@@ -60,8 +53,4 @@ module.exports = {
   isLoggedin,
   disableCacheMiddleware,
   isAdminLoggedin,
- 
- 
- 
-
 };

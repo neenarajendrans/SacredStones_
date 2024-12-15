@@ -1,26 +1,27 @@
-const Order = require("../../model/orderModel"); 
-const asyncHandler = require("express-async-handler");  
-const Wallet = require("../../model/walletModel"); 
-const {handleWalletTransaction} = require("../../controller/user/walletController"); 
+const Order = require("../../model/orderModel");
+const asyncHandler = require("express-async-handler");
+const Wallet = require("../../model/walletModel");
+const {
+  handleWalletTransaction,
+} = require("../../controller/user/walletController");
 
-const getRequestPage = asyncHandler(async(req, res) => {
-   
-    const orders = await Order.find({ orderStatus: "Return Request" })
-        .populate("user_id", "fullName email") // Populate user details
-        .sort({ orderDate: -1 }); // Sort by most recent order first
+const getRequestPage = asyncHandler(async (req, res) => {
+  const orders = await Order.find({ orderStatus: "Return Request" })
+    .populate("user_id", "fullName email") // Populate user details
+    .sort({ orderDate: -1 }); // Sort by most recent order first
 
-    // Render the return request page with orders
-    res.render("admin/return", { 
-        orders: orders,
-        title: "Return Requests" 
-    }); 
-}) 
+  // Render the return request page with orders
+  res.render("admin/return", {
+    orders: orders,
+    title: "Return Requests",
+  });
+});
 
 const approveReturnRequest = asyncHandler(async (req, res) => {
   try {
     console.log(req.params);
-    
-    const {orderId} = req.params;
+
+    const { orderId } = req.params;
 
     // Validate input
     if (!orderId) {
@@ -41,12 +42,12 @@ const approveReturnRequest = asyncHandler(async (req, res) => {
 
     // Update the order status to "Returned"
     order.orderStatus = "Returned";
-    
+
     await order.save();
     //refund
     if (order.paymentStatus === "Paid") {
       const refundAmount = order.finalAmount;
-      
+
       try {
         await handleWalletTransaction(
           order.user_id,
@@ -81,10 +82,7 @@ const approveReturnRequest = asyncHandler(async (req, res) => {
   }
 });
 
-
-
-
 module.exports = {
-    getRequestPage,
-    approveReturnRequest
-}
+  getRequestPage,
+  approveReturnRequest,
+};

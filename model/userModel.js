@@ -24,7 +24,6 @@ const user = mongoose.Schema(
     googleId: {
       type: String,
       required: false,
-
     },
     password: {
       type: String,
@@ -46,43 +45,51 @@ const user = mongoose.Schema(
       },
     ],
     wallet: {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : "Wallet"
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Wallet",
     },
-    wishlist: [{
+    wishlist: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref:"Wishlist",
-    }],
-    orderHistory:[{
+        ref: "Wishlist",
+      },
+    ],
+    orderHistory: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref:"Order"
-    }],
-    createdOn:{
-        type:Date,
-        default:Date.now,
+        ref: "Order",
+      },
+    ],
+    createdOn: {
+      type: Date,
+      default: Date.now,
     },
-    referalCode:{  
-        type:String,
-        required: false,
+    referalCode: {
+      type: String,
+      required: false,
     },
-    redeemed:{
-        type:Boolean,
+    redeemed: {
+      type: Boolean,
     },
-    redeemedUsers:[{
-        type:mongoose.Schema.Types.ObjectId, 
-        ref:"User"
-    }],
-    searchHistory:[{
-        category:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"Category",
+    redeemedUsers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    searchHistory: [
+      {
+        category: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Category",
         },
-        searchOn:{
-            type:Date,
-            default:Date.now,
-        }
-    }]
+        searchOn: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
-  { timestamps: true } 
+  { timestamps: true }
 );
 module.exports = mongoose.model("User", user);

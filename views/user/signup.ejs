@@ -1,253 +1,314 @@
 <%- include ("../layout/usertem")%>
 
-<body>
-  <style>
-    .btn-google {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: 60px;
-        padding: 10px 20px;
-        background-color: #ffffff;
-        color: #757575;
-        border: 1px solid #dadce0;
-        border-radius: 4px;
-        font-family: 'Roboto', Arial, sans-serif;
-        font-size: 14px;
-        font-weight: 500;
-        text-decoration: none;
-        transition: background-color 0.3s, box-shadow 0.3s;
-    }
+  <body>
+    <style>
+ .signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  background-color: #f4f4f4;
+  padding: 10px;
+}
 
-    .btn-google:hover {
-        background-color: #3df791;
-        box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
-    }
+.card-login {
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
 
-    .btn-google svg {
-        margin-right: 10px;
-    }
+.logo-container {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.logo-container img {
+  max-width: 250px;
+  height: auto;
+}
+
+.btn-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px 15px;
+  background-color: #ffffff;
+  color: #757575;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+@media (max-width: 768px) {
+  .signup-container {
+    padding: 5px;
+    min-height: 100vh;
+  }
+
+  .card-login {
+    max-width: 95%;
+  }
+
+  .logo-container img {
+    max-width: 200px;
+  }
+}
+
+.form-label {
+  margin-bottom: 5px;
+}
+
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
+.card-title {
+  margin-bottom: 1rem;
+}
 </style>
-  <main>
-    <section class="content-main ">
-      <div class="card mx-auto card-login">
-        <div class="card-body">
-          <% if(message) {%>
-            <p class="text-danger errorMsg">
-                <%=message %>
-            </p>
-            <% } %>
-          <h4 class="card-title mb-4">Create an Account</h4>
-         
-            <form  id="myForm" method="post" action="/signup"  onsubmit="return validation(event)" >
-              <div class="mb-3">
-                  <label class="form-label" >Full Name</label>
-                  <input class="form-control"  id="name" placeholder="Full Name" type="text" name="fullName" onkeyup="nameChecking()" required />
-              </div>
-              <div id="errorname" class="ms-2 text-danger"></div>
-              <div class="mb-3">
-                  <label class="form-label">Email</label>
-                  <input class="form-control" id="email" placeholder="Your email" type="text"  name="email" onkeyup="emailChecking()" required/>
-              </div>
-              <div id="erroremail" class="ms-2 text-danger"></div>
-          
-              <div class="mb-3">
-                  <label class="form-label">Phone</label>
-                  <div class="row gx-2">
-                  
-                      <div class="col-8"> <input class="form-control" id="phoneNumber" name="phoneNumber"  placeholder="Phone"  minlength="10" maxlength="10" type="text" onkeyup="phoneNumberChecking()" name="phoneNumber" required/> </div>
-                  </div>
-              </div>
-              <div id="errorphone" class="ms-2 text-danger"></div>
-           
-              <div class="mb-3">
-                  <label class="form-label">password</label>
-                  <input class="form-control" id="password" name="password" placeholder="Password" type="password"  onkeyup="passwordChecking()" required>
-              </div>
-              <div id="errorpassword" class="ms-2 text-danger"></div>
-              <div class="mb-3">
-                  <label class="form-label"> Confirm Password</label>
-                  <input class="form-control" name="confirmPassword" id="cpassword" placeholder="Password" type="password" onkeyup="cpasswordChecking()" required>
-              </div>
-              <div id="errorcpassword" class="ms-2 text-danger"></div> 
-              <div class="mb-3">
-                <label class="form-label">Referral Code (Optional)</label>
-                <input type="text" class="form-control" id="referredBy" placeholder="Referral Code (Optional)"
-                  name="referredBy" />
-                <div id="errorreferredBy" class="error-message"></div>
-              </div>
-        
-            <div class="mb-4">
-              <button type="submit" name="signup" class="btn btn-primary w-100"> SignUp </button>
-            </div>
-          </form>
-          <p class="text-center mb-2">Already have an account? <a href="/login">Sign in now</a></p>
-          
-          <a href="/auth/google" class="btn-google">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="18px" height="18px">
-                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
-                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
-                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
-                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
-            </svg>
-            Sign in with Google
+
+<div class="signup-container">
+  <div class="card mx-auto card-login">
+    <div class="card-body p-4">
+      <div class="logo-container">
+        <a href="/jewellery">
+          <img src="images/logo.png" alt="Jewellery Store Logo">
         </a>
-          
-        </div>
       </div>
-    </section>
-  </main>
-  <script>
-    const error = document.getElementsByClassName('errorMsg');
-    // Check if there are any elements with the class 'errorMsg'
-    if (error.length) {
-        setTimeout(() => {
-            for (let i = 0; i < error.length; i++) {
-                error[i].innerHTML = ' ';
-            }
-        }, 3000);
-    }
+
+      <div class="error-container">
+        <% if(message) {%>
+          <p class="text-danger errorMsg">
+            <%=message %>
+          </p>
+        <% } %>
+      </div>
+
+      <h4 class="card-title mb-4 text-center">Create an Account</h4>
+
+      <form id="myForm" method="post" action="/signup" onsubmit="return validation(event)">
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input class="form-control" id="name" placeholder="Full Name" type="text" name="fullName"
+            onkeyup="nameChecking()" required />
+          <div id="errorname" class="ms-2 text-danger"></div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input class="form-control" id="email" placeholder="Your email" type="text" name="email"
+            onkeyup="emailChecking()" required />
+          <div id="erroremail" class="ms-2 text-danger"></div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Phone</label>
+          <input class="form-control" id="phoneNumber" name="phoneNumber"
+            placeholder="Phone" minlength="10" maxlength="10" type="text" onkeyup="phoneNumberChecking()"
+            required />
+          <div id="errorphone" class="ms-2 text-danger"></div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input class="form-control" id="password" name="password" placeholder="Password" type="password"
+            onkeyup="passwordChecking()" required>
+          <div id="errorpassword" class="ms-2 text-danger"></div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Confirm Password</label>
+          <input class="form-control" name="confirmPassword" id="cpassword" placeholder="Confirm Password"
+            type="password" onkeyup="cpasswordChecking()" required>
+          <div id="errorcpassword" class="ms-2 text-danger"></div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Referral Code (Optional)</label>
+          <input type="text" class="form-control" id="referredBy" placeholder="Referral Code (Optional)"
+            name="referredBy" />
+          <div id="errorreferredBy" class="error-message"></div>
+        </div>
+
+        <div class="mb-4">
+          <button type="submit" name="signup" class="btn btn-primary w-100"> SignUp </button>
+        </div>
+      </form>
+
+      <p class="text-center mb-2">Already have an account? <a href="/login">Sign in now</a></p>
+
+      <a href="/auth/google" class="btn-google">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="18px" height="18px">
+          <path fill="#FFC107"
+            d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
+          <path fill="#FF3D00"
+            d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
+          <path fill="#4CAF50"
+            d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
+          <path fill="#1976D2"
+            d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
+        </svg>
+        Sign in with Google
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const error = document.getElementsByClassName('errorMsg');
+  // Check if there are any elements with the class 'errorMsg'
+  if (error.length) {
+    setTimeout(() => {
+      for (let i = 0; i < error.length; i++) {
+        error[i].innerHTML = ' ';
+      }
+    }, 3000);
+  }
 </script>
-  
-  <!-- Other scripts -->
-  <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
-  <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
-  <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
-  <script src="assets/js/main.js" type="text/javascript"></script>
 
-<script>function validation(event) {
-  event.preventDefault(); // Prevent default form submission
-  
-  // Run all validations and store results
-  const isNameValid = nameChecking();
-  const isEmailValid = emailChecking();
-  const isPhoneValid = phoneNumberChecking();
-  const isPasswordValid = passwordChecking();
-  const isConfirmPasswordValid = cpasswordChecking();
-  
-  // Only submit if all validations pass
-  if (isNameValid && isEmailValid && isPhoneValid && isPasswordValid && isConfirmPasswordValid) {
-      document.getElementById("myForm").submit();
-      return true;
-  }
-  return false;
-}
+    <!-- Other scripts -->
+    <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <script src="assets/js/main.js" type="text/javascript"></script>
 
-function nameChecking() {
-  let name = document.getElementById("name").value;
-  let errorName = document.getElementById("errorname");
-  
-  // Clear previous error message
-  errorName.innerHTML = "";
-  
-  // Trim whitespace and check if empty
-  if (name.trim() === "") {
-      errorName.innerHTML = "Please enter your name";
-      return false;
-  }
-  
-  // Check minimum length
-  if (name.length < 3) {
-      errorName.innerHTML = "Name must be at least 3 characters long";
-      return false;
-  }
-  
-  // Check for numbers
-  if (/\d/.test(name)) {
-      errorName.innerHTML = "Name cannot contain numbers";
-      return false;
-  }
-  
-  // Check for minimum letters
-  if (name.replace(/[^a-zA-Z]/g, '').length < 3) {
-      errorName.innerHTML = "Name must contain at least 3 letters";
-      return false;
-  }
-  
-  return true;
-}
+    <script>function validation(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Run all validations and store results
+        const isNameValid = nameChecking();
+        const isEmailValid = emailChecking();
+        const isPhoneValid = phoneNumberChecking();
+        const isPasswordValid = passwordChecking();
+        const isConfirmPasswordValid = cpasswordChecking();
+
+        // Only submit if all validations pass
+        if (isNameValid && isEmailValid && isPhoneValid && isPasswordValid && isConfirmPasswordValid) {
+          document.getElementById("myForm").submit();
+          return true;
+        }
+        return false;
+      }
+
+      function nameChecking() {
+        let name = document.getElementById("name").value;
+        let errorName = document.getElementById("errorname");
+
+        // Clear previous error message
+        errorName.innerHTML = "";
+
+        // Trim whitespace and check if empty
+        if (name.trim() === "") {
+          errorName.innerHTML = "Please enter your name";
+          return false;
+        }
+
+        // Check minimum length
+        if (name.length < 3) {
+          errorName.innerHTML = "Name must be at least 3 characters long";
+          return false;
+        }
+
+        // Check for numbers
+        if (/\d/.test(name)) {
+          errorName.innerHTML = "Name cannot contain numbers";
+          return false;
+        }
+
+        // Check for minimum letters
+        if (name.replace(/[^a-zA-Z]/g, '').length < 3) {
+          errorName.innerHTML = "Name must contain at least 3 letters";
+          return false;
+        }
+
+        return true;
+      }
 
 
-function emailChecking() {
-  let emailId = document.getElementById("email").value;
-  let errorEmail = document.getElementById("erroremail");
-  
-  errorEmail.innerHTML = ""; // Clear previous error
-  
-  if (!emailId.trim()) {
-      errorEmail.innerHTML = "Please enter an email address";
-      return false;
-  }
-  
-  if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailId)) {
-      errorEmail.innerHTML = "Please enter a valid email address";
-      return false;
-  }
-  
-  return true;
-}
+      function emailChecking() {
+        let emailId = document.getElementById("email").value;
+        let errorEmail = document.getElementById("erroremail");
 
-function phoneNumberChecking() {
-  let number = document.getElementById("phoneNumber").value;
-  let errorNumber = document.getElementById("errorphone");
-  
-  errorNumber.innerHTML = ""; // Clear previous error
-  
-  if (!number.trim()) {
-      errorNumber.innerHTML = "Please enter a phone number";
-      return false;
-  }
-  
-  if (!/^[1-9]\d{9}$/.test(number)) {
-      errorNumber.innerHTML = "Please enter a valid 10-digit phone number";
-      return false;
-  }
-  
-  return true;
-}
+        errorEmail.innerHTML = ""; // Clear previous error
 
-function passwordChecking() {
-  let password = document.getElementById("password").value;
-  let errorPassword = document.getElementById("errorpassword");
-  
-  errorPassword.innerHTML = ""; // Clear previous error
-  
-  if (!password) {
-      errorPassword.innerHTML = "Please enter your password";
-      return false;
-  }
-  
-  if (password.length < 8) {
-      errorPassword.innerHTML = "Password must be at least 8 characters long";
-      return false;
-  }
-  
-  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/.test(password)) {
-      errorPassword.innerHTML = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character";
-      return false;
-  }
-  
-  return true;
-}
+        if (!emailId.trim()) {
+          errorEmail.innerHTML = "Please enter an email address";
+          return false;
+        }
 
-function cpasswordChecking() {
-  let password = document.getElementById("password").value;
-  let cpassword = document.getElementById("cpassword").value;
-  let errorCPassword = document.getElementById("errorcpassword");
-  
-  errorCPassword.innerHTML = ""; // Clear previous error
-  
-  if (!cpassword) {
-      errorCPassword.innerHTML = "Please confirm your password";
-      return false;
-  }
-  
-  if (cpassword !== password) {
-      errorCPassword.innerHTML = "Passwords do not match";
-      return false;
-  }
-  
-  return true;
-}</script>
-</body>
-</html>
+        if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(emailId)) {
+          errorEmail.innerHTML = "Please enter a valid email address";
+          return false;
+        }
+
+        return true;
+      }
+
+      function phoneNumberChecking() {
+        let number = document.getElementById("phoneNumber").value;
+        let errorNumber = document.getElementById("errorphone");
+
+        errorNumber.innerHTML = ""; // Clear previous error
+
+        if (!number.trim()) {
+          errorNumber.innerHTML = "Please enter a phone number";
+          return false;
+        }
+
+        if (!/^[1-9]\d{9}$/.test(number)) {
+          errorNumber.innerHTML = "Please enter a valid 10-digit phone number";
+          return false;
+        }
+
+        return true;
+      }
+
+      function passwordChecking() {
+        let password = document.getElementById("password").value;
+        let errorPassword = document.getElementById("errorpassword");
+
+        errorPassword.innerHTML = ""; // Clear previous error
+
+        if (!password) {
+          errorPassword.innerHTML = "Please enter your password";
+          return false;
+        }
+
+        if (password.length < 8) {
+          errorPassword.innerHTML = "Password must be at least 8 characters long";
+          return false;
+        }
+
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}$/.test(password)) {
+          errorPassword.innerHTML = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character";
+          return false;
+        }
+
+        return true;
+      }
+
+      function cpasswordChecking() {
+        let password = document.getElementById("password").value;
+        let cpassword = document.getElementById("cpassword").value;
+        let errorCPassword = document.getElementById("errorcpassword");
+
+        errorCPassword.innerHTML = ""; // Clear previous error
+
+        if (!cpassword) {
+          errorCPassword.innerHTML = "Please confirm your password";
+          return false;
+        }
+
+        if (cpassword !== password) {
+          errorCPassword.innerHTML = "Passwords do not match";
+          return false;
+        }
+
+        return true;
+      }</script>
+  </body>
+
+  </html>

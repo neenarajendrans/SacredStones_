@@ -158,6 +158,13 @@
     </style>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/admin/dashboard">
+            <img src="/img/logo_main.png" width="400" height="70" class="d-inline-block align-top" alt="Your Logo">
+            
+        </a>
+      
+    </nav>
     <div class="container mt-4">
       
         <h2 class="main-title">Coupon Management</h2>
@@ -175,11 +182,11 @@
                             <input type="date" class="form-control" id="expireOn" name="expireOn">
                         </div>
                         <div class="form-group">
-                            <label for="offerPrice">Offer Price</label>
+                            <label for="offerPrice">Offer Discount</label>
                             <input type="number" class="form-control" id="offerPrice" name="offerPrice">
                         </div>
                         <div class="form-group">
-                            <label for="minimumPrice">Minimum Price</label>
+                            <label for="minimumPrice">Minimum Spend</label>
                             <input type="number" class="form-control" id="minimumPrice" name="minimumPrice">
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Create Coupon</button>
@@ -204,8 +211,8 @@
                                     <th>Name</th>
                                     <th>Coupon Code</th>
                                     <th>Expiry Date</th>
-                                    <th>Offer Price</th>
-                                    <th>Minimum Price</th>
+                                    <th>Offer Discount</th>
+                                    <th>Minimum Spend</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -215,8 +222,8 @@
                                     <td><%= coupon.name %></td>
                                     <td><%= coupon.code %></td>
                                     <td><%= coupon.expireOn.toLocaleDateString() %></td>
-                                    <td><%= coupon.offerPrice %></td>
-                                    <td><%= coupon.minimumPrice %></td>
+                                    <td>₹<%= coupon.offerPrice %></td>
+                                    <td>₹<%= coupon.minimumPrice %></td>
                                     <td>
                                         <form action="/admin/deleteCoupons/<%= coupon._id %>" method="POST" style="display: inline;">
                                             <button type="submit" class="btn btn-danger btn-sm">Delete</button>

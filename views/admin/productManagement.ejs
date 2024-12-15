@@ -33,7 +33,7 @@
                                     <th scope="col">Gold Purity</th>
                                     <th scope="col">Making Charges</th>
                                     <th scope="col">Category</th>
-                                    <th scope="col">stock</th>
+                                    <th scope="col">Stock</th>
                                     <th scope="col">Actions</th>
                                 </tr>
                             </thead>
@@ -50,10 +50,10 @@
                                         height="60" src="/assets/imgs/productIMG/<%= ele.images[0] %>"></td>
                                     
                                     <td><%= ele.name %></td>
-                                    <td><%= ele.total_price %></td>
-                                    <td><%= ele.gross_weight %></td>
-                                    <td><%= ele.gold_purity %></td>
-                                    <td><%= ele.making_charge %></td>
+                                    <td>₹<%= ele.total_price %></td>
+                                    <td><%= ele.gross_weight %>gm</td>
+                                    <td><%= ele.gold_purity %>K</td>
+                                    <td>₹<%= ele.making_charge %></td>
                                     <td><%= ele.category.name %></td>
                                     <td><%= ele.stock %></td>
                                    

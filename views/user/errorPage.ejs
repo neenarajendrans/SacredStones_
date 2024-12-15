@@ -3,106 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SacredStones</title>
+    <title>SacredStones - Page Not Found</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .error-container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        .error-icon {
+            font-size: 80px;
+            color: #FF6B6B;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .error-message {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #4040F6;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #5252F8;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(50,50,93,0.1);
+        }
+        .signup-link {
+            margin-top: 15px;
+            color: #4040F6;
+            text-decoration: none;
+        }
+        .signup-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
-<body style="background-color: aliceblue;">
-    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 200px;">
-        <h1 style="font-weight: 50px;">
-            Page Not Found!
-        </h1>
-        <a href="/home"><button style="width: 200px; height: 50px; background-color: rgb(64, 64, 246); color: white; border-radius: 30PX; border-color: rgb(69, 69, 254);">Go Back to Home page</button></a>
-        
+<body>
+    <div class="error-container">
+        <i class="fas fa-exclamation-triangle error-icon"></i>
+        <h1>Oops! Something Went Wrong</h1>
+        <p class="error-message">
+            It seems like you've reached a page that doesn't exist. 
+            This could be due to an expired session or an incorrect link.
+        </p>
+        <a href="/login" class="btn">
+            <i class="fas fa-sign-in-alt"></i> Login Again
+        </a>
+        <div>
+            <p>Don't have an account?</p>
+            <a href="/signup" class="signup-link">
+                Create a New Account
+            </a>
+        </div>
     </div>
-    
 </body>
 </html>
-<!-- <script>
-    // Form validation on input
-    document.getElementById('name').addEventListener('input', nameChecking);
-    document.getElementById('email').addEventListener('input', emailChecking);
-    document.getElementById('phoneNumber').addEventListener('input', phoneNumberChecking);
-    
-    // Main validation function
-    function validation(event) {
-        event.preventDefault(); // Prevent default form submission
-    
-        // Check all validations
-        const isNameValid = nameChecking();
-        const isEmailValid = emailChecking();
-        const isPhoneValid = phoneNumberChecking();
-    
-        // Only submit if all validations pass
-        if (isNameValid && isEmailValid && isPhoneValid) {
-            document.getElementById("myForm").submit();
-            return true;
-        }
-        return false;
-    }
-    
-    // Name validation
-    function nameChecking() {
-        const name = document.getElementById("name").value;
-        const errorName = document.getElementById("errorname");
-        const namePattern = /^[A-Za-z\s]+$/;
-        // Remove leading/trailing spaces for validation
-        if (name.trim() === "") {
-            errorName.innerHTML = "Please enter your name";
-            return false;
-        } else if (!namePattern.test(name)) {
-            errorName.innerHTML = "Name should contain only alphabets";
-            return false;
-        } else if (name.trim().length > 30) {
-            errorName.innerHTML = "Name is too long (maximum 50 characters)";
-            return false;
-        } else if (name.trim().length < 3) {
-            errorName.innerHTML = "Name must be at least 3 characters long";
-            return false;
-        } else {
-            errorName.innerHTML = "";
-            return true;
-        }
-    }
-    
-    // Email validation
-    function emailChecking() {
-        const email = document.getElementById("email").value;
-        const errorEmail = document.getElementById("erroremail");
-        
-        // Email regex pattern
-        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        
-        if (email.trim() === "") {
-            errorEmail.innerHTML = "Please enter your email";
-            return false;
-        } else if (!emailPattern.test(email)) {
-            errorEmail.innerHTML = "Please enter a valid email address";
-            return false;
-        } else {
-            errorEmail.innerHTML = "";
-            return true;
-        }
-    }
-    
-    // Phone number validation
-    function phoneNumberChecking() {
-        const phoneNumber = document.getElementById("phoneNumber").value;
-        const errorPhone = document.getElementById("errorphoneNumber");
-        
-        // Remove any non-digit characters for validation
-        const cleanNumber = phoneNumber.replace(/\D/g, '');
-        
-        if (phoneNumber.trim() === "") {
-            errorPhone.innerHTML = "Please enter your phone number";
-            return false;
-        } else if (cleanNumber.length !== 10) {
-            errorPhone.innerHTML = "Phone number must be 10 digits";
-            return false;
-        } else if (!/^[1-9]\d{9}$/.test(cleanNumber)) {
-            errorPhone.innerHTML = "Please enter a valid phone number";
-            return false;
-        } else {
-            errorPhone.innerHTML = "";
-            return true;
-        }
-    }
-    </script> -->

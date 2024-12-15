@@ -166,6 +166,7 @@
                                                         required />
                                                     <small id="errorphoneNumber"
                                                         class="error-message text-danger"></small>
+
                                                 </div>
                                                 <div class="row">
                                                     <div class="form-group col-md-6 mb-3">
@@ -222,14 +223,17 @@
                                                                 </a></h5>
                                                             <span class="product-qty">x <%= cartData.qty %></span>
                                                         </td>
-                                                        <td>$<%= productTotal[index] %>
+                                                        <td>₹<%= productTotal[index] %>
                                                         </td>
                                                     </tr>
 
                                                     <% }) } %>
+
+                                                       
+
                                                         <tr>
                                                             <th>SubTotal</th>
-                                                            <td class="product-subtotal" colspan="2">$
+                                                            <td class="product-subtotal" colspan="2">₹
                                                                 <%=subtotalWithShipping %>
                                                             </td>
                                                         </tr>
@@ -237,11 +241,17 @@
                                                             <th>Shipping</th>
                                                             <td colspan="2"><em>Free Shipping</em></td>
                                                         </tr>
+                                                         <tr>
+                                                            <th>Discount</th>
+                                                            <td id="discount" colspan="2"
+                                                                style="color: rgb(55, 211, 55);">0</td>
+                                                        </tr>
+
 
                                                         <tr>
                                                             <th>Total</th>
                                                             <td colspan="2" class="product-subtotal"><span
-                                                                    class="font-xl text-brand fw-900">$
+                                                                    class="font-xl text-brand fw-900">₹
                                                                     <%=subtotalWithShipping %>
                                                                 </span></td>
                                                         </tr>
@@ -262,27 +272,30 @@
                                         </div>
 
                                         <div class="payment_option">
-                                            <div class="custome-radio">
-                                                <input class="form-check-input" value="CashOnDelivery" required=""
-                                                    type="radio" name="payment_option" id="exampleRadios1" checked="">
-                                                <label class="form-check-label" for="exampleRadios1"
-                                                    data-bs-toggle="collapse" data-target="#CashOnDelivery1"
-                                                    aria-controls="CashOnDelivery1">Cash On Delivery</label>
-                                            </div>
-                                            <div class="custome-radio">
-                                                <input class="form-check-input" value="Online" required="" type="radio"
-                                                    name="payment_option" id="exampleRadios2">
-                                                <label class="form-check-label" for="exampleRadios2"
-                                                    data-bs-toggle="collapse" data-target="#CreditCard"
-                                                    aria-controls="CreditCard">Online Payment</label>
-                                            </div>
-                                            <div class="custome-radio">
-                                                <input class="form-check-input" value="Wallet" required="" type="radio"
-                                                    name="payment_option" id="exampleRadios3">
-                                                <label class="form-check-label" for="exampleRadios3"
-                                                    data-bs-toggle="collapse" data-target="#PayPal"
-                                                    aria-controls="PayPal">Wallet</label>
-                                            </div>
+                                            <% if (subtotalWithShipping <=1000){ %>
+                                                <div class="custome-radio">
+                                                    <input class="form-check-input" value="CashOnDelivery" required=""
+                                                        type="radio" name="payment_option" id="exampleRadios1"
+                                                        checked="">
+                                                    <label class="form-check-label" for="exampleRadios1"
+                                                        data-bs-toggle="collapse" data-target="#CashOnDelivery1"
+                                                        aria-controls="CashOnDelivery1">Cash On Delivery</label>
+                                                </div>
+                                                <%}%>
+                                                    <div class="custome-radio">
+                                                        <input class="form-check-input" value="Online" required=""
+                                                            type="radio" name="payment_option" id="exampleRadios2">
+                                                        <label class="form-check-label" for="exampleRadios2"
+                                                            data-bs-toggle="collapse" data-target="#CreditCard"
+                                                            aria-controls="CreditCard">Online Payment</label>
+                                                    </div>
+                                                    <div class="custome-radio">
+                                                        <input class="form-check-input" value="Wallet" required=""
+                                                            type="radio" name="payment_option" id="exampleRadios3">
+                                                        <label class="form-check-label" for="exampleRadios3"
+                                                            data-bs-toggle="collapse" data-target="#PayPal"
+                                                            aria-controls="PayPal">Wallet</label>
+                                                    </div>
                                         </div>
 
 
@@ -332,17 +345,6 @@
                         return;
                     }
 
-                    // Show loading state
-                    // Swal.fire({
-                    //     title: 'Processing Order',
-                    //     text: 'Please wait...',
-                    //     allowOutsideClick: false,
-                    //     showConfirmButton: false,
-                    //     willOpen: () => {
-                    //         Swal.showLoading();
-                    //     }
-                    // });
-
                     // Make the POST request to create order
                     fetch('/order/checkout', {
                         method: 'POST',
@@ -358,7 +360,6 @@
                         .then(data => {
                             if (data.success) {
                                 if (paymentMethod === 'Online') {
-                                    // For online payment, initiate Razorpay // try catch plus then cancelorder
                                     fetch('/createRazorpayOrder', {
                                         method: 'POST',
                                         headers: {
@@ -369,6 +370,8 @@
                                         .then(res => res.json())
                                         .then(razorpayData => {
                                             if (razorpayData.success) {
+                                                // Store the original order ID to use for potential retry or cancellation
+                                                window.currentOrderId = data.orderId;
                                                 initiateRazorpayPayment(razorpayData);
                                             } else {
                                                 throw new Error(razorpayData.message);
@@ -381,19 +384,7 @@
                                                 text: error.message || 'Failed to initialize payment',
                                             });
                                         });
-                                } else if (paymentMethod === 'CashOnDelivery') {
-                                    // For COD, redirect to success page
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Order Placed Successfully!',
-                                        text: 'Thank you for your purchase.',
-                                        confirmButtonText: 'View Order',
-                                    }).then(() => {
-                                        //update payment status here as placed
-                                        window.location.href = '/order/ordersuccess?orderId=' + data.orderId;
-                                    });
                                 } else if (paymentMethod === 'Wallet') {
-                                    // For wallet payment
                                     fetch('/wallet', {
                                         method: 'POST',
                                         headers: {
@@ -409,17 +400,15 @@
                                                     title: 'Payment Successful!',
                                                     text: 'Your order has been confirmed.',
                                                 }).then(() => {
-                                                    window.location.href = '/order/ordersuccess?orderId=' + data.orderId;
+                                                    window.location.href = '/order/orderdetails/' + data.orderId;
                                                 });
                                             } else {
-                                                // Handle wallet payment failure due to insufficient balance
+                                                // Specific handling for insufficient wallet balance
                                                 Swal.fire({
                                                     icon: 'error',
-                                                    title: 'Payment Failed',
-                                                    text: data.message || 'Insufficient balance in wallet.',
-                                                    confirmButtonText: 'Ok',
-                                                }).then(() => {
-                                                    window.history.back()
+                                                    title: 'Insufficient Wallet Balance',
+                                                    text: data.message || 'Not enough balance in your wallet.',
+                                                    confirmButtonText: 'Choose Another Payment Method',
                                                 });
                                             }
                                         })
@@ -429,77 +418,40 @@
                                                 icon: 'error',
                                                 title: 'Payment Error',
                                                 text: 'An unexpected error occurred during wallet payment.',
-                                                confirmButtonText: 'Ok',
-                                            }).then(() => {
-                                                window.history.back()
                                             });
                                         });
-                                }
-                                else {
-                                    //payment unsuccessful cancel order
+                                } else if (paymentMethod === 'CashOnDelivery') {
+                                    // For COD, redirect to success page
                                     Swal.fire({
-                                        icon: 'error',
-                                        title: 'Payment Failed',
-                                        text: data.message || 'Payment failed due to some error',
-                                        confirmButtonText: 'Ok',
+                                        icon: 'success',
+                                        title: 'Order Placed Successfully!',
+                                        text: 'Thank you for your purchase.',
+                                        confirmButtonText: 'View Order',
                                     }).then(() => {
-                                        window.history.back()
+
+                                        window.location.href = '/order/orderdetails/' + data.orderId;
                                     });
                                 }
+
+
+
                             } else {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Payment Failed',
-                                    text: data.message || 'Payment failed due to some error',
-                                    confirmButtonText: 'Ok',
-                                })
+                                    title: 'Order Creation Failed',
+                                    text: data.message || 'Failed to create order',
+                                });
                             }
                         })
                         .catch(error => {
                             console.error('Error:', error);
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Oops...',
-                                text: 'An unexpected error occurred while placing order',
+                                title: 'Unexpected Error',
+                                text: 'An error occurred while processing your order',
                             });
                         });
-
                 }
-                // // Function to handle order cancellation write the route and controller for this  ========================
-                // function cancelOrder(orderId, reason) {
-                //     console.log(orderId, reason + "check ---------------------")
-                //     return fetch('/order/cancelorder', {
-                //         method: 'POST',
-                //         headers: {
-                //             'Content-Type': 'application/json',
-                //         },
-                //         body: JSON.stringify({ orderId: orderId, reason: reason }),
-                //     })
-                //         .then(res => res.json())
-                //         .then(cancelData => {
-                //             if (cancelData.success) {
-                //                 Swal.fire({
-                //                     icon: 'success',
-                //                     title: 'Order Cancelled',
-                //                     text: 'The order has been cancelled due to payment failure.',
-                //                 });
-                //             } else {
-                //                 Swal.fire({
-                //                     icon: 'error',
-                //                     title: 'Order Cancellation Failed',
-                //                     text: cancelData.message || 'Unable to cancel the order.',
-                //                 });
-                //             }
-                //         })
-                //         .catch(error => {
-                //             console.error('Cancellation Error:', error);
-                //             Swal.fire({
-                //                 icon: 'error',
-                //                 title: 'Cancellation Error',
-                //                 text: 'Failed to cancel the order due to an unexpected error.',
-                //             });
-                //         });
-                // }
 
                 function initiateRazorpayPayment(data) {
                     const options = {
@@ -519,12 +471,35 @@
                         },
                         theme: {
                             color: '#3399cc'
+                        },
+                        handler: function (response) {
+                            verifyPayment(response, data.orderId);
+                        },
+                        modal: {
+                            ondismiss: function () {
+                                // Handle case when user closes Razorpay modal without completing payment
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Payment Incomplete',
+                                    text: 'You cancelled the payment. Would you like to try again?',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Retry Payment',
+                                    cancelButtonText: 'Go back to Order'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // Retry payment
+                                        retryRazorpayPayment(window.currentOrderId);
+                                    } else {
+                                        // Cancel order or redirect
+                                        window.location.href = '/order/ordersuccess';
+
+                                    }
+                                });
+                            }
                         }
                     };
 
                     const rzp = new Razorpay(options);
-                    rzp.originalOrderId = data.orderId;
-                    //what to do when payment failed?
                     rzp.on('payment.failed', function (response) {
                         Swal.fire({
                             icon: 'error',
@@ -532,34 +507,259 @@
                             text: response.error.description,
                             showCancelButton: true,
                             confirmButtonText: 'Retry Payment',
-                            cancelButtonText: 'Cancel Order',
+                            cancelButtonText: 'Go back to Order',
                             reverseButtons: true
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                // Explicitly call a function to handle retry
-                                retryRazorpayPayment(rzp.originalOrderId);
-                            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                                window.history.back()
+                                retryRazorpayPayment(window.currentOrderId);
+                            } else {
+                                // window.location.href = '/order/ordersuccess';
                             }
                         });
                     });
 
-
                     rzp.open();
                 }
+
+                //                 function placeOrder() {
+                //                     const selectedAddress = document.querySelector('input[name="checkAddress"]:checked');
+                //                     if (!selectedAddress) {
+                //                         Swal.fire({
+                //                             icon: 'warning',
+                //                             title: 'Address Required',
+                //                             text: 'Please select a delivery address.',
+                //                         });
+                //                         return;
+                //                     }
+
+                //                     const address = selectedAddress.value;
+                //                     const paymentMethod = document.querySelector('input[name="payment_option"]:checked')?.value;
+
+                //                     if (!paymentMethod) {
+                //                         Swal.fire({
+                //                             icon: 'warning',
+                //                             title: 'Payment Method Required',
+                //                             text: 'Please select a payment method.',
+                //                         });
+                //                         return;
+                //                     }
+                // setTimeout(()=>{ Swal.fire({
+                //                         title: 'Payment Failed ',
+                //                         text: 'Go back to your order',
+                //                         allowOutsideClick: false,
+                //                         showConfirmButton: false,
+                //                         showCancelButton: true,
+                //                         cancelButtonText: 'Ok',
+                //                         cancelButtonColor: '#3085d6',
+
+                //                         preConfirm: () => {
+                //                             // Prevent default close behavior
+                //                             return false;
+                //                         }
+                //                     }).then((result) => {
+                //                         if (result.dismiss === Swal.DismissReason.cancel) {
+                //                             // Redirect to order success page when cancel button is clicked
+                //                             window.location.href = '/order/ordersuccess';
+                //                         }
+                //                     });
+                //                 },4000)
+
+
+                //                     // Make the POST request to create order
+                //                     fetch('/order/checkout', {
+                //                         method: 'POST',
+                //                         headers: {
+                //                             'Content-Type': 'application/json',
+                //                         },
+                //                         body: JSON.stringify({
+                //                             address: address,
+                //                             paymentMethod: paymentMethod,
+                //                         }),
+                //                     })
+                //                         .then(response => response.json())
+                //                         .then(data => {
+                //                             if (data.success) {
+                //                                 if (paymentMethod === 'Online') {
+                //                                     // For online payment, initiate Razorpay // try catch plus then cancelorder
+                //                                     fetch('/createRazorpayOrder', {
+                //                                         method: 'POST',
+                //                                         headers: {
+                //                                             'Content-Type': 'application/json',
+                //                                         },
+                //                                         body: JSON.stringify({ orderId: data.orderId })
+                //                                     })
+                //                                         .then(res => res.json())
+                //                                         .then(razorpayData => {
+                //                                             if (razorpayData.success) {
+                //                                                 initiateRazorpayPayment(razorpayData);
+                //                                             } else {
+                //                                                 throw new Error(razorpayData.message);
+                //                                             }
+                //                                         })
+                //                                         .catch(error => {
+                //                                             Swal.fire({
+                //                                                 icon: 'error',
+                //                                                 title: 'Payment Initialization Failed',
+                //                                                 text: error.message || 'Failed to initialize payment',
+                //                                             });
+
+                //                                         });
+                //                                 } else if (paymentMethod === 'CashOnDelivery') {
+                //                                     // For COD, redirect to success page
+                //                                     Swal.fire({
+                //                                         icon: 'success',
+                //                                         title: 'Order Placed Successfully!',
+                //                                         text: 'Thank you for your purchase.',
+                //                                         confirmButtonText: 'View Order',
+                //                                     }).then(() => {
+
+                //                                         window.location.href = '/order/orderdetails/' + data.orderId;
+                //                                     });
+                //                                 } else if (paymentMethod === 'Wallet') {
+                //                                     // For wallet payment
+                //                                     fetch('/wallet', {
+                //                                         method: 'POST',
+                //                                         headers: {
+                //                                             'Content-Type': 'application/json',
+                //                                         },
+                //                                         body: JSON.stringify({ orderId: data.orderId }),
+                //                                     })
+                //                                         .then(response => response.json())
+                //                                         .then(data => {
+                //                                             if (data.success) {
+                //                                                 Swal.fire({
+                //                                                     icon: 'success',
+                //                                                     title: 'Payment Successful!',
+                //                                                     text: 'Your order has been confirmed.',
+                //                                                 }).then(() => {
+                //                                                     window.location.href = '/order/orderdetails/' + data.orderId;
+                //                                                 });
+                //                                             } else {
+                //                                                 // Handle wallet payment failure due to insufficient balance
+                //                                                 Swal.fire({
+                //                                                     icon: 'error',
+                //                                                     title: 'Payment Failed, try other Payment Methods',
+                //                                                     text: data.message || 'Insufficient balance in wallet.',
+                //                                                     confirmButtonText: 'Ok',
+                //                                                 }).then(() => {
+                //                                                     window.location.href = '/order/ordersuccess'
+                //                                                 });
+                //                                             }
+                //                                         })
+                //                                         .catch(error => {
+                //                                             console.error('Error during wallet payment:', error);
+                //                                             Swal.fire({
+                //                                                 icon: 'error',
+                //                                                 title: 'Payment Error',
+                //                                                 text: 'An unexpected error occurred during wallet payment.',
+                //                                                 confirmButtonText: 'Ok',
+                //                                             }).then(() => {
+                //                                                 window.location.href = '/order/ordersuccess'
+                //                                             });
+                //                                         });
+                //                                 }
+                //                                 else {
+
+                //                                     Swal.fire({
+                //                                         icon: 'error',
+                //                                         title: 'Payment Failed',
+                //                                         text: data.message || 'Payment failed due to some error',
+                //                                         confirmButtonText: 'Ok',
+                //                                     }).then(() => {
+                //                                         window.location.href = '/order/ordersuccess'
+                //                                     });
+                //                                 }
+                //                             } else {
+                //                                 Swal.fire({
+                //                                     icon: 'error',
+                //                                     title: 'Failed to Make Order',
+                //                                     text: data.message || 'Failed due to some error',
+                //                                     confirmButtonText: 'Ok',
+                //                                 })
+                //                             }
+                //                         })
+                //                         .catch(error => {
+                //                             console.error('Error:', error);
+                //                             Swal.fire({
+                //                                 icon: 'error',
+                //                                 title: 'Oops...',
+                //                                 text: 'An unexpected error occurred while placing order',
+                //                             });
+                //                         });
+
+                //                 }
+
+
+                // function initiateRazorpayPayment(data) {
+                //     const options = {
+                //         key: '<%= process.env.RAZORPAY_KEY_ID %>',
+                //         amount: data.amount,
+                //         currency: data.currency,
+                //         name: 'Your Store Name',
+                //         description: 'Order Payment',
+                //         order_id: data.orderId,
+                //         handler: function (response) {
+                //             verifyPayment(response, data.orderId);
+                //         },
+                //         prefill: {
+                //             name: data.customerName,
+                //             email: data.customerEmail,
+                //             contact: data.customerPhone
+                //         },
+                //         theme: {
+                //             color: '#3399cc'
+                //         }
+                //     };
+
+                //     const rzp = new Razorpay(options);
+                //     rzp.originalOrderId = data.orderId;
+                //     //what to do when payment failed?
+                //     rzp.on('payment.failed', function (response) {
+                //         Swal.fire({
+                //             icon: 'error',
+                //             title: 'Payment Failed',
+                //             text: response.error.description,
+                //             showCancelButton: true,
+                //             confirmButtonText: 'Retry Payment',
+                //             cancelButtonText: 'Go back to your Order',
+                //             reverseButtons: true
+                //         }).then((result) => {
+                //             if (result.isConfirmed) {
+                //                 // Explicitly call a function to handle retry
+                //                 retryRazorpayPayment(rzp.originalOrderId);
+                //             } else if (result.dismiss === Swal.DismissReason.cancel) {
+                //                 window.location.href = '/order/ordersuccess';
+                //             }
+                //         });
+                //     });
+
+
+                //     rzp.open();
+                // }
 
 
                 function retryRazorpayPayment(orderId) {
                     // Show loading state
-                    Swal.fire({
-                        title: 'Retrying Payment',
-                        text: 'Please wait...',
-                        allowOutsideClick: false,
-                        showConfirmButton: false,
-                        willOpen: () => {
-                            Swal.showLoading();
-                        }
-                    });
+                    //    setTimeout(()=>{Swal.fire({
+                    //         title: 'Payment Failed',
+                    //         text: 'Go back to your order',
+                    //         allowOutsideClick: false,
+                    //         showConfirmButton: false,
+                    //         showCancelButton: true,
+                    //         cancelButtonText: 'Ok',
+                    //         cancelButtonColor: '#3085d6',
+
+                    //         preConfirm: () => {
+                    //             // Prevent default close behavior
+                    //             return false;
+                    //         }
+                    //     }).then((result) => {
+                    //         if (result.dismiss === Swal.DismissReason.cancel) {
+                    //             // You can customize the redirection or action here
+                    //             window.location.href = '/order/ordersuccess'; // Adjust the URL as needed
+                    //         }
+                    //     });
+                    // },4000) 
 
                     // Recreate Razorpay order
                     fetch('/createRazorpayOrder', {
@@ -703,6 +903,12 @@
                             // Update UI
                             document.getElementById("appliedCouponCode").textContent = data.couponCode;
                             document.getElementById("couponDiscount").textContent = data.discount.toFixed(2);
+                            const discountElement = document.getElementById("discount");
+                            if (discountElement) {
+                                discountElement.textContent = `₹${data.discount.toFixed(2)}`;
+                                // Optional: Change color to indicate a positive discount
+                                discountElement.style.color = 'rgb(55, 211, 55)';
+                            }
 
                             // Toggle visibility
                             couponForm.style.display = "none";
@@ -713,11 +919,7 @@
                             if (totalElement && data.finalAmount !== undefined) {
                                 totalElement.textContent = `₹${data.finalAmount.toFixed(2)}`;
                             }
-                            // Update discount amount if exists
-                            // const dicountElement = document.querySelector('.discount');
-                            // if (discountElement && data.discount !== undefined) {
-                            //     discountElement.textContent = `₹${data.discount.toFixed(2)}`;
-                            // }
+
 
                         } else {
                             Swal.fire({
@@ -782,6 +984,12 @@
                                     couponInfoDiv.style.display = "none";
                                     couponForm.style.display = "block";
                                     document.getElementById("couponCode").value = '';
+
+                                    const discountElement = document.getElementById("discount");
+                                    if (discountElement) {
+                                        discountElement.textContent = '0';
+
+                                    }
 
                                     // Update total amount
                                     if (data.requiresRefresh) {

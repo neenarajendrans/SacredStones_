@@ -13,58 +13,65 @@ const getCartPage = asyncHandler(async (req, res) => {
   const userId = req.session.user_id;
   console.log("userId:", userId);
   const userData = await User.findById(userId);
+  
   if (userData) {
     const userCart = await Cart.findOne({ user_id: userId }).populate(
       "products.productData_id"
     );
-    let subtotalWithShipping = 0;
+
     if (userCart) {
       const cart = userCart ? userCart.products : [];
       const subtotal = calculateSubtotal(cart);
       const productTotal = calculateProductTotal(cart);
       const subtotalWithShipping = subtotal;
-      console.log(productTotal, "sub12");
-
-      let outOfStockError = false;
-      if (cart.length > 0) {
-        for (const cartItem of cart) {
-          const product = cartItem.productData_id;
-
-          if (product.stock < cartItem.qty) {
-            outOfStockError = true;
-            break;
-          }
+      
+      // Flag to track out-of-stock products
+      let hasOutOfStockProducts = false;
+      
+      // Check for out-of-stock or insufficient stock products
+      const updatedCart = cart.map(cartItem => {
+        const product = cartItem.productData_id;
+        
+        // Mark product as out of stock if stock is insufficient
+        if (product.stock < cartItem.qty || product.stock === 0) {
+          hasOutOfStockProducts = true;
+          return {
+            ...cartItem.toObject(),
+            isOutOfStock: true
+          };
         }
-      }
-      let maxQuantityErr = false;
-      if (cart.length > 0) {
-        for (const cartItem of cart) {
-          const product = cartItem.productData_id;
+        
+        return cartItem;
+      });
 
-          if (product.stock > 2) {
-            maxQuantityErr = true;
-            break;
-          }
-        }
-      }
-      console.log(cart.length, "Ready...............");
+      // Check for max quantity exceeded
+      let maxQuantityExceeded = cart.some(cartItem => 
+        cartItem.qty > 5 || cartItem.qty > cartItem.productData_id.stock
+      );
+
       res.render("user/cart", {
         userData,
         productTotal,
         subtotalWithShipping,
-        outOfStockError,
-        maxQuantityErr,
-        cart,
+        hasOutOfStockProducts,
+        maxQuantityExceeded,
+        cart: updatedCart,
+        // Pass a flag to control checkout button visibility
+        canProceedToCheckout: !hasOutOfStockProducts && cart.length > 0
       });
     } else {
       // Handle scenario where user has no cart
-      res.render("user/cart", { userData, cart: [], subtotalWithShipping });
+      res.render("user/cart", { 
+        userData, 
+        cart: [], 
+        subtotalWithShipping: 0,
+        canProceedToCheckout: false
+      });
     }
   } else {
     res.redirect("/login");
   }
 });
-
 //Add to cart
 const addtoCart = asyncHandler(async (req, res) => {
   console.log("123");
@@ -74,8 +81,8 @@ const addtoCart = asyncHandler(async (req, res) => {
   if (!req.session.user_id) {
     return res.status(200).json({
       success: false,
-      message: "User Doesn't Exists",
-  });
+      message: "Please login to your account to make a purchase",
+    });
   }
 
   const userId = req.session.user_id;
@@ -123,34 +130,31 @@ const addtoCart = asyncHandler(async (req, res) => {
 
       // Check if the new quantity exceeds maximum limit
       if (newQuantity > maxQuantityPerUser) {
-        const availableToAdd = product.stock < maxQuantityPerUser? product.stock - existingCartItem.qty : maxQuantityPerUser - existingCartItem.qty;
+        const availableToAdd =
+          product.stock < maxQuantityPerUser
+            ? product.stock - existingCartItem.qty
+            : maxQuantityPerUser - existingCartItem.qty;
 
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: `Cannot add ${qty} more items. you can only add ${availableToAdd} more items to this product`,
-          });
+        return res.status(400).json({
+          success: false,
+          message: `Cannot add ${qty} more items. you can only add ${availableToAdd} more items to this product`,
+        });
       } else if (newQuantity > product.stock) {
         // ask chat gpt to help to set a limit to the cart item quantity here somewhere
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: "Requested quantity exceeds available stock",
-          });
-        }
+        return res.status(400).json({
+          success: false,
+          message: "Requested quantity exceeds available stock",
+        });
+      }
 
       existingCartItem.qty = newQuantity;
     } else {
       if (qty > product.stock) {
         // ask chat gpt to help to set a limit to the cart item quantity here somewhere
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: "Requested quantity exceeds available stock",
-          });
+        return res.status(400).json({
+          success: false,
+          message: "Requested quantity exceeds available stock",
+        });
       }
 
       existingCart.products.push({
@@ -179,8 +183,7 @@ const addtoCart = asyncHandler(async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Product added to cart successfully",
-    
-});
+  });
 });
 
 // update cart
@@ -188,9 +191,7 @@ const updateQuantity = asyncHandler(async (req, res) => {
   const productId = req.query.productId;
   const newQuantity = parseInt(req.query.quantity);
   const userId = req.session.user_id;
-  console.log(productId, "777777777777777777777777777");
-  console.log(userId, "888888888888888888888");
-  console.log(newQuantity, "9999999999999999999");
+  
 
   const existingCart = await Cart.findOne({ user_id: userId });
   if (existingCart) {

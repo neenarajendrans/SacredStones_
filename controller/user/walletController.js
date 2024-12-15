@@ -1,6 +1,8 @@
 const Wallet = require("../../model/walletModel");
 const Order = require("../../model/orderModel");
 const Product = require("../../model/productModel");
+const Cart = require("../../model/cartModel");
+
 
 const getWallet = async (req, res) => {
   try {
@@ -79,12 +81,12 @@ const handleWalletPayment = async (req, res) => {
   try {
     const userId = req.session.user_id;
     const { orderId } = req.body;
-    
+
     // Validate input
     if (!userId || !orderId) {
       return res.status(400).json({
         success: false,
-        message: "User ID and Order ID are required"
+        message: "User ID and Order ID are required",
       });
     }
 
@@ -114,13 +116,7 @@ const handleWalletPayment = async (req, res) => {
       // Rollback order status
       order.orderStatus = "Cancelled";
       order.paymentStatus = "Failed";
-      order.items.map(async (item) => {
-          await Product.findByIdAndUpdate(item.product, {
-            $inc: { stock: item.qty },
-          });
-        })
-        await order.save()
-      
+      await order.save();
 
       return res.status(400).json({
         success: false,
@@ -144,6 +140,24 @@ const handleWalletPayment = async (req, res) => {
       order.paymentMethod = "Wallet";
       await order.save();
 
+      // Update product stock
+      await Promise.all(
+        order.items.map((item) =>
+          Product.findByIdAndUpdate(
+            item.product,
+            { $inc: { stock: -item.qty } },
+            { new: true }
+          )
+        )
+      );
+
+      // Clear user's cart
+      await Cart.findOneAndUpdate(
+        { user_id: userId },
+        { $set: { products: [], total: 0 } },
+        { new: true }
+      );
+
       return res.status(200).json({
         success: true,
         message: "Payment successful",
@@ -156,7 +170,7 @@ const handleWalletPayment = async (req, res) => {
         stack: transactionError.stack,
         userId,
         orderId,
-        orderAmount
+        orderAmount,
       });
 
       // Rollback any partial changes
@@ -166,7 +180,7 @@ const handleWalletPayment = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Wallet transaction failed",
-        error: transactionError.message
+        error: transactionError.message,
       });
     }
   } catch (error) {
@@ -174,13 +188,13 @@ const handleWalletPayment = async (req, res) => {
     console.error("Wallet Payment Error:", {
       message: error.message,
       stack: error.stack,
-      requestBody: req.body
+      requestBody: req.body,
     });
 
     return res.status(500).json({
       success: false,
       message: "Internal server error",
-      error: error.message
+      error: error.message,
     });
   }
 };

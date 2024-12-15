@@ -319,7 +319,7 @@
                 </select>
 
                 <select class="filter-select" id="sortBy">
-                    <option value="popularity">Popularity</option>
+                    <option >Sort</option>
                     <option value="price-low-high">Price: Low to High</option>
                     <option value="price-high-low">Price: High to Low</option>
                     <option value="new-arrivals">New Arrivals</option>
@@ -355,13 +355,13 @@
                             <div class="product-box">
                                 <div class="product-image">
                                     <img src="/assets/imgs/productIMG/<%= ele.images[0] %>" alt="<%= ele.name %>">
-
-                                    <button class="wishlist-btn" data-product-id="<%= ele._id %>"
+                                    <% if(userpresent) {%>
+                                    <button class="wishlist-btn"  onclick="addToWishlist('<%= ele._id %>')"
                                         aria-label="Add to wishlist">
                                         <i class="wishlist-icon fa fa-heart"
-                                            style="color: <%= ele.isWishlisted ? '#ff0000' : '#000000' %>"></i>
+                                            style="color: #ff0000 "></i>
                                     </button>
-
+<% } %>
                                 </div>
                                 <div class="product-info">
                                     <h6 class="product-name">
@@ -390,10 +390,14 @@
                                             <% } %>
                                     </div>
 
-                                    <% if(ele.stock> 0) {%>
-                                        <span class="in-stock text-success ml-5">
-                                            <%= ele.stock %> Items In Stock
+                                    <% if(ele.stock > 0 && ele.stock < 10) {%>
+                                        <span class="in-stock text-warning ml-5">
+                                            only few left
                                         </span>
+                                        <% }else if(ele.stock >= 10) { %>
+                                            <span class="in-stock text-success ml-5">
+                                               In stock
+                                            </span>
                                         <% } else{%>
                                             <span class="out-of-stock text-danger ml-5">Out of Stock</span></li>
                                             <%}%>
@@ -639,9 +643,9 @@
                     }).then(() => {
                         window.location.href = '/cart';
                     });
-                } else if (data.message === "User Doesn't Exists") {
+                } else if (data.message === "Please login to your account to make a purchase") {
                     Swal.fire({
-                        icon: 'error',
+                        icon: 'info',
                         title: 'Oops...',
                         text: data.message || 'Failed to add product to cart',
                         confirmButtonColor: '#e74c3c'
@@ -671,103 +675,137 @@
         </script>
 
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                // Get all wishlist buttons
-                const wishlistButtons = document.querySelectorAll('.wishlist-btn');
-
-                // Add click event listener to each wishlist button
-                wishlistButtons.forEach(button => {
-                    button.addEventListener('click', async function (e) {
-                        e.preventDefault();
-                        const productId = this.dataset.productId;
-                        const heartIcon = this.querySelector('.wishlist-icon');
-
-                        try {
-                            const response = await fetch(`/addtowishlist`, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({ productId })
-                            });
-
-                            const data = await response.json();
-
-                            if (response.ok) {
-                                // Toggle the heart icon color
-                                if (data.action === 'added') {
-                                    heartIcon.style.color = '#ff000';
-                                    showNotification('Product added to wishlist!', 'success');
-                                    setTimeout(() => {
-                                        location.reload()
-                                    }, 1000);
-
-                                } else {
-                                    heartIcon.style.color = '#00000';
-                                    showNotification('Product removed from wishlist!', 'info');
-                                    setTimeout(() => {
-                                        location.reload()
-                                    }, 1000);
-                                }
-                            } else {
-                                if (response.status === 401) {
-                                    // Redirect to login if user is not authenticated
-                                    window.location.href = '/login';
-                                } else {
-                                    showNotification(data.message || 'Something went wrong!', 'error');
-                                }
-                            }
-                        } catch (error) {
-                            console.error('Error:', error);
-                            showNotification('Failed to update wishlist!', 'error');
-                        }
-                    });
-                });
-            });
-
-            // Add notification function
-            function showNotification(message, type) {
-                const notification = document.createElement('div');
-                notification.className = `notification ${type}`;
-                notification.textContent = message;
-
-                // Style the notification
-                Object.assign(notification.style, {
-                    position: 'fixed',
-                    bottom: '20px',
-                    right: '20px',
-                    padding: '12px 24px',
-                    borderRadius: '4px',
-                    color: 'white',
-                    zIndex: '1000',
-                    animation: 'fadeIn 0.3s, fadeOut 0.3s 2.7s',
-                    backgroundColor: type === 'success' ? '#4CAF50' :
-                        type === 'error' ? '#f44336' :
-                            type === 'info' ? '#2196F3' : '#333'
-                });
-
-                // Add animation keyframes
-                const style = document.createElement('style');
-                style.textContent = `
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(20px); }
-        }
-    `;
-                document.head.appendChild(style);
-
-                document.body.appendChild(notification);
-
-                // Remove notification after 3 seconds
-                setTimeout(() => {
-                    notification.remove();
-                    style.remove();
-                }, 1000);
+function addToWishlist(productId){
+    $.ajax({
+        url:`/addtowishlist`,
+        method:"POST",
+        data : { productId:productId },
+        success:(response)=>{
+            if(response.status){
+                swal.fire({
+                    title:"Added to Wishlist",
+                    text:"The Product has been added to your wishlist",
+                    icon:"success",
+                    timer:2000
+                })
+            }else{
+                swal.fire({
+                    title:"Already in the Wishlist ",
+                    text:response.message,
+                    icon:"info",
+                    timer:2000
+                })
             }
+        },
+        error:(error)=>{
+            swal.fire({
+               title:"Error",
+               text:"Error while adding the product to the wishlist",
+               icon:"error",
+               timer:2000
+
+            })
+        }
+    })
+}
+
+    //         document.addEventListener('DOMContentLoaded', function () {
+    //             // Get all wishlist buttons
+    //             const wishlistButtons = document.querySelectorAll('.wishlist-btn');
+
+    //             // Add click event listener to each wishlist button
+    //             wishlistButtons.forEach(button => {
+    //                 button.addEventListener('click', async function (e) {
+    //                     e.preventDefault();
+    //                     const productId = this.dataset.productId;
+    //                     const heartIcon = this.querySelector('.wishlist-icon');
+
+    //                     try {
+    //                         const response = await fetch(`/addtowishlist`, {
+    //                             method: 'POST',
+    //                             headers: {
+    //                                 'Content-Type': 'application/json'
+    //                             },
+    //                             body: JSON.stringify({ productId })
+    //                         });
+
+    //                         const data = await response.json();
+
+    //                         if (response.ok) {
+    //                             // Toggle the heart icon color
+    //                             if (data.action === 'added') {
+    //                                 heartIcon.style.color = '#ff000';
+    //                                 showNotification('Product added to wishlist!', 'success');
+    //                                 setTimeout(() => {
+    //                                     location.reload()
+    //                                 }, 1000);
+
+    //                             } else {
+    //                                 heartIcon.style.color = '#00000';
+    //                                 showNotification('Product removed from wishlist!', 'info');
+    //                                 setTimeout(() => {
+    //                                     location.reload()
+    //                                 }, 1000);
+    //                             }
+    //                          } //else {
+    //                         //     if (response.status === 401) {
+    //                         //         // Redirect to login if user is not authenticated
+    //                         //         window.location.href = '/login';
+    //                         //     } else {
+    //                         //         showNotification(data.message || 'Something went wrong!', 'error');
+    //                         //     }
+    //                         // }
+    //                     } catch (error) {
+    //                         console.error('Error:', error);
+    //                         showNotification('Failed to update wishlist!', 'error');
+    //                     }
+    //                 });
+    //             });
+    //         });
+
+    //         // Add notification function
+    //         function showNotification(message, type) {
+    //             const notification = document.createElement('div');
+    //             notification.className = `notification ${type}`;
+    //             notification.textContent = message;
+
+    //             // Style the notification
+    //             Object.assign(notification.style, {
+    //                 position: 'fixed',
+    //                 bottom: '20px',
+    //                 right: '20px',
+    //                 padding: '12px 24px',
+    //                 borderRadius: '4px',
+    //                 color: 'white',
+    //                 zIndex: '1000',
+    //                 animation: 'fadeIn 0.3s, fadeOut 0.3s 2.7s',
+    //                 backgroundColor: type === 'success' ? '#4CAF50' :
+    //                     type === 'error' ? '#f44336' :
+    //                         type === 'info' ? '#2196F3' : '#333'
+    //             });
+
+    //             // Add animation keyframes
+    //             const style = document.createElement('style');
+    //             style.textContent = `
+    //     @keyframes fadeIn {
+    //         from { opacity: 0; transform: translateY(20px); }
+    //         to { opacity: 1; transform: translateY(0); }
+    //     }
+    //     @keyframes fadeOut {
+    //         from { opacity: 1; transform: translateY(0); }
+    //         to { opacity: 0; transform: translateY(20px); }
+    //     }
+    // `;
+    //             document.head.appendChild(style);
+
+    //             document.body.appendChild(notification);
+
+    //             // Remove notification after 3 seconds
+    //             setTimeout(() => {
+    //                 notification.remove();
+    //                 style.remove();
+    //             }, 1000);
+    //         }
 
         </script>
 </body>

@@ -4,7 +4,7 @@ const Product = require("../../model/productModel");
 const Category = require("../../model/categoryModel");
 const Order = require("../../model/orderModel");
 const Address = require("../../model/addressModel");
-const {handleWalletTransaction} = require("../user/walletController"); 
+const { handleWalletTransaction } = require("../user/walletController");
 
 //Get order management page
 const getOrderPage = async (req, res) => {
@@ -12,11 +12,9 @@ const getOrderPage = async (req, res) => {
     // Get page number from query params or default to 1
     const page = parseInt(req.query.page) || 1;
     const limit = 7; // Number of orders per page
-    // Get filter parameters
-    const { orderStatus, paymentStatus, search } = req.query;
-   
+
     // Get orders with pagination
-    const orders = await Order.find({orderStatus: { $ne: 'Pending' }})
+    const orders = await Order.find({ orderStatus: { $ne: "Pending" } })
       .populate("user_id", "fullName email") // Populate user details
       .sort({ orderDate: -1 }) // Sort by order date descending
       .skip((page - 1) * limit)
@@ -24,21 +22,19 @@ const getOrderPage = async (req, res) => {
       .lean(); // Use lean() for better performance
 
     // Get total count for pagination
-    const totalOrders = await Order.countDocuments({orderStatus: { $ne: 'Pending' }});
+    const totalOrders = await Order.countDocuments({
+      orderStatus: { $ne: "Pending" },
+    });
     const totalPages = Math.ceil(totalOrders / limit);
     res.render("admin/orderManagement", {
       orders,
       currentPage: page,
       totalPages,
       totalOrders,
-     
     });
   } catch (error) {
     console.error("Error in getOrderPage:", error);
-    res.status(500).render("error", {
-      message: "Error loading orders",
-      error: process.env.NODE_ENV === "development" ? error : {},
-    });
+    return res.redirect('/admin/errorpage');
   }
 };
 
@@ -61,19 +57,13 @@ const updateOrderStatus = async (req, res) => {
       .populate("address");
 
     if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found",
-      });
+      return res.redirect('/admin/errorpage');
     }
 
     res.redirect("/admin/ordermanagement");
   } catch (error) {
     console.error("Error updating order status:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error updating order status",
-    });
+    return res.redirect('/admin/errorpage');
   }
 };
 
@@ -100,13 +90,13 @@ const getOrderDetails = async (req, res) => {
       .lean();
 
     if (!order) {
-      return res.status(404).json({ message: "Order not found" });
+      return res.redirect('/admin/errorpage');
     }
 
     res.render("admin/orderDetail", { order });
   } catch (error) {
     console.error("Error in getOrderDetails:", error);
-    res.status(500).json({ error: "Error loading order details" });
+    return res.redirect('/admin/errorpage');
   }
 };
 
@@ -127,32 +117,27 @@ const cancelOrder = async (req, res) => {
     );
 
     if (!order) {
-      return res.send("order not found");
+      return res.render("admin/errorPage", { message: "Order not found " });
     }
 
+    //refund
+    if (order.paymentStatus === "Paid") {
+      const refundAmount = order.finalAmount;
 
-//refund
-if (order.paymentStatus === "Paid") {
-  const refundAmount = order.finalAmount;
-  
-  try {
-    await handleWalletTransaction(
-      order.user_id,
-      refundAmount,
-      "credit",
-      `Refund for order ${orderId}`
-    );
-    order.paymentStatus = "Refunded";
-    await order.save();
-  } catch (error) {
-    console.error("Error processing wallet refund:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to process wallet refund",
-      error: error.message,
-    });
-  }
-}
+      try {
+        await handleWalletTransaction(
+          order.user_id,
+          refundAmount,
+          "credit",
+          `Refund for order ${orderId}`
+        );
+        order.paymentStatus = "Refunded";
+        await order.save();
+      } catch (error) {
+        console.error("Error processing wallet refund:", error);
+       return res.redirect('/admin/errorpage');
+      }
+    }
     // Update product stock
     for (const item of order.items) {
       await Product.findByIdAndUpdate(
@@ -164,8 +149,7 @@ if (order.paymentStatus === "Paid") {
     res.redirect(`/admin/ordermanagement`);
   } catch (error) {
     console.error("Error cancelling order:", error);
-    req.flash("error", "Failed to cancel order");
-    res.redirect("/admin/ordermanagement");
+    return res.redirect('/admin/errorpage');
   }
 };
 

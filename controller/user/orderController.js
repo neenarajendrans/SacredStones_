@@ -8,16 +8,15 @@ const {
   calculateSubtotal,
 } = require("../../config/cartSum");
 const Order = require("../../model/orderModel");
-const {handleWalletTransaction} = require("./walletController"); 
+const { handleWalletTransaction } = require("./walletController");
 
-
-function generateOrderId (){
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let orderId = '';
-  for(let i =0; i<8; i++){
-    const randomIndex = Math.floor(Math.random()*characters.length)
-      orderId += characters[randomIndex];
-    
+function generateOrderId() {
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let orderId = "";
+  for (let i = 0; i < 8; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    orderId += characters[randomIndex];
   }
   return orderId;
 }
@@ -127,7 +126,7 @@ const checkOutPost = asyncHandler(async (req, res) => {
     if (!address) {
       return res.status(400).json({ message: "Billing address not selected" });
     }
-    
+
     // Check product stock before proceeding
     for (const item of cart.products) {
       const product = await Product.findById(item.productData_id._id);
@@ -151,24 +150,22 @@ const checkOutPost = asyncHandler(async (req, res) => {
     let couponDiscount = 0;
     let total = totalAmount;
     let orderstatus = "Pending";
-    let paymentstatus = "Pending"
+    let paymentstatus = "Pending";
     // If coupon is applied, calculate the discounted total
     if (appliedCoupon) {
       couponCode = appliedCoupon.couponCode;
       couponDiscount = appliedCoupon.discount;
       total = totalAmount - couponDiscount;
     }
-    if(paymentMethod==="CashOnDelivery"){
-      orderstatus = "Placed"
-      paymentstatus = "Pending" 
-
-    }else if(paymentMethod === "Online"){
-      orderstatus = "Pending"
-      paymentstatus = "Pending"
-
-    }else if(paymentMethod ==="Wallet"){
-      orderstatus = "Pending"
-      paymentstatus = "Pending"
+    if (paymentMethod === "CashOnDelivery") {
+      orderstatus = "Placed";
+      paymentstatus = "Pending";
+    } else if (paymentMethod === "Online") {
+      orderstatus = "Pending";
+      paymentstatus = "Pending";
+    } else if (paymentMethod === "Wallet") {
+      orderstatus = "Pending";
+      paymentstatus = "Pending";
     }
 
     // Create new order
@@ -183,6 +180,7 @@ const checkOutPost = asyncHandler(async (req, res) => {
       deliveryDate: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000),
       totalAmount: totalAmount,
       finalAmount: total,
+      couponApplied:couponCode,
       discount: couponDiscount,
       items: cartItems.map((cartItem) => ({
         product: cartItem.productData_id._id,
@@ -197,16 +195,16 @@ const checkOutPost = asyncHandler(async (req, res) => {
     const savedOrder = await order.save();
     // Update product stock - FIXED VERSION
     if (savedOrder.orderStatus === "Placed") {
-    await Promise.all(
-      cartItems.map((item) =>
-        Product.findByIdAndUpdate(
-          item.productData_id._id,
-          { $inc: { stock: -item.qty } },
-          { new: true }
+      await Promise.all(
+        cartItems.map((item) =>
+          Product.findByIdAndUpdate(
+            item.productData_id._id,
+            { $inc: { stock: -item.qty } },
+            { new: true }
+          )
         )
-      )
-    );
-  }
+      );
+    }
 
     // Clear cart
     if (savedOrder.orderStatus === "Placed") {
@@ -240,7 +238,9 @@ const loadOrderDetails = asyncHandler(async (req, res) => {
     page = req.query.page;
   }
   const limitno = 5;
-  const order = await Order.find({ user_id: userData._id, orderStatus: { $ne: 'Pending' }})
+  const order = await Order.find({
+    user_id: userData._id
+  })
     .populate("user_id")
     .populate({
       path: "items.product",
@@ -250,10 +250,18 @@ const loadOrderDetails = asyncHandler(async (req, res) => {
     .skip((page - 1) * limitno)
     .sort({ createdAt: -1 });
   console.log(order, " Details");
-  const count = await Order.find({user_id: userData._id, orderStatus: { $ne: 'Pending' }}).countDocuments();
+  const count = await Order.find({
+    user_id: userData._id,
+    orderStatus: { $ne: "Pending" },
+  }).countDocuments();
   let totalPages = Math.ceil(count / limitno);
   if (userData) {
-    res.render("user/orders", { userData, order,totalPages, currentPage: page });
+    res.render("user/orders", {
+      userData,
+      order,
+      totalPages,
+      currentPage: page,
+    });
   } else {
     res.redirect("/login");
   }
@@ -361,7 +369,7 @@ const orderCancel = asyncHandler(async (req, res) => {
     //refund
     if (order.paymentStatus === "Paid") {
       const refundAmount = order.finalAmount;
-      
+
       try {
         await handleWalletTransaction(
           order.user_id,
@@ -394,7 +402,50 @@ const orderCancel = asyncHandler(async (req, res) => {
   }
 });
 
+const orderDelete = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
+  const userId = req.session.user_id;
+
+  if (!orderId) {
+    return res.status(400).json({
+      success: false,
+      message: "Order ID is required",
+    });
+  }
+
+  try {
+    const order = await Order.findOne({ 
+      _id: orderId, 
+      user_id: userId, 
+      orderStatus: 'Pending'
+    });
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found or cannot be cancelled",
+      });
+    }
+
+    await Order.findByIdAndDelete(orderId);
+
+    res.status(200).json({
+      success: true,
+      message: "Order cancelled successfully",
+    });
+
+  } catch (error) {
+    console.error("Order cancellation error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error cancelling order",
+      error: error.message,
+    });
+  }
+});
+
 module.exports = {
+  orderDelete,
   orderCancel,
   getCancelOrderPage,
   getCheckOutPage,

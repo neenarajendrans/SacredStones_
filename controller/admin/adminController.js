@@ -43,14 +43,14 @@ const loadUserManagement = asyncHandler(async (req, res) => {
     page = req.query.page;
   }
   const limitno = 7;
-  const users = await User.find({isAdmin: 0})
+  const users = await User.find({ isAdmin: 0 })
     .limit(limitno * 1)
     .skip((page - 1) * limitno)
     .sort({ createdAt: -1 })
     .exec(); // for combining chain of promises
 
   const count = await User.find({
-    isAdmin: 0
+    isAdmin: 0,
   }).countDocuments();
   let totalPages = Math.ceil(count / limitno);
   res.render("admin/userManagement", { users, totalPages, currentPage: page });
@@ -97,7 +97,9 @@ const logout = asyncHandler(async (req, res) => {
 
 // Error Page
 const ErrorPage = asyncHandler(async (req, res) => {
-  res.render("admin/errorPage");
+  res.render("admin/errorPage",
+    {message:""}
+  );
 });
 
 module.exports = {

@@ -219,12 +219,18 @@
                                             <% } %>
                                         </div>
                                     </form>
-                                    <% if (product.stock > 0) { %>
+                                    <% if (product.stock > 0 && product.stock < 10) { %>
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li>Availability:<span class="in-stock text-success ml-5">
-                                                <%= product.stock %> Items In Stock
+                                                only few left
                                             </span></li>
                                         </ul>
+                                        <% }else if(product.stock >= 10){%>
+                                            <ul class="product-meta font-xs color-grey mt-50">
+                                                <li>Availability:<span class="in-stock text-success ml-5">
+                                                    In Stock
+                                                </span></li>
+                                            </ul>
                                     <% } else { %>
                                         <ul class="product-meta font-xs color-grey mt-50">
                                             <li>Availability:<span class="out-of-stock text-danger ml-5">Out of Stock</span></li>
@@ -412,7 +418,7 @@
                         window.location.href = '/cart';
                    
                 });
-            } else if(data.message === "User Doesn't Exists") {
+            } else if(data.message === "Please login to your account to make a purchase") {
 
                 // Handle error cases
                 Swal.fire({

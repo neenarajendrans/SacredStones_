@@ -1,5 +1,4 @@
 const asyncHandler = require("express-async-handler");
-
 const Order = require("../../model/orderModel");
 const ExcelJS = require("exceljs");
 const PDFDocument = require("pdfkit-table");
@@ -44,13 +43,16 @@ const salesReportController = {
         }
       }
 
-      const orders = await Order.find(query); //.populate('appliedCouponId');
+      const orders = await Order.find({
+        ...query,
+   orderStatus: { $in: ["Confirmed", "Delivered"] }
+      })
 
       const salesReport = {
         totalSales: orders.length,
         totalAmount: orders.reduce((sum, order) => sum + order.finalAmount, 0),
         totalDiscount: orders.reduce(
-          (sum, order) => sum + (order.finalAmount - order.totalPrice),
+          (sum, order) => sum + (order.discount),
           0
         ),
         orders: orders.map((order) => ({
@@ -58,12 +60,9 @@ const salesReportController = {
           date: order.createdAt,
           amount: order.totalAmount,
           finalAmount: order.finalAmount,
-          discount: order.finalAmount - order.totalPrice,
-          appliedCouponId: order.appliedCouponId
-            ? order.appliedCouponId._id
-            : null,
-          couponCode: order.appliedCouponId
-            ? order.appliedCouponId.code
+          discount: order.discount,
+          couponCode: order.couponApplied
+            ? order.couponApplied
             : "N/A",
         })),
       };
@@ -72,7 +71,7 @@ const salesReportController = {
       res.render("admin/salesManagement", { salesReport });
     } catch (error) {
       console.error("Error generating sales report:", error);
-      res.status(500).send("Error generating sales report");
+      res.render("admin/errorPage", { message: "Error generating sales report" });
     }
   }),
 
@@ -161,7 +160,10 @@ const salesReportController = {
       }
       console.log("MongoDB query:", query);
 
-      const orders = await Order.find(query); //.populate('appliedCouponId');
+      const orders = await Order.find({
+        ...query,
+   orderStatus: { $in: ["Confirmed", "Delivered"] }
+      })
       console.log(`Found ${orders.length} orders`);
 
       if (format === "excel") {
@@ -188,13 +190,11 @@ const salesReportController = {
             orderId: order._id.toString(),
             date: order.createdAt.toDateString(),
             amount: order.totalAmount,
-            discount: order.finalAmount - order.totalPrice,
+            discount: order.discount,
             finalAmount: order.finalAmount,
-            appliedCouponId: order.appliedCouponId
-              ? order.appliedCouponId._id
-              : null,
-            couponCode: order.appliedCouponId
-              ? order.appliedCouponId.code
+           
+            couponCode: order.couponApplied
+              ? order.couponApplied
               : "N/A",
           });
         });
@@ -210,7 +210,7 @@ const salesReportController = {
           "Total Discount:",
           orders
             .reduce(
-              (sum, order) => sum + (order.finalAmount - order.totalPrice),
+              (sum, order) => sum + (order.discount),
               0
             )
             .toFixed(2),
@@ -264,9 +264,9 @@ const salesReportController = {
             order._id.toString(),
             order.createdAt.toDateString(),
             order.totalAmount.toFixed(2),
-            (order.finalAmount - order.totalPrice).toFixed(2),
+            (order.discount).toFixed(2),
             order.finalAmount.toFixed(2),
-            order.appliedCouponId ? order.appliedCouponId.code : "N/A",
+            order.couponApplied ? order.couponApplied.code : "N/A",
           ]),
         };
         // Draw the table
@@ -287,7 +287,7 @@ const salesReportController = {
         doc.text(
           `Total Discount: $${orders
             .reduce(
-              (sum, order) => sum + (order.finalAmount - order.totalPrice),
+              (sum, order) => sum + (order.discount),
               0
             )
             .toFixed(2)}`
@@ -299,7 +299,7 @@ const salesReportController = {
       }
     } catch (error) {
       console.error("Error downloading report:", error);
-      res.status(500).send("Error downloading report");
+      res.render("admin/errorPage", { message: "Error while downloading Report" });
     }
   },
 };

@@ -6,9 +6,10 @@ const mongoose = require("mongoose");
 const addtoWishlist = async (req, res) => {
   try {
     // 1. Check authentication
-    if (!req.session || !req.session.user_id) {
+    if (!req.session.user_id) {
       return res.status(401).json({
-        success: false,
+        status: false,
+        title:"Please Login",
         message: "Please login to add items to wishlist",
       });
     }
@@ -19,7 +20,7 @@ const addtoWishlist = async (req, res) => {
     // 2. Validate product ID
     if (!productId) {
       return res.status(400).json({
-        success: false,
+        status: false,
         message: "Product ID is required",
       });
     }
@@ -28,7 +29,7 @@ const addtoWishlist = async (req, res) => {
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({
-        success: false,
+        status: false,
         message: "Product not found",
       });
     }
@@ -47,43 +48,39 @@ const addtoWishlist = async (req, res) => {
       (item) => item.productId.toString() === productId
     );
 
-    let action;
     // 6. Remove or add product
     if (productExists) {
-      // Remove product
+      
       wishlist.products = wishlist.products.filter(
         (item) => item.productId.toString() !== productId
       );
-      action = "removed";
+      return res.status(200).json({status:false,message:"Product already in wishlist"});
 
-      // Update product's isWishlisted status
-      await Product.findByIdAndUpdate(productId, { isWishlisted: false });
+ 
     } else {
+      console.log("Adding to wishlist")
       // Add product
       wishlist.products.push({
         productId,
         addedOn: new Date(),
       });
-      action = "added";
-
-      // Update product's isWishlisted status
-      await Product.findByIdAndUpdate(productId, { isWishlisted: true });
+    
     }
 
     // 7. Save wishlist
     await wishlist.save();
+    console.log(wishlist)
 
     // 8. Send response matching frontend expectations
     return res.status(200).json({
-      success: true,
-      action: action,
-      message: `Product ${action} to wishlist successfully`,
-      isInWishlist: action === "added",
+      status: true, 
+      message: `Product added to wishlist successfully`,
+      
     });
   } catch (error) {
     console.error("Wishlist operation error:", error);
     return res.status(500).json({
-      success: false,
+      status: false,
       message: "Failed to update wishlist",
       error: error.message,
     });
@@ -95,6 +92,8 @@ const getWishlist = async (req, res) => {
     const userId = req.session.user_id;
     const page = parseInt(req.query.page) || 1;
     const itemsPerPage = 12;
+
+    console.log("User ID:", userId); // Debug log
 
     // Find wishlist and populate all product fields
     const wishlist = await Wishlist.findOne({ userId })
@@ -109,10 +108,11 @@ const getWishlist = async (req, res) => {
           gold_purity: 1,
           total_price: 1,
           discount_price: 1,
-          // Add any other fields you need
         },
       })
       .exec();
+
+    console.log("Wishlist found:", wishlist); // Debug log
 
     if (!wishlist || !wishlist.products || wishlist.products.length === 0) {
       return res.render("user/wishlist", {
@@ -123,17 +123,10 @@ const getWishlist = async (req, res) => {
       });
     }
 
-    // Filter out deleted products
-    const availableProducts = wishlist.products.filter(
-      (item) => item.productId !== null
-    );
+    // Remove the is_listed filter
+    const availableProducts = wishlist.products;
 
-    // Update wishlist to remove any deleted products
-    await Wishlist.findOneAndUpdate(
-      { userId },
-      { $set: { products: availableProducts } },
-      { new: true }
-    );
+    console.log("Available Products:", availableProducts); // Debug log
 
     // Format wishlist items with all populated fields
     const formattedWishlist = availableProducts.map((item) => ({
@@ -145,8 +138,9 @@ const getWishlist = async (req, res) => {
       total_price: item.productId.total_price,
       discount_price: item.productId.discount_price,
       addedOn: item.addedOn,
-      // Add any other fields you need from the populated product
     }));
+
+    console.log("Formatted Wishlist:", formattedWishlist); // Debug log
 
     // Pagination
     const totalItems = formattedWishlist.length;
@@ -195,9 +189,7 @@ const removeFromWishlist = async (req, res) => {
 
     wishlist.products.splice(productIndex, 1);
     await wishlist.save();
-    // Update product's isWishlisted status
-    await Product.findByIdAndUpdate(productId, { isWishlisted: false });
-
+    
     res.status(200).json({
       success: true,
       message: "Product removed from wishlist",

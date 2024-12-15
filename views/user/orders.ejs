@@ -1,118 +1,183 @@
 <%- include('../Layout/usertem.ejs') %>
-    <%- include ("../layout/cdn")%>
+<%- include ("../layout/cdn")%>
 
-        <main class="main">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="#">
-                    <img src="/img/logo_main.png" width="400" height="70" class="d-inline-block align-top"
-                        alt="Your Logo">
+<main class="main">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/home">
+            <img src="/img/logo_main.png" width="400" height="70" class="d-inline-block align-top" alt="Your Logo">
+        </a>
+    </nav>
 
-                </a>
-
-            </nav>
-
-
-
-            <section class="pt-20 pb-20">
-
-                <div class="container">
+    <section class="pt-20 pb-20">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 m-auto">
                     <div class="row">
-                        <div class="col-lg-10 m-auto">
-                            <div class="row">
-                                <%- include ("../layout/accountSideBar")%>
-                                    <div class="col-md-8">
+                        <%- include ("../layout/accountSideBar")%>
+                        <div class="col-md-8">
+                            <% 
+                            // Separate pending and other orders
+                            const pendingOrders = order.filter(o => o.orderStatus === 'Pending');
+                            const otherOrders = order.filter(o => o.orderStatus !== 'Pending');
+                            %>
 
-                                        <% if(order.length>0){ %>
-                                            <div class="card" style="width: 900px;">
-
-                                                <div class="card-header">
-                                                    <h5>Your Orders</h5>
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="table-responsive">
-                                                        <table class="table">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Order Id</th>
-                                                                    <th>Date of Order</th>
-                                                                    <th>Delivery date</th>
-                                                                    <th>Customer name</th>
-                                                                    <th>Payment Status</th>
-                                                                    <th>Order Status</th>
-                                                                    <th>Total</th>
-                                                                    <th>Actions</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <% order.forEach(function(order_data) { %>
-
-                                                                    <tr>
-                                                                        <td>
-                                                                            <%= order_data?._id %>
-                                                                        </td>
-                                                                        <td>
-                                                                            <%= new
-                                                                                Date(order_data.orderDate).toLocaleDateString()
-                                                                                %>
-                                                                        </td>
-                                                                        <td>
-                                                                            <%= new
-                                                                                Date(order_data.deliveryDate).toLocaleDateString()
-                                                                                %>
-                                                                        </td>
-
-                                                                        <td>
-                                                                            <%= order_data.user_id.fullName %>
-                                                                        </td>
-                                                                        <td>
-                                                                            <%= order_data.paymentStatus %>
-                                                                        </td>
-                                                                        <td>
-                                                                            <%= order_data.orderStatus %>
-                                                                        </td>
-                                                                        <td>
-                                                                            <%= order_data.finalAmount %>
-                                                                        </td>
-                                                                        <td><a href="/order/orderdetails/<%= order_data?._id%>"
-                                                                                class="btn-small d-block">View</a></td>
-                                                                    </tr>
-                                                                    <% }) %>
-
-                                                            </tbody>
-                                                        </table>
-                                                        <div class="container mt-3">
-                                                            <nav aria-label="Page navigation">
-                                                                <ul class="pagination justify-content-start mb-20"
-                                                                    style="margin-right: 200px;">
-                                                                    <% for(let i=1; i<=totalPages;i++){ %>
-                                                                        <li
-                                                                            class="page-item <%=(i===currentPage) ? 'active' : '' %>">
-                                                                            <a class="page-link" href="?page=<%= i %>">
-                                                                                <%= i %>
-                                                                            </a>
-                                                                        </li>
-                                                                        <% } %>
-                                                                </ul>
-                                                            </nav>
+                            <% if(order.length > 0) { %>
+                                <% if(pendingOrders.length > 0) { %>
+                                    <div class="mb-4">
+                                        <h4 class="text-danger">Pending Orders</h4>
+                                        <div class="row">
+                                            <% pendingOrders.forEach(function(order_data) { %>
+                                                <div class="col-md-12 mb-3">
+                                                    <div class="card border-warning">
+                                                        <div class="card-header bg-warning d-flex justify-content-between align-items-center">
+                                                            <strong>Order ID: <%= order_data?._id %></strong>
+                                                            <span class="badge bg-danger">Pending</span>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <p class="mb-1"><strong>Customer:</strong> <%= order_data.user_id.fullName %></p>
+                                                                    <p class="mb-1"><strong>Order Date:</strong> <%= new Date(order_data.orderDate).toLocaleDateString() %></p>
+                                                                    <p class="mb-1"><strong>Total Amount:</strong> ₹<%= order_data.finalAmount %></p>
+                                                                </div>
+                                                                <div class="col-md-6 text-end">
+                                                                    <a href="/order/orderdetails/<%= order_data?._id%>" class="btn btn-primary">
+                                                                        Proceed with Order
+                                                                    </a>
+                    
+                                                                   
+                                                                </div>
+                                                                <div class="col-md-6 text">
+                                                                    <br>
+                                                                    
+                                                                    <button onclick="handleOrderDelete('<%= order_data._id %>')" 
+                                                                                 class="btn btn-small font-sm btn-light rounded"
+                                                                                 data-order-id="<%= order_data._id %>">
+                                                                             Cancel Order
+                                                                         </button>
+                                                                   
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                            </div>
-                                            <%}else{%>
-                                                <P>oops.. Haven't Ordered anything Yet?</P>
-                                                <%}%>
-
-
-
-
-
+                                            <% }); %>
+                                        </div>
                                     </div>
-                            </div>
+                                <% } %>
+
+                                <% if(otherOrders.length > 0) { %>
+                                    <div>
+                                        <h4>Other Orders</h4>
+                                        <div class="row">
+                                            <% otherOrders.forEach(function(order_data) { %>
+                                                <div class="col-md-12 mb-3">
+                                                    <div class="card">
+                                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                                            <strong>Order ID: <%= order_data?._id %></strong>
+                                                            <span class="badge bg-secondary"><%= order_data.orderStatus %></span>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <p class="mb-1"><strong>Customer:</strong> <%= order_data.user_id.fullName %></p>
+                                                                    <p class="mb-1"><strong>Order Date:</strong> <%= new Date(order_data.orderDate).toLocaleDateString() %></p>
+                                                                    <p class="mb-1"><strong>Delivery Date:</strong> <%= new Date(order_data.deliveryDate).toLocaleDateString() %></p>
+                                                                    <p class="mb-1"><strong>Payment Status:</strong> <%= order_data.paymentStatus %></p>
+                                                                    <p class="mb-1"><strong>Total Amount:</strong> ₹<%= order_data.finalAmount %></p>
+                                                                </div>
+                                                                <div class="col-md-6 text-end">
+                                                                    <a href="/order/orderdetails/<%= order_data?._id%>" class="btn btn-small btn-outline-primary">
+                                                                        View Details
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% }); %>
+                                        </div>
+                                    </div>
+                                <% } %>
+
+                                <!-- Pagination -->
+                                <div class="container mt-3">
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination justify-content-start mb-20" style="margin-right: 200px;">
+                                            <% for(let i=1; i<=totalPages;i++){ %>
+                                                <li class="page-item <%=(i===currentPage) ? 'active' : '' %>">
+                                                    <a class="page-link" href="?page=<%= i %>">
+                                                        <%= i %>
+                                                    </a>
+                                                </li>
+                                            <% } %>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            <% } else { %>
+                                <div class="alert alert-info text-center">
+                                    <p>Oops.. Haven't Ordered anything Yet?</p>
+                                </div>
+                            <% } %>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+</main>
+<script>
+    function handleOrderDelete(orderId) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'Do you want to delete this order?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes, delete it!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      fetch(`/order/delete/${orderId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          // Add any necessary authentication headers like CSRF token
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          Swal.fire(
+            'Deleted!',
+            'Your order has been deleted.',
+            'success'
+          ).then(() => {
+        
+              // Fallback redirect if specific order element not found
+              location.reload();
+            
+          });
+        } else {
+          Swal.fire(
+            'Error!',
+            data.message || 'Could not delete the order.',
+            'error'
+          );
+        }
+      })
+      .catch(error => {
+        Swal.fire(
+          'Error!',
+          'Something went wrong.',
+          'error'
+        );
+        console.error('Delete order error:', error);
+      });
+    }
+  });
+}
 
 
-            </section>
-        </main>
+ 
+</script>

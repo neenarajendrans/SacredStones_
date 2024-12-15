@@ -196,7 +196,7 @@
 
                 <div class="container-fluid">
                     <nav class="navbar navbar-expand-lg custom_nav-container ">
-                        <a class="navbar-brand" href="index.html">
+                        <a class="navbar-brand" href="/jewellery">
                             <img src="images/logo.png" style="width: 350px;" alt="">
                             <span>
 
@@ -223,10 +223,7 @@
                                         <a class="nav-link" href="/jewellery"
                                             style="color: black;font-size: medium;">Jewellery </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="/contact"
-                                            style="color: black;font-size: medium;">Contact us</a>
-                                    </li>
+                                    
                                     <li class="nav-item">
                                         <a class="nav-link" href="/useraccount"
                                             style="color: black;font-size: medium;">My Account</a>
@@ -248,17 +245,17 @@
                                 <a href="/wishlist">
                                     <i class="fa fa-heart" style="color: rgb(193, 8, 8); padding: 20px;"></i>
                                     <div class="wishlist_number" style="color: black; background-color: aliceblue;">
-                                        
+
                                     </div>
                                 </a>
 
                             </div>
                         </div>
                     </nav>
-              
+
                 </div>
             </header>
-           
+
             <section class="mt-50 mb-50">
                 <div class="cart-container">
 
@@ -270,128 +267,158 @@
                             <a href="/jewellery" class="btn">Start Shopping</a>
                         </div>
                         <% } else { %>
-                            <!-- <div class="row">
-                    <div class="col-12"> -->
+
                             <div class="cart-header">
                                 <h1>Your Shopping Cart</h1>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table shopping-summery text-center clean">
-                                    <thead>
-                                        <tr class="main-heading">
-                                            <th scope="col">Image</th>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Price</th>
-                                            <th scope="col">Quantity</th>
-                                            <th scope="col">Subtotal</th>
-                                            <th scope="col">Remove</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                        <% if (cart?.length>0) {
-                                            cart.forEach((cartData,index)=>{
-                                            %>
-                                            <p></p>
-                                            <tr>
-                                                <td class="image product-thumbnail"><img
-                                                        src="/assets/imgs/productIMG/<%=cartData.productData_id.images[0]%>"
-                                                        alt="#"></td>
-                                                <td class="product-des product-name">
-                                                    <%=cartData.productData_id.name%>
-                                                </td>
-                                                <td class="price" data-title="Price"><span>
-                                                        <%=cartData.productData_id.discount_price %>
-                                                    </span></td>
-                                                <td class="text-center" data-title="Stock">
-                                                    <div class="cart-product-quantity">
-                                                        <button type="button" class="quantity-btn"
-                                                            onclick="decrementQuantity(this, '<%= cartData.productData_id._id %>', <%= cartData.productData_id.stock %>)">
-                                                            -
-                                                        </button>
-                                                        <input type="number" class="form-control" name="qty"
-                                                            value="<%= cartData.qty %>" min="1"
-                                                            max="<%= Math.min(5, cartData.productData_id.stock) %>"
-                                                            step="1" required
-                                                            onchange="validateAndUpdateCart('<%= cartData.productData_id._id %>', this.value, <%= cartData.productData_id.stock %>)">
-                                                        <button type="button" class="quantity-btn"
-                                                            onclick="incrementQuantity(this, '<%= cartData.productData_id._id %>', <%= cartData.productData_id.stock %>)">
-                                                            +
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                                <td class="text-center" data-title="Cart">
-                                                    <span>
-                                                        <%=productTotal[index] %>
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <button type="button"
-                                                        onclick="confirmRemoveCartItem('<%= cartData.productData_id._id %>');">
-                                                        <i class="fi-rs-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            <% }) }%>
-
-                                    </tbody>
-                                </table>
-                            </div>
-
-
-
-                            <div class="cart-action text-end">
-                                <button onclick="confirmClearCart()" class="clear-cart-btn">
-                                    <i class="fi-rs-trash"></i>
-                                    Clear Cart
-                                </button>
-                                <a href="/jewellery" class="btn">
-                                    <i class="fi-rs-shopping-bag mr-10"></i>
-                                    Continue Shopping
-                                </a>
-                            </div>
-                            <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
-                            <div class="row mb-50">
-                                <div class="col-lg-6 col-md-12">
-
+                            <% if (hasOutOfStockProducts) { %>
+                                <div class="alert alert-warning">
+                                    Some items in your cart are currently out of stock or have insufficient quantity.
+                                    Please remove or adjust the quantities before checking out.
                                 </div>
-                                <div class="col-lg-6 col-md-12">
-                                    <div class="border p-md-4 p-30 border-radius cart-totals">
-                                        <div class="heading_s1 mb-3">
-                                            <h4>Cart Totals</h4>
-                                        </div>
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <tbody>
+                                <% } %>
+                                    <div class="table-responsive">
+                                        <table class="table shopping-summery text-center clean">
+                                            <thead>
+                                                <tr class="main-heading">
+                                                    <th scope="col">Image</th>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Price</th>
+                                                    <th scope="col">Quantity</th>
+                                                    <th scope="col">Subtotal</th>
+                                                    <th scope="col">Remove</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <% if (cart?.length> 0) {
+                                                    cart.forEach((cartData,index)=>{
+                                                    %>
+                                                    <p></p>
                                                     <tr>
-                                                        <td class="cart_total_label">Cart Subtotal</td>
-                                                        <td class="cart_total_amount"><span
-                                                                class="font-lg fw-900 text-brand">
-                                                                <%=subtotalWithShipping %>
+                                                        <td class="image product-thumbnail"><img
+                                                                src="/assets/imgs/productIMG/<%=cartData.productData_id.images[0]%>"
+                                                                alt="#"></td>
+                                                        <td class="product-des product-name">
+                                                            <%=cartData.productData_id.name%>
+                                                        </td>
+                                                        <td class="price" data-title="Price"><span>
+                                                                ₹<%=cartData.productData_id.discount_price %>
                                                             </span></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="cart_total_label">Shipping</td>
-                                                        <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> Free
-                                                            Shipping</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="cart_total_label">Total</td>
-                                                        <td class="cart_total_amount"><strong><span
-                                                                    class="font-xl fw-900 text-brand">
-                                                                    <%=subtotalWithShipping %>
-                                                                </span></strong></td>
-                                                    </tr>
 
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <a href="/order/checkout" class="btn "> <i class="fi-rs-box-alt mr-10"></i>
-                                            Proceed
-                                            To CheckOut</a>
+                                                        <td class="text-center" data-title="Stock">
+                                                            <% if (cartData.productData_id.stock===0 ){ %>
+                                                                <div class="alert alert-warning"
+                                                                    style="background-color: #ffdddd; color: #d8000c; border: 1px solid #d8000c; padding: 15px; border-radius: 8px;">
+                                                                    Out of Stock
+                                                                </div>
+                                                                <%}else{%>
+                                                                    <div class="cart-product-quantity">
+                                                                        <button type="button" class="quantity-btn"
+                                                                            onclick="decrementQuantity(this, '<%= cartData.productData_id._id %>', <%= cartData.productData_id.stock %>)">
+                                                                            -
+                                                                        </button>
+                                                                        <input type="number" class="form-control"
+                                                                            name="qty" value="<%= cartData.qty %>"
+                                                                            min="1"
+                                                                            max="<%= Math.min(5, cartData.productData_id.stock) %>"
+                                                                            step="1" required
+                                                                            onchange="validateAndUpdateCart('<%= cartData.productData_id._id %>', this.value, <%= cartData.productData_id.stock %>)">
+                                                                        <button type="button" class="quantity-btn"
+                                                                            onclick="incrementQuantity(this, '<%= cartData.productData_id._id %>', <%= cartData.productData_id.stock %>)">
+                                                                            +
+                                                                        </button>
+                                                                    </div>
+                                                                    <%}%>
+                                                        </td>
+                                                        <td class="text-center" data-title="Cart">
+                                                            <span>
+                                                                ₹<%=productTotal[index] %>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" 
+   onclick="confirmRemoveCartItem('<%= cartData.productData_id._id %>');"
+   class="remove-btn"
+   style="
+       background: none;
+       border: none;
+       color: #ff4545;
+       cursor: pointer;
+       transition: color 0.2s;
+       padding: 8px;
+       font-size: 18px;
+   "
+   onmouseover="this.style.color='#ff1111'"
+   onmouseout="this.style.color='#ff4545'"
+>
+   <i class="fi-rs-trash"></i>
+</button>
+                                                        </td>
+                                                    </tr>
+                                                    <% }) }%>
+
+                                            </tbody>
+                                        </table>
                                     </div>
-                                </div>
-                            </div>
+
+
+
+                                    <div class="cart-action text-end">
+                                        <button onclick="confirmClearCart()" class="clear-cart-btn">
+                                            <i class="fi-rs-trash"></i>
+                                            Clear Cart
+                                        </button>
+                                        <a href="/jewellery" class="btn">
+                                            <i class="fi-rs-shopping-bag mr-10"></i>
+                                            Continue Shopping
+                                        </a>
+                                    </div>
+                                    <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
+                                    <div class="row mb-50">
+                                        <div class="col-lg-6 col-md-12">
+
+                                        </div>
+                                        <div class="col-lg-6 col-md-12">
+                                            <div class="border p-md-4 p-30 border-radius cart-totals">
+                                                <div class="heading_s1 mb-3">
+                                                    <h4>Cart Totals</h4>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table class="table">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="cart_total_label">Cart Subtotal</td>
+                                                                <td class="cart_total_amount"><span
+                                                                        class="font-lg fw-900 text-brand">
+                                                                        ₹<%=subtotalWithShipping %>
+                                                                    </span></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="cart_total_label">Shipping</td>
+                                                                <td class="cart_total_amount"> <i
+                                                                        class="ti-gift mr-5"></i> Free
+                                                                    Shipping</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="cart_total_label">Total</td>
+                                                                <td class="cart_total_amount"><strong><span
+                                                                            class="font-xl fw-900 text-brand">
+                                                                            ₹<%=subtotalWithShipping %>
+                                                                        </span></strong></td>
+                                                            </tr>
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <% if (canProceedToCheckout) { %>
+                                                    <a href="/order/checkout" class="btn">
+                                                        <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut
+                                                    </a>
+                                                    <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
                 </div>
                 </div>
                 <% } %>
