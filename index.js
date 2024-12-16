@@ -14,7 +14,7 @@ const {disableCacheMiddleware} = require("./middleware/authenticationMiddleware"
 const fetchCartData = require('./middleware/fetchCart');
 
 const app = express();
-const port = process.env.PORT || 5001;
+const port = process.env.PORT ;
 dbConnection();
 
 
