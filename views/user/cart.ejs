@@ -1,4 +1,4 @@
-<%- include('../Layout/usertem.ejs') %>
+<%- include('../layout/usertem.ejs') %>
     <%- include ("../layout/cdn")%>
 
         <style>
@@ -223,7 +223,7 @@
                                         <a class="nav-link" href="/jewellery"
                                             style="color: black;font-size: medium;">Jewellery </a>
                                     </li>
-                                    
+
                                     <li class="nav-item">
                                         <a class="nav-link" href="/useraccount"
                                             style="color: black;font-size: medium;">My Account</a>
@@ -337,10 +337,9 @@
                                                             </span>
                                                         </td>
                                                         <td>
-                                                            <button type="button" 
-   onclick="confirmRemoveCartItem('<%= cartData.productData_id._id %>');"
-   class="remove-btn"
-   style="
+                                                            <button type="button"
+                                                                onclick="confirmRemoveCartItem('<%= cartData.productData_id._id %>');"
+                                                                class="remove-btn" style="
        background: none;
        border: none;
        color: #ff4545;
@@ -348,12 +347,9 @@
        transition: color 0.2s;
        padding: 8px;
        font-size: 18px;
-   "
-   onmouseover="this.style.color='#ff1111'"
-   onmouseout="this.style.color='#ff4545'"
->
-   <i class="fi-rs-trash"></i>
-</button>
+   " onmouseover="this.style.color='#ff1111'" onmouseout="this.style.color='#ff4545'">
+                                                                <i class="fi-rs-trash"></i>
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                     <% }) }%>
