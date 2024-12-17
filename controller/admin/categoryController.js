@@ -100,7 +100,7 @@ const getEditCategory = asyncHandler(async (req, res) => {
       return res.redirect('/admin/errorpage');
     }
     
-    res.render("admin/editcategory", { category });
+    res.render("admin/editCategory", { category });
   } catch (error) {
     // Handle any potential errors (like invalid ObjectId)
     console.error('Error fetching category:', error);
