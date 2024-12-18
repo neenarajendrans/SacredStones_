@@ -34,8 +34,10 @@ const getWallet = async (req, res) => {
 const handleWalletTransaction = async (userId, amount, type, description) => {
   try {
     const wallet = await Wallet.findOne({ userId });
+    const walletamount = await Wallet.findOne({createdAt})
 
     if (wallet) {
+
       // Update existing wallet
       const newBalance =
         type === "credit" ? wallet.balance + amount : wallet.balance - amount;

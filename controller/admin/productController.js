@@ -156,6 +156,9 @@ const editProduct = asyncHandler(async (req, res) => {
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
+    if(product.stock<5){
+      product.name = product.name +"limited Stock"
+    }
 
     // Update basic product information
     product.name = req.body.name;
