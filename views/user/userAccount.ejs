@@ -76,6 +76,7 @@
                         <div class="card-body">
                           <p>From your account dashboard. you can easily check &amp; view your recent orders, manage your shipping and billing addresses and edit your password and account details.</p>
                         </div>
+                        <% if (user.password) { %>
                         <div class="referral-container">
                           <h3 class="referral-title">Your Referral Code</h3>
                           <div class="referral-code" id="referralCode" onclick="copyToClipboard()">
@@ -83,7 +84,7 @@
                           </div>
                           <p class="copy-text" id="copyText">Click to copy</p>
                       </div>
-                        <% if (user.password) { %>
+                      
                           <a href="/editprofile"><button name="userId" style="margin: 20px;" type="submit" class="edit-btn">
                             <i class="fas fa-user-edit me-2"></i>Edit Profile
                         </button></a>
